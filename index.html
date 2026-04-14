@@ -3,41 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestão Empresa Pro - Android</title>
+  <title>Jorge Fernandes Gestão Empresa</title>
   <meta name="theme-color" content="#0b1020" />
-  <link rel='manifest' href='manifest.json' />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/icon-180.png" />
+
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" href="assets/favicon-32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="assets/favicon-16.png" sizes="16x16" />
+
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="android">
+<body>
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
 
   <div id="updateBanner" class="update-banner hidden">
     <div>
       <strong>Nova versão disponível</strong>
-      <p>A app foi atualizada. Carrega no botão para usar a versão mais recente.</p>
+      <p>Foi detetada uma versão mais recente da aplicação.</p>
     </div>
-    <button id="reloadAppBtn" class="primary-btn">Atualizar agora</button>
+    <button id="reloadAppBtn" class="btn btn-primary">Atualizar agora</button>
   </div>
 
   <div id="loginScreen" class="login-screen">
     <div class="login-card">
-      <div class="login-badge">GE</div>
-      <h1>Gestão Empresa</h1>
-      <p>Entrar como <strong>Admin</strong> ou <strong>User</strong></p>
-      <form id="loginForm" class="login-form">
-        <div class="field">
-          <label>Utilizador</label>
-          <input id="loginUsername" type="text" placeholder="Ex: admin" required />
+      <div class="login-brand">
+        <div class="login-copy">
+          <span class="eyebrow">Jorge Fernandes</span>
+          <h1>Gestão Empresa</h1>
+          <p>Sistema profissional para controlo de trabalhos, clientes e pagamentos.</p>
         </div>
-        <div class="field">
-          <label>Palavra-passe</label>
-          <input id="loginPassword" type="password" placeholder="••••••••" required />
+        <img src="assets/logo-dark.png" alt="Logo Jorge Fernandes" />
+      </div>
+
+      <div class="login-panel">
+        <div class="login-badge">GE</div>
+        <div class="login-copy">
+          <span class="eyebrow">Acesso</span>
+          <h1>Entrar</h1>
+          <p>Admin mestre, admin e user com permissões separadas.</p>
         </div>
-        <button type="submit" class="primary-btn full">Entrar</button>
-      </form>
-      <div class="login-help">
-        <span>Modo demo configurável no ficheiro <code>js/auth-config.js</code></span>
+        <form id="loginForm" class="login-form">
+          <div class="field">
+            <label>Utilizador</label>
+            <input id="loginUsername" type="text" placeholder="adminmestre, admin ou user" required />
+          </div>
+          <div class="field">
+            <label>Palavra-passe</label>
+            <input id="loginPassword" type="password" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary full">Entrar</button>
+        </form>
+        <div class="login-help">
+          <div><strong>Admin Mestre:</strong> cria utilizadores e altera tudo</div>
+          <div><strong>Admin:</strong> altera dados da empresa</div>
+          <div><strong>User:</strong> só consulta</div>
+        </div>
       </div>
     </div>
   </div>
@@ -45,10 +67,10 @@
   <div id="appRoot" class="app-shell hidden">
     <aside class="sidebar" id="sidebar">
       <div class="brand-card">
-        <div class="brand-logo">GE</div>
+        <img src="assets/logo-icon-dark.png" alt="Logo ícone" />
         <div>
           <h1>Gestão Empresa</h1>
-          <p>Android • Admin/User</p>
+          <p>Jorge Fernandes</p>
         </div>
       </div>
 
@@ -61,7 +83,7 @@
         <button class="nav-btn" data-tab="configuracoes"><span class="nav-icon">⚙</span><span>Configurações</span></button>
       </nav>
 
-      <div class="sidebar-bottom">
+      <div class="sidebar-footer">
         <div class="mini-card">
           <span class="mini-label">Sessão</span>
           <strong id="roleBadge">-</strong>
@@ -70,14 +92,14 @@
           <span class="mini-label">Versão</span>
           <strong id="versionBadge">-</strong>
         </div>
-        <button id="logoutBtn" class="secondary-btn full">Terminar sessão</button>
+        <button id="logoutBtn" class="btn btn-secondary full">Terminar sessão</button>
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
-          <button class="menu-btn mobile-only" id="menuToggle" aria-label="Abrir menu">☰</button>
+          <button class="menu-btn mobile-only" id="menuToggle">☰</button>
           <div>
             <h2 id="pageTitle">Dashboard</h2>
             <div class="subline">
@@ -88,25 +110,24 @@
           </div>
         </div>
         <div class="topbar-actions">
-          <button class="ghost-btn" id="syncBtn">Tentar Firebase</button>
-          <button class="secondary-btn" id="exportBackupBtn">Backup JSON</button>
+          <button class="btn btn-ghost" id="syncBtn">Tentar Firebase</button>
+          <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
         </div>
       </header>
 
       <section class="page active" id="dashboard-page">
-        <div class="hero glass">
+        <div class="hero panel">
           <div class="hero-copy">
-            <h3>Controlo simples, profissional e rápido para o dia a dia.</h3>
-            <p>Regista trabalhos, acompanha clientes, controla pagamentos e usa a mesma base visual em Android.</p>
+            <h3>Controlo total dos trabalhos, clientes e pagamentos.</h3>
+            <p>Painel rápido para uso diário com visual profissional e branding da empresa.</p>
             <div class="hero-actions">
-              <button class="primary-btn admin-only" data-go="trabalhos">Adicionar trabalho</button>
-              <button class="ghost-btn" data-go="clientes">Ver clientes</button>
+              <button class="btn btn-primary admin-only" data-go="trabalhos">Adicionar trabalho</button>
+              <button class="btn btn-ghost" data-go="clientes">Ver clientes</button>
             </div>
           </div>
-
           <div class="hero-side">
             <div class="hero-chip">
-              <span>Dispositivo</span>
+              <span>Canal</span>
               <strong>Android</strong>
             </div>
             <div class="hero-chip">
@@ -117,18 +138,20 @@
         </div>
 
         <div class="stats-grid">
-          <div class="stat glass pink"><span>Total trabalhos</span><strong id="statTotalTrabalhos">0</strong><small>Todos os registos</small></div>
-          <div class="stat glass blue"><span>Em andamento</span><strong id="statEmAndamento">0</strong><small>Serviços abertos</small></div>
-          <div class="stat glass green"><span>Concluídos</span><strong id="statConcluidos">0</strong><small>Fechados ou pagos</small></div>
-          <div class="stat glass gold"><span>Total faturado</span><strong id="statTotalFaturado">0 €</strong><small>Soma dos valores</small></div>
+          <div class="stat-card panel pink"><span>Total trabalhos</span><strong id="statTotalTrabalhos">0</strong><small>Todos os registos</small></div>
+          <div class="stat-card panel blue"><span>Em andamento</span><strong id="statEmAndamento">0</strong><small>Serviços abertos</small></div>
+          <div class="stat-card panel green"><span>Concluídos</span><strong id="statConcluidos">0</strong><small>Fechados ou pagos</small></div>
+          <div class="stat-card panel gold"><span>Total faturado</span><strong id="statTotalFaturado">0 €</strong><small>Soma dos valores</small></div>
         </div>
 
+        <div id="alertsGrid" class="alerts-grid"></div>
+
         <div class="dashboard-grid">
-          <section class="panel glass">
-            <div class="panel-head"><h3>Trabalhos recentes</h3><button class="tiny-btn" data-go="trabalhos">Ver tudo</button></div>
+          <section class="panel">
+            <div class="panel-head"><h3>Trabalhos recentes</h3></div>
             <div id="recentTrabalhos" class="list-stack"></div>
           </section>
-          <section class="panel glass">
+          <section class="panel">
             <div class="panel-head"><h3>Receitas por mês</h3></div>
             <div id="monthlyBars" class="bars"></div>
           </section>
@@ -136,14 +159,14 @@
       </section>
 
       <section class="page" id="trabalhos-page">
-        <div class="split-layout">
-          <section class="panel glass admin-only">
+        <div class="content-grid">
+          <section class="panel admin-only">
             <div class="panel-head"><h3>Novo / Editar trabalho</h3></div>
             <form id="trabalhoForm" class="form-grid">
               <input type="hidden" id="trabalhoId" />
               <div class="field"><label>Cliente</label><input id="cliente" type="text" placeholder="Nome do cliente" required /></div>
               <div class="field"><label>Contacto</label><input id="contacto" type="text" placeholder="Telefone ou contacto" /></div>
-              <div class="field"><label>Tipo de trabalho</label><input id="tipoTrabalho" type="text" placeholder="Ex: Instalação, reparação" required /></div>
+              <div class="field"><label>Tipo de trabalho</label><input id="tipoTrabalho" type="text" placeholder="Ex: Torno, reparação, instalação" required /></div>
               <div class="field"><label>Valor (€)</label><input id="valor" type="number" min="0" step="0.01" placeholder="0.00" required /></div>
               <div class="field"><label>Data de início</label><input id="dataInicio" type="date" /></div>
               <div class="field"><label>Data de fim</label><input id="dataFim" type="date" /></div>
@@ -156,11 +179,10 @@
                 </select>
               </div>
               <div class="field field-span-2"><label>Descrição</label><textarea id="descricao" rows="5" placeholder="Detalhes do serviço"></textarea></div>
-              <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="primary-btn">Guardar trabalho</button><button type="button" class="secondary-btn" id="clearTrabalhoBtn">Limpar</button></div></div>
+              <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar trabalho</button><button type="button" class="btn btn-secondary" id="clearTrabalhoBtn">Limpar</button></div></div>
             </form>
           </section>
-
-          <section class="panel glass">
+          <section class="panel">
             <div class="panel-head"><h3>Lista de trabalhos</h3></div>
             <div class="toolbar">
               <input id="searchTrabalhos" type="text" placeholder="Pesquisar cliente ou tipo de trabalho" />
@@ -183,8 +205,8 @@
       </section>
 
       <section class="page" id="clientes-page">
-        <div class="split-layout">
-          <section class="panel glass admin-only">
+        <div class="content-grid">
+          <section class="panel admin-only">
             <div class="panel-head"><h3>Novo cliente</h3></div>
             <form id="clienteForm" class="form-grid">
               <input type="hidden" id="clienteId" />
@@ -193,11 +215,10 @@
               <div class="field"><label>Email</label><input id="clienteEmail" type="email" placeholder="Email" /></div>
               <div class="field"><label>NIF</label><input id="clienteNif" type="text" placeholder="NIF" /></div>
               <div class="field field-span-2"><label>Morada</label><textarea id="clienteMorada" rows="4" placeholder="Morada completa"></textarea></div>
-              <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="primary-btn">Guardar cliente</button><button type="button" class="secondary-btn" id="clearClienteBtn">Limpar</button></div></div>
+              <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar cliente</button><button type="button" class="btn btn-secondary" id="clearClienteBtn">Limpar</button></div></div>
             </form>
           </section>
-
-          <section class="panel glass">
+          <section class="panel">
             <div class="panel-head"><h3>Lista de clientes</h3></div>
             <div class="toolbar"><input id="searchClientes" type="text" placeholder="Pesquisar cliente" /></div>
             <div class="table-wrap">
@@ -211,13 +232,13 @@
       </section>
 
       <section class="page" id="pagamentos-page">
-        <div class="split-layout">
-          <section class="panel glass admin-only">
+        <div class="content-grid">
+          <section class="panel admin-only">
             <div class="panel-head"><h3>Registar pagamento</h3></div>
             <form id="pagamentoForm" class="form-grid">
               <input type="hidden" id="pagamentoId" />
               <div class="field"><label>Cliente</label><input id="pagamentoCliente" type="text" placeholder="Nome do cliente" required /></div>
-              <div class="field"><label>Referência do trabalho</label><input id="pagamentoReferencia" type="text" placeholder="Ex: Reparação cozinha" /></div>
+              <div class="field"><label>Referência do trabalho</label><input id="pagamentoReferencia" type="text" placeholder="Ex: Serviço torno" /></div>
               <div class="field"><label>Valor pago (€)</label><input id="pagamentoValor" type="number" min="0" step="0.01" placeholder="0.00" required /></div>
               <div class="field"><label>Data de pagamento</label><input id="pagamentoData" type="date" /></div>
               <div class="field"><label>Método</label>
@@ -229,11 +250,10 @@
                 </select>
               </div>
               <div class="field field-span-2"><label>Notas</label><textarea id="pagamentoNotas" rows="4" placeholder="Observações"></textarea></div>
-              <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="primary-btn">Guardar pagamento</button><button type="button" class="secondary-btn" id="clearPagamentoBtn">Limpar</button></div></div>
+              <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar pagamento</button><button type="button" class="btn btn-secondary" id="clearPagamentoBtn">Limpar</button></div></div>
             </form>
           </section>
-
-          <section class="panel glass">
+          <section class="panel">
             <div class="panel-head"><h3>Pagamentos</h3></div>
             <div class="table-wrap">
               <table>
@@ -246,26 +266,60 @@
       </section>
 
       <section class="page" id="relatorios-page">
-        <section class="panel glass">
-          <div class="panel-head"><h3>Resumo mensal</h3></div>
+        <section class="panel">
+          <div class="panel-head">
+            <h3>Resumo mensal</h3>
+            <button id="exportMonthlyPdfBtn" class="btn btn-tiny">Exportar PDF</button>
+          </div>
           <div id="resumoMensal" class="report-grid"></div>
         </section>
       </section>
 
       <section class="page" id="configuracoes-page">
-        <section class="panel glass">
+        <section class="panel">
           <div class="panel-head"><h3>Configurações e dados</h3></div>
           <div class="settings-grid">
-            <div class="setting-card"><span class="mini-label">Acesso</span><strong>Admin / User</strong><p>Admin pode criar, editar e apagar. User pode consultar os dados.</p></div>
-            <div class="setting-card"><span class="mini-label">Atualização</span><strong>Auto-check ativo</strong><p>A app lê o ficheiro <code>version.json</code> e avisa quando existir nova versão.</p></div>
-            <div class="setting-card"><span class="mini-label">Firebase</span><strong>Pronto a ligar</strong><p>Usa <code>js/firebase-config.js</code> para sincronizar entre dispositivos.</p></div>
+            <div class="setting-card">
+              <span class="mini-label">Acesso</span>
+              <strong>Admin Mestre / Admin / User</strong>
+              <p>Admin mestre pode criar utilizadores. Admin altera dados. User consulta.</p>
+            </div>
+            <div class="setting-card">
+              <span class="mini-label">Atualização</span>
+              <strong>Auto-check ativo</strong>
+              <p>A app lê o ficheiro <code>version.json</code> e avisa quando existir nova versão.</p>
+            </div>
+            <div class="setting-card">
+              <span class="mini-label">Firebase</span>
+              <strong>Pronto a ligar</strong>
+              <p>Usa <code>js/firebase-config.js</code> para sincronizar entre dispositivos.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel admin-only" style="margin-top:14px">
+          <div class="panel-head"><h3>Utilizadores</h3></div>
+          <div id="usersGrid" class="users-grid"></div>
+          <div class="admin-only" style="margin-top:14px">
+            <form id="createUserForm" class="form-grid">
+              <div class="field"><label>Novo utilizador</label><input id="newUsername" type="text" placeholder="Nome do utilizador" /></div>
+              <div class="field"><label>Palavra-passe</label><input id="newPassword" type="text" placeholder="Palavra-passe" /></div>
+              <div class="field"><label>Tipo</label>
+                <select id="newRole">
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                </select>
+              </div>
+              <div class="field"><label>Ação</label><button type="submit" class="btn btn-primary">Criar utilizador</button></div>
+            </form>
+            <div class="login-help">Só o <strong>admin mestre</strong> pode criar utilizadores.</div>
           </div>
         </section>
       </section>
     </main>
   </div>
 
-  <nav class="bottom-nav mobile-nav">
+  <nav class="bottom-nav">
     <button class="bottom-btn active" data-tab="dashboard">Dashboard</button>
     <button class="bottom-btn" data-tab="trabalhos">Trabalhos</button>
     <button class="bottom-btn" data-tab="clientes">Clientes</button>
