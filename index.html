@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Gestão Empresa</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#111827" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">GE</div>
+        <div>
+          <h1>Gestão Empresa</h1>
+          <p>Serviços e clientes</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+        <button class="nav-btn" data-view="novo">Novo Trabalho</button>
+        <button class="nav-btn" data-view="trabalhos">Trabalhos</button>
+        <button class="nav-btn" data-view="config">Configurações</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p>Fase 1</p>
+        <small>PC + Android</small>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <h2 id="pageTitle">Dashboard</h2>
+          <p id="pageSubtitle">Resumo rápido da atividade</p>
+        </div>
+        <button id="mobileMenuBtn" class="mobile-menu-btn">☰</button>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span>Total trabalhos</span>
+            <strong id="statTotal">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Pendentes</span>
+            <strong id="statPendentes">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Concluídos</span>
+            <strong id="statConcluidos">0</strong>
+          </article>
+          <article class="stat-card highlight">
+            <span>Total faturado</span>
+            <strong id="statFaturado">0,00 €</strong>
+          </article>
+        </div>
+
+        <div class="panel-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <h3>Últimos trabalhos</h3>
+            </div>
+            <div id="recentList" class="empty-state">Ainda não existem trabalhos registados.</div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h3>Valores por estado</h3>
+            </div>
+            <div class="mini-stats" id="estadoResumo"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-novo">
+        <form id="jobForm" class="panel form-panel">
+          <div class="panel-head">
+            <h3>Novo Trabalho</h3>
+            <p>Regista um serviço da empresa</p>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Cliente</span>
+              <input type="text" id="cliente" required placeholder="Nome do cliente" />
+            </label>
+
+            <label>
+              <span>Contacto</span>
+              <input type="text" id="contacto" placeholder="Telemóvel ou email" />
+            </label>
+
+            <label>
+              <span>Tipo de trabalho</span>
+              <input type="text" id="tipoTrabalho" required placeholder="Ex: Pintura, eletricidade" />
+            </label>
+
+            <label>
+              <span>Valor (€)</span>
+              <input type="number" id="valor" min="0" step="0.01" required placeholder="0.00" />
+            </label>
+
+            <label>
+              <span>Data de início</span>
+              <input type="date" id="dataInicio" required />
+            </label>
+
+            <label>
+              <span>Data de fim</span>
+              <input type="date" id="dataFim" required />
+            </label>
+
+            <label>
+              <span>Estado</span>
+              <select id="estado" required>
+                <option value="Pendente">Pendente</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Pago">Pago</option>
+              </select>
+            </label>
+
+            <label class="full">
+              <span>Descrição</span>
+              <textarea id="descricao" rows="4" placeholder="Detalhes do trabalho"></textarea>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="primary-btn" id="submitBtn">Guardar trabalho</button>
+            <button type="button" class="secondary-btn" id="clearBtn">Limpar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="view" id="view-trabalhos">
+        <div class="panel">
+          <div class="panel-head stack-mobile">
+            <div>
+              <h3>Lista de Trabalhos</h3>
+              <p>Pesquisa, filtra e gere os registos</p>
+            </div>
+            <div class="filters">
+              <input type="text" id="searchInput" placeholder="Pesquisar cliente ou tipo" />
+              <select id="filterEstado">
+                <option value="">Todos os estados</option>
+                <option value="Pendente">Pendente</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Pago">Pago</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="jobsTableWrap" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-config">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Configurações</h3>
+            <p>Opções simples para a fase inicial</p>
+          </div>
+
+          <div class="config-list">
+            <label class="config-row">
+              <div>
+                <strong>Exportar dados</strong>
+                <p>Guarda todos os trabalhos num ficheiro JSON</p>
+              </div>
+              <button id="exportBtn" class="secondary-btn">Exportar</button>
+            </label>
+
+            <label class="config-row danger-row">
+              <div>
+                <strong>Apagar todos os dados</strong>
+                <p>Remove todos os trabalhos guardados neste dispositivo</p>
+              </div>
+              <button id="clearAllBtn" class="danger-btn">Apagar tudo</button>
+            </label>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
