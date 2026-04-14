@@ -23,16 +23,17 @@ function cacheElements() {
     'clientForm','clientId','clientNome','clientTelefone','clientEmail','clientNif','clientMorada','clientsList','searchClients','clearClientForm',
     'paymentForm','paymentId','paymentCliente','paymentTrabalho','paymentValor','paymentData','paymentMetodo','paymentNotas','paymentsList','clearPaymentForm',
     'statTotalTrabalhos','statEmAndamento','statConcluidos','statFaturado','recentJobs','monthlySummary','reportMonthly',
-    'pageTitle','pageSubtitle','menuBtn','sidebar','exportJobsCsv','exportClientsCsv','exportPaymentsCsv','exportBackupBtn','importBackupBtn','backupFileInput','useFirebaseToggle'
+    'pageTitle','pageSubtitle','menuBtn','sidebar','exportJobsCsv','exportClientsCsv','exportPaymentsCsv','exportBackupBtn','importBackupBtn','backupFileInput','useFirebaseToggle','goDashboardBtn'
   ].forEach(id => els[id] = document.getElementById(id));
 }
 
 function bindEvents() {
-  document.querySelectorAll('.nav-btn').forEach(btn => {
+  document.querySelectorAll('.nav-btn, .bottom-nav-btn, .quick-nav').forEach(btn => {
     btn.addEventListener('click', () => switchPage(btn.dataset.page));
   });
 
   els.menuBtn.addEventListener('click', () => els.sidebar.classList.toggle('open'));
+  els.goDashboardBtn.addEventListener('click', () => switchPage('dashboard'));
 
   els.jobForm.addEventListener('submit', saveJob);
   els.clientForm.addEventListener('submit', saveClient);
@@ -61,9 +62,12 @@ function bindEvents() {
 
 function switchPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn, .bottom-nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(`page-${page}`).classList.add('active');
-  document.querySelector(`.nav-btn[data-page="${page}"]`).classList.add('active');
+  const desktopBtn = document.querySelector(`.nav-btn[data-page="${page}"]`);
+  const mobileBtn = document.querySelector(`.bottom-nav-btn[data-page="${page}"]`);
+  if (desktopBtn) desktopBtn.classList.add('active');
+  if (mobileBtn) mobileBtn.classList.add('active');
   els.sidebar.classList.remove('open');
 
   const titles = {
@@ -215,7 +219,7 @@ function renderClients() {
       <div class="meta">NIF: ${escapeHtml(c.nif || '---')}</div>
       <div class="meta">${escapeHtml(c.morada || 'Sem morada')}</div>
     </div>
-  `).join('') : '<div class="muted">Sem clientes registados.</div>';
+  `).join('') : '<div class="empty-state">Sem clientes registados.</div>';
 }
 
 function renderPayments() {
@@ -231,7 +235,7 @@ function renderPayments() {
       <div class="meta">${escapeHtml(p.trabalho)} • ${formatMoney(p.valor)} • ${formatDate(p.data)}</div>
       <div class="meta">${escapeHtml(p.metodo)}${p.notas ? ' • ' + escapeHtml(p.notas) : ''}</div>
     </div>
-  `).join('') : '<div class="muted">Sem pagamentos registados.</div>';
+  `).join('') : '<div class="empty-state">Sem pagamentos registados.</div>';
 }
 
 function renderDashboard() {
@@ -255,18 +259,25 @@ function renderDashboard() {
       <div class="meta">${escapeHtml(j.tipoTrabalho)} • ${formatMoney(j.valor)}</div>
       <div class="meta">${formatDate(j.dataInicio)} até ${formatDate(j.dataFim)}</div>
     </div>
-  `).join('') : '<div class="muted">Ainda não existem trabalhos.</div>';
+  `).join('') : '<div class="empty-state">Ainda não existem trabalhos.</div>';
 
   const grouped = groupByMonth(state.jobs, 'dataInicio');
-  els.monthlySummary.innerHTML = Object.keys(grouped).length ? Object.entries(grouped).map(([month, items]) => `
-    <div class="item-row">
-      <div class="top">
-        <strong>${month}</strong>
-        <span>${items.length} trabalho(s)</span>
+  const monthlyEntries = Object.entries(grouped);
+  const maxMonthly = Math.max(0, ...monthlyEntries.map(([, items]) => items.reduce((a,b) => a + Number(b.valor || 0), 0)));
+  els.monthlySummary.innerHTML = monthlyEntries.length ? monthlyEntries.map(([month, items]) => {
+    const total = items.reduce((a,b) => a + Number(b.valor || 0), 0);
+    const width = maxMonthly ? Math.max(8, (total / maxMonthly) * 100) : 0;
+    return `
+      <div class="item-row month-line">
+        <div class="month-line-top">
+          <strong>${month}</strong>
+          <span>${items.length} trabalho(s)</span>
+        </div>
+        <div class="month-bar"><span style="width:${width}%"></span></div>
+        <div class="meta">Total: ${formatMoney(total)}</div>
       </div>
-      <div class="meta">Total: ${formatMoney(items.reduce((a,b) => a + Number(b.valor || 0), 0))}</div>
-    </div>
-  `).join('') : '<div class="muted">Sem dados mensais.</div>';
+    `;
+  }).join('') : '<div class="empty-state">Sem dados mensais.</div>';
 }
 
 function renderReports() {
@@ -284,7 +295,7 @@ function renderReports() {
         <div class="meta">Pagos: ${pagos} • Concluídos: ${items.filter(x => x.estado === 'Concluído').length}</div>
       </div>
     `;
-  }).join('') : '<div class="muted">Ainda sem relatórios disponíveis.</div>';
+  }).join('') : '<div class="empty-state">Ainda sem relatórios disponíveis.</div>';
 }
 
 function editJob(id) {

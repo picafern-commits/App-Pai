@@ -3,77 +3,121 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#111827" />
+  <meta name="theme-color" content="#081120" />
   <title>Gestão Empresa Pro</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <div class="brand-logo">GE</div>
-        <div>
-          <h1>Gestão Empresa</h1>
-          <p>PC + Android</p>
+      <div class="brand-panel">
+        <div class="brand">
+          <div class="brand-logo">GE</div>
+          <div>
+            <h1>Gestão Empresa</h1>
+            <p>Modo empresa Braga</p>
+          </div>
+        </div>
+
+        <div class="brand-status">
+          <span class="mini-label">Sistema</span>
+          <strong>PC + Android</strong>
+          <small>Versão 3.0 UI</small>
         </div>
       </div>
 
       <nav class="nav">
-        <button class="nav-btn active" data-page="dashboard">Dashboard</button>
-        <button class="nav-btn" data-page="trabalhos">Trabalhos</button>
-        <button class="nav-btn" data-page="clientes">Clientes</button>
-        <button class="nav-btn" data-page="pagamentos">Pagamentos</button>
-        <button class="nav-btn" data-page="relatorios">Relatórios</button>
-        <button class="nav-btn" data-page="config">Configurações</button>
+        <button class="nav-btn active" data-page="dashboard"><span class="nav-icon">◫</span><span>Dashboard</span></button>
+        <button class="nav-btn" data-page="trabalhos"><span class="nav-icon">▣</span><span>Trabalhos</span></button>
+        <button class="nav-btn" data-page="clientes"><span class="nav-icon">◎</span><span>Clientes</span></button>
+        <button class="nav-btn" data-page="pagamentos"><span class="nav-icon">€</span><span>Pagamentos</span></button>
+        <button class="nav-btn" data-page="relatorios"><span class="nav-icon">◧</span><span>Relatórios</span></button>
+        <button class="nav-btn" data-page="config"><span class="nav-icon">⚙</span><span>Configurações</span></button>
       </nav>
 
       <div class="sidebar-footer">
-        <small>Versão 2.0</small>
+        <div class="footer-card">
+          <span class="mini-label">Estado</span>
+          <strong>Pronto para uso</strong>
+          <small>Base local + estrutura Firebase</small>
+        </div>
       </div>
     </aside>
 
     <main class="content">
-      <header class="topbar">
-        <button class="menu-btn" id="menuBtn">☰</button>
-        <div>
-          <h2 id="pageTitle">Dashboard</h2>
-          <p id="pageSubtitle">Resumo rápido da atividade</p>
+      <header class="topbar glass">
+        <div class="topbar-left">
+          <button class="menu-btn" id="menuBtn">☰</button>
+          <div>
+            <div class="eyebrow">PAINEL PRINCIPAL</div>
+            <h2 id="pageTitle">Dashboard</h2>
+            <p id="pageSubtitle">Resumo rápido da atividade</p>
+          </div>
         </div>
-        <button class="primary" id="exportBackupBtn">Exportar Backup</button>
+        <div class="topbar-actions">
+          <button class="secondary" id="goDashboardBtn" type="button">Ir ao painel</button>
+          <button class="primary" id="exportBackupBtn" type="button">Exportar Backup</button>
+        </div>
       </header>
 
       <section class="page active" id="page-dashboard">
-        <div class="cards-grid">
-          <article class="card stat">
+        <section class="hero glass">
+          <div>
+            <div class="eyebrow">GESTÃO OPERACIONAL</div>
+            <h3>Controlo simples, visual profissional e rápido para o dia a dia.</h3>
+            <p>Regista trabalhos, acompanha clientes, controla pagamentos e exporta tudo com um layout adaptado para PC e Android.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="primary quick-nav" data-page="trabalhos" type="button">Novo trabalho</button>
+            <button class="secondary quick-nav" data-page="clientes" type="button">Novo cliente</button>
+            <button class="secondary quick-nav" data-page="pagamentos" type="button">Registar pagamento</button>
+          </div>
+        </section>
+
+        <div class="cards-grid stats-grid">
+          <article class="card stat stat-accent">
             <span>Total Trabalhos</span>
             <strong id="statTotalTrabalhos">0</strong>
+            <small>Todos os registos criados</small>
           </article>
           <article class="card stat">
             <span>Em andamento</span>
             <strong id="statEmAndamento">0</strong>
+            <small>Serviços ainda abertos</small>
           </article>
           <article class="card stat">
             <span>Concluídos</span>
             <strong id="statConcluidos">0</strong>
+            <small>Concluídos ou pagos</small>
           </article>
           <article class="card stat">
             <span>Total faturado</span>
             <strong id="statFaturado">0 €</strong>
+            <small>Soma dos valores dos trabalhos</small>
           </article>
         </div>
 
-        <div class="two-col">
-          <article class="card">
-            <div class="card-header">
-              <h3>Trabalhos recentes</h3>
+        <div class="dashboard-grid">
+          <article class="card panel-large">
+            <div class="card-header between">
+              <div>
+                <span class="mini-label">ATIVIDADE</span>
+                <h3>Trabalhos recentes</h3>
+              </div>
             </div>
             <div id="recentJobs" class="stack"></div>
           </article>
 
-          <article class="card">
-            <div class="card-header">
-              <h3>Receitas por mês</h3>
+          <article class="card panel-medium">
+            <div class="card-header between">
+              <div>
+                <span class="mini-label">RESUMO</span>
+                <h3>Receitas por mês</h3>
+              </div>
             </div>
             <div id="monthlySummary" class="stack"></div>
           </article>
@@ -82,27 +126,30 @@
 
       <section class="page" id="page-trabalhos">
         <div class="two-col align-start">
-          <article class="card">
-            <div class="card-header">
-              <h3>Novo / Editar trabalho</h3>
+          <article class="card glass">
+            <div class="card-header between">
+              <div>
+                <span class="mini-label">FORMULÁRIO</span>
+                <h3>Novo / Editar trabalho</h3>
+              </div>
             </div>
             <form id="jobForm" class="form-grid">
               <input type="hidden" id="jobId" />
               <label>
                 Cliente
-                <input type="text" id="cliente" required />
+                <input type="text" id="cliente" required placeholder="Nome do cliente" />
               </label>
               <label>
                 Contacto
-                <input type="text" id="contacto" />
+                <input type="text" id="contacto" placeholder="Telefone ou contacto" />
               </label>
               <label>
                 Tipo de trabalho
-                <input type="text" id="tipoTrabalho" required />
+                <input type="text" id="tipoTrabalho" required placeholder="Ex: reparação, instalação" />
               </label>
               <label>
                 Valor (€)
-                <input type="number" id="valor" min="0" step="0.01" required />
+                <input type="number" id="valor" min="0" step="0.01" required placeholder="0.00" />
               </label>
               <label>
                 Data de início
@@ -123,7 +170,7 @@
               </label>
               <label class="full">
                 Descrição
-                <textarea id="descricao" rows="4"></textarea>
+                <textarea id="descricao" rows="4" placeholder="Detalhes do serviço"></textarea>
               </label>
               <div class="form-actions full">
                 <button type="submit" class="primary">Guardar trabalho</button>
@@ -132,10 +179,13 @@
             </form>
           </article>
 
-          <article class="card">
-            <div class="card-header between">
-              <h3>Lista de trabalhos</h3>
-              <div class="filters-inline">
+          <article class="card glass">
+            <div class="card-header between mobile-col">
+              <div>
+                <span class="mini-label">LISTAGEM</span>
+                <h3>Lista de trabalhos</h3>
+              </div>
+              <div class="filters-inline filters-grid">
                 <input type="text" id="searchJobs" placeholder="Pesquisar cliente" />
                 <select id="filterEstado">
                   <option value="">Todos os estados</option>
@@ -168,31 +218,32 @@
 
       <section class="page" id="page-clientes">
         <div class="two-col align-start">
-          <article class="card">
+          <article class="card glass">
             <div class="card-header">
+              <span class="mini-label">BASE DE DADOS</span>
               <h3>Novo cliente</h3>
             </div>
             <form id="clientForm" class="form-grid">
               <input type="hidden" id="clientId" />
               <label>
                 Nome
-                <input type="text" id="clientNome" required />
+                <input type="text" id="clientNome" required placeholder="Nome do cliente" />
               </label>
               <label>
                 Telefone
-                <input type="text" id="clientTelefone" />
+                <input type="text" id="clientTelefone" placeholder="Número de telefone" />
               </label>
               <label>
                 Email
-                <input type="email" id="clientEmail" />
+                <input type="email" id="clientEmail" placeholder="Email" />
               </label>
               <label>
                 NIF
-                <input type="text" id="clientNif" />
+                <input type="text" id="clientNif" placeholder="NIF" />
               </label>
               <label class="full">
                 Morada
-                <textarea id="clientMorada" rows="3"></textarea>
+                <textarea id="clientMorada" rows="3" placeholder="Morada completa"></textarea>
               </label>
               <div class="form-actions full">
                 <button type="submit" class="primary">Guardar cliente</button>
@@ -201,9 +252,12 @@
             </form>
           </article>
 
-          <article class="card">
-            <div class="card-header between">
-              <h3>Lista de clientes</h3>
+          <article class="card glass">
+            <div class="card-header between mobile-col">
+              <div>
+                <span class="mini-label">CLIENTES</span>
+                <h3>Lista de clientes</h3>
+              </div>
               <input type="text" id="searchClients" placeholder="Pesquisar cliente" />
             </div>
             <div id="clientsList" class="stack"></div>
@@ -213,23 +267,24 @@
 
       <section class="page" id="page-pagamentos">
         <div class="two-col align-start">
-          <article class="card">
+          <article class="card glass">
             <div class="card-header">
+              <span class="mini-label">FINANCEIRO</span>
               <h3>Registar pagamento</h3>
             </div>
             <form id="paymentForm" class="form-grid">
               <input type="hidden" id="paymentId" />
               <label>
                 Cliente
-                <input type="text" id="paymentCliente" required />
+                <input type="text" id="paymentCliente" required placeholder="Nome do cliente" />
               </label>
               <label>
                 Referência do trabalho
-                <input type="text" id="paymentTrabalho" required />
+                <input type="text" id="paymentTrabalho" required placeholder="Referência ou tipo" />
               </label>
               <label>
                 Valor pago (€)
-                <input type="number" id="paymentValor" min="0" step="0.01" required />
+                <input type="number" id="paymentValor" min="0" step="0.01" required placeholder="0.00" />
               </label>
               <label>
                 Data de pagamento
@@ -246,7 +301,7 @@
               </label>
               <label class="full">
                 Notas
-                <textarea id="paymentNotas" rows="3"></textarea>
+                <textarea id="paymentNotas" rows="3" placeholder="Observações do pagamento"></textarea>
               </label>
               <div class="form-actions full">
                 <button type="submit" class="primary">Guardar pagamento</button>
@@ -255,8 +310,9 @@
             </form>
           </article>
 
-          <article class="card">
+          <article class="card glass">
             <div class="card-header">
+              <span class="mini-label">MOVIMENTOS</span>
               <h3>Pagamentos</h3>
             </div>
             <div id="paymentsList" class="stack"></div>
@@ -266,22 +322,24 @@
 
       <section class="page" id="page-relatorios">
         <div class="two-col align-start">
-          <article class="card">
+          <article class="card glass">
             <div class="card-header">
+              <span class="mini-label">VISÃO MENSAL</span>
               <h3>Resumo mensal</h3>
             </div>
             <div id="reportMonthly" class="stack"></div>
           </article>
 
-          <article class="card">
+          <article class="card glass">
             <div class="card-header">
+              <span class="mini-label">EXPORTAÇÃO</span>
               <h3>Exportações</h3>
             </div>
             <div class="stack">
-              <button class="primary" id="exportJobsCsv">Exportar trabalhos CSV</button>
-              <button class="secondary" id="exportClientsCsv">Exportar clientes CSV</button>
-              <button class="secondary" id="exportPaymentsCsv">Exportar pagamentos CSV</button>
-              <button class="secondary" id="importBackupBtn">Importar backup JSON</button>
+              <button class="primary" id="exportJobsCsv" type="button">Exportar trabalhos CSV</button>
+              <button class="secondary" id="exportClientsCsv" type="button">Exportar clientes CSV</button>
+              <button class="secondary" id="exportPaymentsCsv" type="button">Exportar pagamentos CSV</button>
+              <button class="secondary" id="importBackupBtn" type="button">Importar backup JSON</button>
               <input type="file" id="backupFileInput" accept="application/json" hidden />
             </div>
           </article>
@@ -289,8 +347,9 @@
       </section>
 
       <section class="page" id="page-config">
-        <article class="card">
+        <article class="card glass">
           <div class="card-header">
+            <span class="mini-label">SISTEMA</span>
             <h3>Configurações</h3>
           </div>
           <div class="stack">
@@ -313,6 +372,13 @@ window.FIREBASE_CONFIG = {
       </section>
     </main>
   </div>
+
+  <nav class="bottom-nav">
+    <button class="bottom-nav-btn active" data-page="dashboard" type="button">Dashboard</button>
+    <button class="bottom-nav-btn" data-page="trabalhos" type="button">Trabalhos</button>
+    <button class="bottom-nav-btn" data-page="clientes" type="button">Clientes</button>
+    <button class="bottom-nav-btn" data-page="pagamentos" type="button">Pagamentos</button>
+  </nav>
 
   <script src="js/firebase-config.js"></script>
   <script src="js/app.js"></script>
