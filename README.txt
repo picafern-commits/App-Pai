@@ -1,4 +1,4 @@
-Gestão Empresa Pro - ZIP final
+Gestão Empresa Pro - versão final
 
 Estrutura correta para GitHub Pages:
 - index.html
@@ -6,14 +6,18 @@ Estrutura correta para GitHub Pages:
 - js/app.js
 
 Como publicar:
-1. Cria ou abre o repositório no GitHub.
-2. Envia estes ficheiros mantendo a mesma estrutura.
-3. Ativa GitHub Pages na branch principal.
-4. Abre o site.
-5. Se o visual não aparecer de imediato, faz refresh forte:
-   - PC: Ctrl + F5
-   - Android: limpar cache ou abrir em modo anónimo
+1. Extrai o ZIP.
+2. No repositório GitHub, apaga os ficheiros antigos.
+3. Envia apenas:
+   - index.html
+   - pasta css
+   - pasta js
+4. Confirma que a estrutura ficou certa.
+5. Abre o site e faz refresh forte.
 
-Notas:
-- Esta versão guarda dados no navegador/dispositivo.
-- Está preparada para futura ligação ao Firebase.
+Esta versão funciona em:
+- PC
+- telemóvel Android
+- tablet Android
+
+Os dados ficam guardados localmente no navegador/dispositivo.
