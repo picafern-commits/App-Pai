@@ -1,5 +1,4 @@
 // Cola aqui a tua configuração Firebase.
-// Exemplo:
 // export const firebaseConfig = {
 //   apiKey: "....",
 //   authDomain: "....firebaseapp.com",
@@ -8,5 +7,4 @@
 //   messagingSenderId: "....",
 //   appId: "...."
 // };
-
 export const firebaseConfig = null;

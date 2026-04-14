@@ -1,40 +1,34 @@
-Gestão Empresa Pro - Firebase Ready + UI Premium
+Gestão Empresa Pro - Android
 
-O que já tem:
-- Dashboard mais bonito
-- Layout premium inspirado em apps modernas
-- PC + telemóvel Android + tablet Android
-- Trabalhos, clientes, pagamentos, relatórios
-- Backup JSON
-- Estrutura pronta para Firebase
-
-Estrutura correta:
+Conteúdo:
 - index.html
 - css/style.css
 - js/app.js
+- js/auth-config.js
 - js/firebase-config.js
+- version.json
+- manifest.json
 
-Publicar no GitHub Pages:
-1. Extrai o ZIP.
-2. No repositório, apaga os ficheiros antigos.
-3. Envia:
-   - index.html
-   - pasta css
-   - pasta js
-4. Faz refresh forte no browser.
+Login:
+- admin / admin123
+- user / user123
 
-Como ligar ao Firebase:
-1. Cria projeto Firebase.
-2. Ativa Firestore Database.
-3. Abre o ficheiro js/firebase-config.js
-4. Cola lá a tua config no lugar indicado.
-5. Publica outra vez os ficheiros no GitHub.
-6. Clica em "Tentar Firebase" na app.
+Diferença de permissões:
+- Admin: cria, edita, apaga
+- User: só consulta
 
-Coleções Firestore usadas:
-- trabalhos
-- clientes
-- pagamentos
+Auto-update:
+- Para lançar nova versão, altera o número em version.json
+- Exemplo: 1.0.0 -> 1.0.1
+- Depois publica os ficheiros novos no GitHub
+- A app avisa que existe nova versão
 
-Se o Firebase não estiver configurado:
-- a app funciona em modo local no navegador.
+Firebase:
+- Cola a config em js/firebase-config.js
+- Sem Firebase, a app funciona em modo local
+
+Publicação:
+1. Extrai o ZIP
+2. Apaga os ficheiros antigos do repositório
+3. Envia todos os ficheiros mantendo as pastas
+4. Faz refresh forte no browser

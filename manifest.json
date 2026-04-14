@@ -1,9 +1,9 @@
 {
-  "name": "Gestão Empresa Pro",
-  "short_name": "GestãoEmpresa",
-  "start_url": "./index.html",
+  "name": "Gestão Empresa Pro Android",
+  "short_name": "GE Pro",
+  "start_url": "./",
   "display": "standalone",
-  "background_color": "#0b1220",
-  "theme_color": "#111827",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
   "icons": []
 }
