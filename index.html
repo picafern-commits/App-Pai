@@ -4,352 +4,405 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestão Empresa Pro</title>
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="theme-color" content="#0b1020" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
+
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <div class="brand">
+      <div class="brand-card">
         <div class="brand-logo">GE</div>
         <div>
           <h1>Gestão Empresa</h1>
-          <p>Modo empresa Braga</p>
+          <p>UI Pro • PC + Android</p>
         </div>
       </div>
 
       <nav class="nav">
-        <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
-        <button class="nav-btn" data-tab="trabalhos">Trabalhos</button>
-        <button class="nav-btn" data-tab="clientes">Clientes</button>
-        <button class="nav-btn" data-tab="pagamentos">Pagamentos</button>
-        <button class="nav-btn" data-tab="relatorios">Relatórios</button>
-        <button class="nav-btn" data-tab="configuracoes">Configurações</button>
+        <button class="nav-btn active" data-tab="dashboard">
+          <span class="nav-icon">◈</span><span>Dashboard</span>
+        </button>
+        <button class="nav-btn" data-tab="trabalhos">
+          <span class="nav-icon">☰</span><span>Trabalhos</span>
+        </button>
+        <button class="nav-btn" data-tab="clientes">
+          <span class="nav-icon">◉</span><span>Clientes</span>
+        </button>
+        <button class="nav-btn" data-tab="pagamentos">
+          <span class="nav-icon">€</span><span>Pagamentos</span>
+        </button>
+        <button class="nav-btn" data-tab="relatorios">
+          <span class="nav-icon">▣</span><span>Relatórios</span>
+        </button>
+        <button class="nav-btn" data-tab="configuracoes">
+          <span class="nav-icon">⚙</span><span>Configurações</span>
+        </button>
       </nav>
 
-      <div class="sidebar-footer">
-        <div class="status-pill">Versão Pro</div>
-        <div class="status-text">PC + Android</div>
+      <div class="sidebar-bottom">
+        <div class="mini-card">
+          <span class="mini-label">Modo de dados</span>
+          <strong id="dataModeLabel">Local</strong>
+        </div>
+        <div class="mini-card">
+          <span class="mini-label">Visual</span>
+          <strong>Premium Dark</strong>
+        </div>
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
-          <button class="icon-btn mobile-only" id="menuToggle" aria-label="Abrir menu">☰</button>
+          <button class="menu-btn mobile-only" id="menuToggle" aria-label="Abrir menu">☰</button>
           <div>
             <div class="eyebrow">Painel principal</div>
             <h2 id="pageTitle">Dashboard</h2>
           </div>
         </div>
+
         <div class="topbar-actions">
-          <button class="secondary-btn" id="exportBackupBtn">Exportar backup</button>
+          <button class="ghost-btn" id="syncBtn">Tentar Firebase</button>
+          <button class="secondary-btn" id="exportBackupBtn">Backup JSON</button>
         </div>
       </header>
 
       <section class="page active" id="dashboard-page">
-        <div class="hero-card">
-          <div>
-            <div class="eyebrow">Gestão operacional</div>
-            <h3>Controlo simples, profissional e rápido para o dia a dia.</h3>
-            <p>Regista trabalhos, acompanha clientes, controla pagamentos e exporta tudo com layout adaptado para PC, telemóvel e tablet Android.</p>
+        <div class="hero glass">
+          <div class="hero-copy">
+            <div class="eyebrow">Gestão moderna</div>
+            <h3>Uma app bonita, rápida e organizada para o teu pai gerir trabalhos da empresa.</h3>
+            <p>Visual mais premium, inspirado em apps modernas, com foco em rapidez no PC e leitura perfeita em telemóvel e tablet Android.</p>
+            <div class="hero-actions">
+              <button class="primary-btn" data-go="trabalhos">Adicionar trabalho</button>
+              <button class="ghost-btn" data-go="clientes">Gerir clientes</button>
+            </div>
           </div>
-          <div class="hero-actions">
-            <button class="primary-btn" data-go="trabalhos">Novo trabalho</button>
-            <button class="secondary-btn" data-go="clientes">Novo cliente</button>
-            <button class="secondary-btn" data-go="pagamentos">Registar pagamento</button>
+
+          <div class="hero-side">
+            <div class="hero-chip">
+              <span>Estado da app</span>
+              <strong>Pronta para Firebase</strong>
+            </div>
+            <div class="hero-chip">
+              <span>Plataformas</span>
+              <strong>PC + Android</strong>
+            </div>
           </div>
         </div>
 
         <div class="stats-grid">
-          <div class="stat-card">
+          <div class="stat glass pink">
             <span>Total trabalhos</span>
             <strong id="statTotalTrabalhos">0</strong>
-            <small>Todos os registos criados</small>
+            <small>Todos os registos</small>
           </div>
-          <div class="stat-card">
+          <div class="stat glass blue">
             <span>Em andamento</span>
             <strong id="statEmAndamento">0</strong>
-            <small>Serviços ainda abertos</small>
+            <small>Serviços abertos</small>
           </div>
-          <div class="stat-card">
+          <div class="stat glass green">
             <span>Concluídos</span>
             <strong id="statConcluidos">0</strong>
-            <small>Concluídos ou pagos</small>
+            <small>Fechados ou pagos</small>
           </div>
-          <div class="stat-card">
+          <div class="stat glass gold">
             <span>Total faturado</span>
             <strong id="statTotalFaturado">0 €</strong>
-            <small>Soma dos valores dos trabalhos</small>
+            <small>Soma dos valores</small>
           </div>
         </div>
 
-        <div class="two-col">
-          <div class="panel">
+        <div class="dashboard-grid">
+          <section class="panel glass">
             <div class="panel-head">
               <h3>Trabalhos recentes</h3>
+              <button class="tiny-btn" data-go="trabalhos">Ver tudo</button>
             </div>
-            <div id="recentTrabalhos" class="empty-state">Sem trabalhos registados.</div>
-          </div>
+            <div id="recentTrabalhos" class="list-stack"></div>
+          </section>
 
-          <div class="panel">
+          <section class="panel glass">
             <div class="panel-head">
               <h3>Receitas por mês</h3>
             </div>
             <div id="monthlyBars" class="bars"></div>
-          </div>
+          </section>
         </div>
       </section>
 
       <section class="page" id="trabalhos-page">
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Novo / Editar trabalho</h3>
-          </div>
-          <form id="trabalhoForm" class="form-grid">
-            <input type="hidden" id="trabalhoId" />
-            <div class="field">
-              <label>Cliente</label>
-              <input id="cliente" type="text" placeholder="Nome do cliente" required />
+        <div class="split-layout">
+          <section class="panel glass">
+            <div class="panel-head">
+              <h3>Novo / Editar trabalho</h3>
             </div>
-            <div class="field">
-              <label>Contacto</label>
-              <input id="contacto" type="text" placeholder="Telefone ou contacto" />
+
+            <form id="trabalhoForm" class="form-grid">
+              <input type="hidden" id="trabalhoId" />
+              <div class="field">
+                <label>Cliente</label>
+                <input id="cliente" type="text" placeholder="Nome do cliente" required />
+              </div>
+              <div class="field">
+                <label>Contacto</label>
+                <input id="contacto" type="text" placeholder="Telefone ou contacto" />
+              </div>
+              <div class="field">
+                <label>Tipo de trabalho</label>
+                <input id="tipoTrabalho" type="text" placeholder="Ex: Instalação, reparação" required />
+              </div>
+              <div class="field">
+                <label>Valor (€)</label>
+                <input id="valor" type="number" min="0" step="0.01" placeholder="0.00" required />
+              </div>
+              <div class="field">
+                <label>Data de início</label>
+                <input id="dataInicio" type="date" />
+              </div>
+              <div class="field">
+                <label>Data de fim</label>
+                <input id="dataFim" type="date" />
+              </div>
+              <div class="field">
+                <label>Estado</label>
+                <select id="estado">
+                  <option>Pendente</option>
+                  <option>Em andamento</option>
+                  <option>Concluído</option>
+                  <option>Pago</option>
+                </select>
+              </div>
+              <div class="field field-span-2">
+                <label>Descrição</label>
+                <textarea id="descricao" rows="5" placeholder="Detalhes do serviço"></textarea>
+              </div>
+              <div class="field field-span-2">
+                <div class="inline-actions">
+                  <button type="submit" class="primary-btn">Guardar trabalho</button>
+                  <button type="button" class="secondary-btn" id="clearTrabalhoBtn">Limpar</button>
+                </div>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel glass">
+            <div class="panel-head">
+              <h3>Lista de trabalhos</h3>
             </div>
-            <div class="field">
-              <label>Tipo de trabalho</label>
-              <input id="tipoTrabalho" type="text" placeholder="Ex: reparação, instalação" required />
-            </div>
-            <div class="field">
-              <label>Valor (€)</label>
-              <input id="valor" type="number" min="0" step="0.01" placeholder="0.00" required />
-            </div>
-            <div class="field">
-              <label>Data de início</label>
-              <input id="dataInicio" type="date" />
-            </div>
-            <div class="field">
-              <label>Data de fim</label>
-              <input id="dataFim" type="date" />
-            </div>
-            <div class="field">
-              <label>Estado</label>
-              <select id="estado">
+            <div class="toolbar">
+              <input id="searchTrabalhos" type="text" placeholder="Pesquisar cliente ou tipo de trabalho" />
+              <select id="filterEstado">
+                <option value="">Todos os estados</option>
                 <option>Pendente</option>
                 <option>Em andamento</option>
                 <option>Concluído</option>
                 <option>Pago</option>
               </select>
             </div>
-            <div class="field field-span-2">
-              <label>Descrição</label>
-              <textarea id="descricao" rows="4" placeholder="Detalhes do serviço"></textarea>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="trabalhosTableBody"></tbody>
+              </table>
             </div>
-            <div class="form-actions field-span-2">
-              <button type="submit" class="primary-btn">Guardar trabalho</button>
-              <button type="button" class="secondary-btn" id="clearTrabalhoBtn">Limpar</button>
-            </div>
-          </form>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Lista de trabalhos</h3>
-          </div>
-          <div class="toolbar">
-            <input id="searchTrabalhos" type="text" placeholder="Pesquisar cliente" />
-            <select id="filterEstado">
-              <option value="">Todos os estados</option>
-              <option>Pendente</option>
-              <option>Em andamento</option>
-              <option>Concluído</option>
-              <option>Pago</option>
-            </select>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Tipo</th>
-                  <th>Valor</th>
-                  <th>Início</th>
-                  <th>Fim</th>
-                  <th>Estado</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="trabalhosTableBody"></tbody>
-            </table>
-          </div>
+          </section>
         </div>
       </section>
 
       <section class="page" id="clientes-page">
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Novo cliente</h3>
-          </div>
-          <form id="clienteForm" class="form-grid">
-            <input type="hidden" id="clienteId" />
-            <div class="field">
-              <label>Nome</label>
-              <input id="clienteNome" type="text" placeholder="Nome do cliente" required />
+        <div class="split-layout">
+          <section class="panel glass">
+            <div class="panel-head">
+              <h3>Novo cliente</h3>
             </div>
-            <div class="field">
-              <label>Telefone</label>
-              <input id="clienteTelefone" type="text" placeholder="Número de telefone" />
-            </div>
-            <div class="field">
-              <label>Email</label>
-              <input id="clienteEmail" type="email" placeholder="Email" />
-            </div>
-            <div class="field">
-              <label>NIF</label>
-              <input id="clienteNif" type="text" placeholder="NIF" />
-            </div>
-            <div class="field field-span-2">
-              <label>Morada</label>
-              <textarea id="clienteMorada" rows="3" placeholder="Morada completa"></textarea>
-            </div>
-            <div class="form-actions field-span-2">
-              <button type="submit" class="primary-btn">Guardar cliente</button>
-              <button type="button" class="secondary-btn" id="clearClienteBtn">Limpar</button>
-            </div>
-          </form>
-        </div>
+            <form id="clienteForm" class="form-grid">
+              <input type="hidden" id="clienteId" />
+              <div class="field">
+                <label>Nome</label>
+                <input id="clienteNome" type="text" placeholder="Nome do cliente" required />
+              </div>
+              <div class="field">
+                <label>Telefone</label>
+                <input id="clienteTelefone" type="text" placeholder="Número de telefone" />
+              </div>
+              <div class="field">
+                <label>Email</label>
+                <input id="clienteEmail" type="email" placeholder="Email" />
+              </div>
+              <div class="field">
+                <label>NIF</label>
+                <input id="clienteNif" type="text" placeholder="NIF" />
+              </div>
+              <div class="field field-span-2">
+                <label>Morada</label>
+                <textarea id="clienteMorada" rows="4" placeholder="Morada completa"></textarea>
+              </div>
+              <div class="field field-span-2">
+                <div class="inline-actions">
+                  <button type="submit" class="primary-btn">Guardar cliente</button>
+                  <button type="button" class="secondary-btn" id="clearClienteBtn">Limpar</button>
+                </div>
+              </div>
+            </form>
+          </section>
 
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Lista de clientes</h3>
-          </div>
-          <div class="toolbar">
-            <input id="searchClientes" type="text" placeholder="Pesquisar cliente" />
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Telefone</th>
-                  <th>Email</th>
-                  <th>NIF</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="clientesTableBody"></tbody>
-            </table>
-          </div>
+          <section class="panel glass">
+            <div class="panel-head">
+              <h3>Lista de clientes</h3>
+            </div>
+            <div class="toolbar">
+              <input id="searchClientes" type="text" placeholder="Pesquisar cliente" />
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Email</th>
+                    <th>NIF</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="clientesTableBody"></tbody>
+              </table>
+            </div>
+          </section>
         </div>
       </section>
 
       <section class="page" id="pagamentos-page">
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Registar pagamento</h3>
-          </div>
-          <form id="pagamentoForm" class="form-grid">
-            <input type="hidden" id="pagamentoId" />
-            <div class="field">
-              <label>Cliente</label>
-              <input id="pagamentoCliente" type="text" placeholder="Nome do cliente" required />
+        <div class="split-layout">
+          <section class="panel glass">
+            <div class="panel-head">
+              <h3>Registar pagamento</h3>
             </div>
-            <div class="field">
-              <label>Referência do trabalho</label>
-              <input id="pagamentoReferencia" type="text" placeholder="Ex: Reparação cozinha" />
-            </div>
-            <div class="field">
-              <label>Valor pago (€)</label>
-              <input id="pagamentoValor" type="number" min="0" step="0.01" placeholder="0.00" required />
-            </div>
-            <div class="field">
-              <label>Data de pagamento</label>
-              <input id="pagamentoData" type="date" />
-            </div>
-            <div class="field">
-              <label>Método</label>
-              <select id="pagamentoMetodo">
-                <option>Dinheiro</option>
-                <option>Transferência</option>
-                <option>Multibanco</option>
-                <option>MB Way</option>
-              </select>
-            </div>
-            <div class="field field-span-2">
-              <label>Notas</label>
-              <textarea id="pagamentoNotas" rows="3" placeholder="Observações"></textarea>
-            </div>
-            <div class="form-actions field-span-2">
-              <button type="submit" class="primary-btn">Guardar pagamento</button>
-              <button type="button" class="secondary-btn" id="clearPagamentoBtn">Limpar</button>
-            </div>
-          </form>
-        </div>
+            <form id="pagamentoForm" class="form-grid">
+              <input type="hidden" id="pagamentoId" />
+              <div class="field">
+                <label>Cliente</label>
+                <input id="pagamentoCliente" type="text" placeholder="Nome do cliente" required />
+              </div>
+              <div class="field">
+                <label>Referência do trabalho</label>
+                <input id="pagamentoReferencia" type="text" placeholder="Ex: Reparação cozinha" />
+              </div>
+              <div class="field">
+                <label>Valor pago (€)</label>
+                <input id="pagamentoValor" type="number" min="0" step="0.01" placeholder="0.00" required />
+              </div>
+              <div class="field">
+                <label>Data de pagamento</label>
+                <input id="pagamentoData" type="date" />
+              </div>
+              <div class="field">
+                <label>Método</label>
+                <select id="pagamentoMetodo">
+                  <option>Dinheiro</option>
+                  <option>Transferência</option>
+                  <option>Multibanco</option>
+                  <option>MB Way</option>
+                </select>
+              </div>
+              <div class="field field-span-2">
+                <label>Notas</label>
+                <textarea id="pagamentoNotas" rows="4" placeholder="Observações"></textarea>
+              </div>
+              <div class="field field-span-2">
+                <div class="inline-actions">
+                  <button type="submit" class="primary-btn">Guardar pagamento</button>
+                  <button type="button" class="secondary-btn" id="clearPagamentoBtn">Limpar</button>
+                </div>
+              </div>
+            </form>
+          </section>
 
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Pagamentos</h3>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Referência</th>
-                  <th>Valor</th>
-                  <th>Data</th>
-                  <th>Método</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="pagamentosTableBody"></tbody>
-            </table>
-          </div>
+          <section class="panel glass">
+            <div class="panel-head">
+              <h3>Pagamentos</h3>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Referência</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Método</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="pagamentosTableBody"></tbody>
+              </table>
+            </div>
+          </section>
         </div>
       </section>
 
       <section class="page" id="relatorios-page">
-        <div class="panel">
+        <section class="panel glass">
           <div class="panel-head">
             <h3>Resumo mensal</h3>
           </div>
           <div id="resumoMensal" class="report-grid"></div>
-        </div>
+        </section>
       </section>
 
       <section class="page" id="configuracoes-page">
-        <div class="panel">
+        <section class="panel glass">
           <div class="panel-head">
-            <h3>Configurações</h3>
+            <h3>Configurações e dados</h3>
           </div>
-          <div class="settings-list">
-            <div class="setting-item">
-              <div>
-                <strong>Armazenamento local</strong>
-                <p>Os dados ficam guardados neste dispositivo/navegador.</p>
-              </div>
-              <span class="status-pill success">Ativo</span>
+
+          <div class="settings-grid">
+            <div class="setting-card">
+              <span class="mini-label">Modo de dados</span>
+              <strong id="settingsModeLabel">Local</strong>
+              <p>Se colares as credenciais Firebase no ficheiro indicado, a app tenta sincronizar os dados.</p>
             </div>
-            <div class="setting-item">
-              <div>
-                <strong>Estrutura Firebase</strong>
-                <p>Base preparada para futura sincronização PC + Android.</p>
-              </div>
-              <span class="status-pill">Preparado</span>
-            </div>
-            <div class="setting-item">
-              <div>
-                <strong>Backup manual</strong>
-                <p>Exporta um ficheiro JSON com trabalhos, clientes e pagamentos.</p>
-              </div>
+
+            <div class="setting-card">
+              <span class="mini-label">Backup</span>
+              <strong>Exportação manual</strong>
+              <p>Gera um ficheiro JSON com trabalhos, clientes e pagamentos.</p>
               <button class="secondary-btn" id="exportBackupBtn2">Exportar backup</button>
             </div>
+
+            <div class="setting-card">
+              <span class="mini-label">Firebase</span>
+              <strong>Pronto a ligar</strong>
+              <p>Usa o ficheiro <code>js/firebase-config.js</code> e segue o README.</p>
+            </div>
           </div>
-        </div>
+        </section>
       </section>
     </main>
   </div>
 
-  <script src="js/app.js"></script>
+  <nav class="bottom-nav mobile-nav">
+    <button class="bottom-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="bottom-btn" data-tab="trabalhos">Trabalhos</button>
+    <button class="bottom-btn" data-tab="clientes">Clientes</button>
+    <button class="bottom-btn" data-tab="pagamentos">Pagamentos</button>
+  </nav>
+
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
