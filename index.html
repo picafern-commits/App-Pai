@@ -2,15 +2,15 @@
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestão Empresa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <title>Gestão Empresa Pro</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#121212" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="brand">
         <div class="brand-logo">GE</div>
         <div>
@@ -19,175 +19,302 @@
         </div>
       </div>
 
-      <nav class="menu">
-        <button class="menu-btn active" data-page="dashboard">Dashboard</button>
-        <button class="menu-btn" data-page="novo">Novo Trabalho</button>
-        <button class="menu-btn" data-page="trabalhos">Trabalhos</button>
-        <button class="menu-btn" data-page="config">Configurações</button>
+      <nav class="nav">
+        <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+        <button class="nav-btn" data-page="trabalhos">Trabalhos</button>
+        <button class="nav-btn" data-page="clientes">Clientes</button>
+        <button class="nav-btn" data-page="pagamentos">Pagamentos</button>
+        <button class="nav-btn" data-page="relatorios">Relatórios</button>
+        <button class="nav-btn" data-page="config">Configurações</button>
       </nav>
 
-      <div class="sidebar-card">
-        <strong>Base de dados</strong>
-        <p id="dbStatus">A verificar ligação…</p>
+      <div class="sidebar-footer">
+        <small>Versão 2.0</small>
       </div>
     </aside>
 
-    <main class="main-content">
+    <main class="content">
       <header class="topbar">
+        <button class="menu-btn" id="menuBtn">☰</button>
         <div>
           <h2 id="pageTitle">Dashboard</h2>
-          <p>Registo de trabalhos da empresa</p>
+          <p id="pageSubtitle">Resumo rápido da atividade</p>
         </div>
-        <button id="syncBtn" class="secondary-btn">Atualizar dados</button>
+        <button class="primary" id="exportBackupBtn">Exportar Backup</button>
       </header>
 
-      <section id="page-dashboard" class="page active">
+      <section class="page active" id="page-dashboard">
         <div class="cards-grid">
-          <article class="card metric-card">
-            <span>Total de trabalhos</span>
-            <strong id="metricTotal">0</strong>
+          <article class="card stat">
+            <span>Total Trabalhos</span>
+            <strong id="statTotalTrabalhos">0</strong>
           </article>
-          <article class="card metric-card">
-            <span>Total faturado</span>
-            <strong id="metricValor">0 €</strong>
-          </article>
-          <article class="card metric-card">
+          <article class="card stat">
             <span>Em andamento</span>
-            <strong id="metricAndamento">0</strong>
+            <strong id="statEmAndamento">0</strong>
           </article>
-          <article class="card metric-card">
+          <article class="card stat">
             <span>Concluídos</span>
-            <strong id="metricConcluidos">0</strong>
+            <strong id="statConcluidos">0</strong>
+          </article>
+          <article class="card stat">
+            <span>Total faturado</span>
+            <strong id="statFaturado">0 €</strong>
           </article>
         </div>
 
-        <div class="card">
-          <h3>Últimos trabalhos</h3>
-          <div id="recentList" class="empty-state">Sem trabalhos registados.</div>
-        </div>
-      </section>
-
-      <section id="page-novo" class="page">
-        <div class="card">
-          <h3 id="formTitle">Novo Trabalho</h3>
-          <form id="jobForm" class="form-grid">
-            <input type="hidden" id="jobId" />
-
-            <label>
-              Cliente
-              <input type="text" id="cliente" required placeholder="Nome do cliente" />
-            </label>
-
-            <label>
-              Contacto
-              <input type="text" id="contacto" placeholder="Telefone ou email" />
-            </label>
-
-            <label>
-              Tipo de trabalho
-              <input type="text" id="tipoTrabalho" required placeholder="Ex: Instalação, Pintura, Reparação" />
-            </label>
-
-            <label>
-              Valor (€)
-              <input type="number" id="valor" min="0" step="0.01" required placeholder="0.00" />
-            </label>
-
-            <label>
-              Data de início
-              <input type="date" id="dataInicio" required />
-            </label>
-
-            <label>
-              Data de fim
-              <input type="date" id="dataFim" required />
-            </label>
-
-            <label class="full-width">
-              Estado
-              <select id="estado" required>
-                <option value="Pendente">Pendente</option>
-                <option value="Em andamento">Em andamento</option>
-                <option value="Concluído">Concluído</option>
-                <option value="Pago">Pago</option>
-              </select>
-            </label>
-
-            <label class="full-width">
-              Descrição
-              <textarea id="descricao" rows="4" placeholder="Detalhes do trabalho feito"></textarea>
-            </label>
-
-            <div class="form-actions full-width">
-              <button type="submit" class="primary-btn">Guardar Trabalho</button>
-              <button type="button" id="cancelEditBtn" class="secondary-btn hidden">Cancelar edição</button>
+        <div class="two-col">
+          <article class="card">
+            <div class="card-header">
+              <h3>Trabalhos recentes</h3>
             </div>
-          </form>
+            <div id="recentJobs" class="stack"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>Receitas por mês</h3>
+            </div>
+            <div id="monthlySummary" class="stack"></div>
+          </article>
         </div>
       </section>
 
-      <section id="page-trabalhos" class="page">
-        <div class="card filters-card">
-          <div class="filters-grid">
-            <label>
-              Pesquisar cliente
-              <input type="text" id="searchCliente" placeholder="Nome do cliente" />
-            </label>
-            <label>
-              Filtrar estado
-              <select id="filterEstado">
-                <option value="">Todos</option>
-                <option value="Pendente">Pendente</option>
-                <option value="Em andamento">Em andamento</option>
-                <option value="Concluído">Concluído</option>
-                <option value="Pago">Pago</option>
-              </select>
-            </label>
-          </div>
-        </div>
+      <section class="page" id="page-trabalhos">
+        <div class="two-col align-start">
+          <article class="card">
+            <div class="card-header">
+              <h3>Novo / Editar trabalho</h3>
+            </div>
+            <form id="jobForm" class="form-grid">
+              <input type="hidden" id="jobId" />
+              <label>
+                Cliente
+                <input type="text" id="cliente" required />
+              </label>
+              <label>
+                Contacto
+                <input type="text" id="contacto" />
+              </label>
+              <label>
+                Tipo de trabalho
+                <input type="text" id="tipoTrabalho" required />
+              </label>
+              <label>
+                Valor (€)
+                <input type="number" id="valor" min="0" step="0.01" required />
+              </label>
+              <label>
+                Data de início
+                <input type="date" id="dataInicio" required />
+              </label>
+              <label>
+                Data de fim
+                <input type="date" id="dataFim" />
+              </label>
+              <label>
+                Estado
+                <select id="estado" required>
+                  <option value="Pendente">Pendente</option>
+                  <option value="Em andamento">Em andamento</option>
+                  <option value="Concluído">Concluído</option>
+                  <option value="Pago">Pago</option>
+                </select>
+              </label>
+              <label class="full">
+                Descrição
+                <textarea id="descricao" rows="4"></textarea>
+              </label>
+              <div class="form-actions full">
+                <button type="submit" class="primary">Guardar trabalho</button>
+                <button type="button" class="secondary" id="clearJobForm">Limpar</button>
+              </div>
+            </form>
+          </article>
 
-        <div class="card table-card">
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Tipo</th>
-                  <th>Valor</th>
-                  <th>Início</th>
-                  <th>Fim</th>
-                  <th>Estado</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="jobsTableBody">
-                <tr>
-                  <td colspan="7" class="empty-cell">Sem trabalhos registados.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <article class="card">
+            <div class="card-header between">
+              <h3>Lista de trabalhos</h3>
+              <div class="filters-inline">
+                <input type="text" id="searchJobs" placeholder="Pesquisar cliente" />
+                <select id="filterEstado">
+                  <option value="">Todos os estados</option>
+                  <option>Pendente</option>
+                  <option>Em andamento</option>
+                  <option>Concluído</option>
+                  <option>Pago</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="jobsTableBody"></tbody>
+              </table>
+            </div>
+          </article>
         </div>
       </section>
 
-      <section id="page-config" class="page">
-        <div class="card">
-          <h3>Configurações Firebase</h3>
-          <p>Abre o ficheiro <strong>firebase-config.js</strong> e cola lá os dados do teu projeto Firebase.</p>
-          <ol>
-            <li>Criar projeto Firebase</li>
-            <li>Ativar Firestore Database</li>
-            <li>Copiar a configuração web</li>
-            <li>Substituir no ficheiro</li>
-          </ol>
-          <p class="small-note">Enquanto não colocares os dados reais, a app funciona mas não guarda na cloud.</p>
+      <section class="page" id="page-clientes">
+        <div class="two-col align-start">
+          <article class="card">
+            <div class="card-header">
+              <h3>Novo cliente</h3>
+            </div>
+            <form id="clientForm" class="form-grid">
+              <input type="hidden" id="clientId" />
+              <label>
+                Nome
+                <input type="text" id="clientNome" required />
+              </label>
+              <label>
+                Telefone
+                <input type="text" id="clientTelefone" />
+              </label>
+              <label>
+                Email
+                <input type="email" id="clientEmail" />
+              </label>
+              <label>
+                NIF
+                <input type="text" id="clientNif" />
+              </label>
+              <label class="full">
+                Morada
+                <textarea id="clientMorada" rows="3"></textarea>
+              </label>
+              <div class="form-actions full">
+                <button type="submit" class="primary">Guardar cliente</button>
+                <button type="button" class="secondary" id="clearClientForm">Limpar</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="card">
+            <div class="card-header between">
+              <h3>Lista de clientes</h3>
+              <input type="text" id="searchClients" placeholder="Pesquisar cliente" />
+            </div>
+            <div id="clientsList" class="stack"></div>
+          </article>
         </div>
+      </section>
+
+      <section class="page" id="page-pagamentos">
+        <div class="two-col align-start">
+          <article class="card">
+            <div class="card-header">
+              <h3>Registar pagamento</h3>
+            </div>
+            <form id="paymentForm" class="form-grid">
+              <input type="hidden" id="paymentId" />
+              <label>
+                Cliente
+                <input type="text" id="paymentCliente" required />
+              </label>
+              <label>
+                Referência do trabalho
+                <input type="text" id="paymentTrabalho" required />
+              </label>
+              <label>
+                Valor pago (€)
+                <input type="number" id="paymentValor" min="0" step="0.01" required />
+              </label>
+              <label>
+                Data de pagamento
+                <input type="date" id="paymentData" required />
+              </label>
+              <label>
+                Método
+                <select id="paymentMetodo">
+                  <option>Dinheiro</option>
+                  <option>Transferência</option>
+                  <option>MB Way</option>
+                  <option>Multibanco</option>
+                </select>
+              </label>
+              <label class="full">
+                Notas
+                <textarea id="paymentNotas" rows="3"></textarea>
+              </label>
+              <div class="form-actions full">
+                <button type="submit" class="primary">Guardar pagamento</button>
+                <button type="button" class="secondary" id="clearPaymentForm">Limpar</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>Pagamentos</h3>
+            </div>
+            <div id="paymentsList" class="stack"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-relatorios">
+        <div class="two-col align-start">
+          <article class="card">
+            <div class="card-header">
+              <h3>Resumo mensal</h3>
+            </div>
+            <div id="reportMonthly" class="stack"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>Exportações</h3>
+            </div>
+            <div class="stack">
+              <button class="primary" id="exportJobsCsv">Exportar trabalhos CSV</button>
+              <button class="secondary" id="exportClientsCsv">Exportar clientes CSV</button>
+              <button class="secondary" id="exportPaymentsCsv">Exportar pagamentos CSV</button>
+              <button class="secondary" id="importBackupBtn">Importar backup JSON</button>
+              <input type="file" id="backupFileInput" accept="application/json" hidden />
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-config">
+        <article class="card">
+          <div class="card-header">
+            <h3>Configurações</h3>
+          </div>
+          <div class="stack">
+            <label class="toggle-row">
+              <span>Usar Firebase</span>
+              <input type="checkbox" id="useFirebaseToggle" />
+            </label>
+            <p class="muted">A app já funciona localmente. Quando quiseres ligar ao Firebase, edita o ficheiro <strong>firebase-config.js</strong>.</p>
+            <pre class="code-block">// firebase-config.js
+window.FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};</pre>
+          </div>
+        </article>
       </section>
     </main>
   </div>
 
-  <div id="toast" class="toast hidden"></div>
-
-  <script type="module" src="app.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

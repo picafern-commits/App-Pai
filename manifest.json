@@ -1,9 +1,9 @@
 {
-  "name": "Gestão Empresa",
-  "short_name": "Gestão",
+  "name": "Gestão Empresa Pro",
+  "short_name": "GestãoEmpresa",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f1115",
-  "theme_color": "#121212",
+  "background_color": "#0b1220",
+  "theme_color": "#111827",
   "icons": []
 }

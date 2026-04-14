@@ -1,216 +1,107 @@
-import { firebaseSettings } from './firebase-config.js';
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  doc,
-  orderBy,
-  query,
-  serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+const STORAGE_KEY = 'gestao_empresa_pro_v2';
 
 const state = {
   jobs: [],
-  db: null,
-  onlineDb: false
+  clients: [],
+  payments: [],
+  useFirebase: false,
 };
 
-const els = {
-  menuBtns: document.querySelectorAll('.menu-btn'),
-  pages: document.querySelectorAll('.page'),
-  pageTitle: document.getElementById('pageTitle'),
-  dbStatus: document.getElementById('dbStatus'),
-  syncBtn: document.getElementById('syncBtn'),
-  jobForm: document.getElementById('jobForm'),
-  formTitle: document.getElementById('formTitle'),
-  cancelEditBtn: document.getElementById('cancelEditBtn'),
-  jobsTableBody: document.getElementById('jobsTableBody'),
-  recentList: document.getElementById('recentList'),
-  searchCliente: document.getElementById('searchCliente'),
-  filterEstado: document.getElementById('filterEstado'),
-  toast: document.getElementById('toast'),
-  metricTotal: document.getElementById('metricTotal'),
-  metricValor: document.getElementById('metricValor'),
-  metricAndamento: document.getElementById('metricAndamento'),
-  metricConcluidos: document.getElementById('metricConcluidos'),
-  jobId: document.getElementById('jobId'),
-  cliente: document.getElementById('cliente'),
-  contacto: document.getElementById('contacto'),
-  tipoTrabalho: document.getElementById('tipoTrabalho'),
-  valor: document.getElementById('valor'),
-  dataInicio: document.getElementById('dataInicio'),
-  dataFim: document.getElementById('dataFim'),
-  estado: document.getElementById('estado'),
-  descricao: document.getElementById('descricao')
-};
+const els = {};
 
-function showToast(message) {
-  els.toast.textContent = message;
-  els.toast.classList.remove('hidden');
-  setTimeout(() => els.toast.classList.add('hidden'), 2500);
-}
-
-function hasFirebaseConfig() {
-  return firebaseSettings.projectId && !String(firebaseSettings.projectId).includes('COLOCA_AQUI');
-}
-
-function saveLocal() {
-  localStorage.setItem('gestaoEmpresaJobs', JSON.stringify(state.jobs));
-}
-
-function loadLocal() {
-  try {
-    state.jobs = JSON.parse(localStorage.getItem('gestaoEmpresaJobs') || '[]');
-  } catch {
-    state.jobs = [];
-  }
-}
-
-function formatCurrency(value) {
-  return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(Number(value || 0));
-}
-
-function formatDate(value) {
-  if (!value) return '-';
-  return new Date(value).toLocaleDateString('pt-PT');
-}
-
-function statusClass(status) {
-  if (status === 'Pendente') return 'pendente';
-  if (status === 'Em andamento') return 'andamento';
-  if (status === 'Concluído') return 'concluido';
-  if (status === 'Pago') return 'pago';
-  return '';
-}
-
-function renderDashboard() {
-  const total = state.jobs.length;
-  const totalValor = state.jobs.reduce((sum, item) => sum + Number(item.valor || 0), 0);
-  const andamento = state.jobs.filter(item => item.estado === 'Em andamento').length;
-  const concluidos = state.jobs.filter(item => item.estado === 'Concluído').length;
-
-  els.metricTotal.textContent = total;
-  els.metricValor.textContent = formatCurrency(totalValor);
-  els.metricAndamento.textContent = andamento;
-  els.metricConcluidos.textContent = concluidos;
-
-  const recent = [...state.jobs]
-    .sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0))
-    .slice(0, 5);
-
-  if (!recent.length) {
-    els.recentList.innerHTML = '<div class="empty-state">Sem trabalhos registados.</div>';
-    return;
-  }
-
-  els.recentList.innerHTML = recent.map(item => `
-    <div class="recent-item" style="padding:12px 0;border-bottom:1px solid var(--line)">
-      <strong>${item.cliente}</strong> · ${item.tipoTrabalho}<br>
-      <span style="color:var(--muted)">${formatCurrency(item.valor)} · ${item.estado} · ${formatDate(item.dataInicio)}</span>
-    </div>
-  `).join('');
-}
-
-function getFilteredJobs() {
-  const text = els.searchCliente.value.trim().toLowerCase();
-  const estado = els.filterEstado.value;
-
-  return state.jobs.filter(item => {
-    const matchText = !text || item.cliente.toLowerCase().includes(text);
-    const matchEstado = !estado || item.estado === estado;
-    return matchText && matchEstado;
-  }).sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
-}
-
-function renderJobs() {
-  const jobs = getFilteredJobs();
-  if (!jobs.length) {
-    els.jobsTableBody.innerHTML = '<tr><td colspan="7" class="empty-cell">Sem resultados.</td></tr>';
-    return;
-  }
-
-  els.jobsTableBody.innerHTML = jobs.map(item => `
-    <tr>
-      <td>${item.cliente}</td>
-      <td>${item.tipoTrabalho}</td>
-      <td>${formatCurrency(item.valor)}</td>
-      <td>${formatDate(item.dataInicio)}</td>
-      <td>${formatDate(item.dataFim)}</td>
-      <td><span class="tag ${statusClass(item.estado)}">${item.estado}</span></td>
-      <td>
-        <div class="actions">
-          <button class="small-btn" data-edit="${item.id}">Editar</button>
-          <button class="danger-btn small-btn" data-delete="${item.id}">Apagar</button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
-
-  document.querySelectorAll('[data-edit]').forEach(btn => {
-    btn.addEventListener('click', () => startEdit(btn.dataset.edit));
-  });
-  document.querySelectorAll('[data-delete]').forEach(btn => {
-    btn.addEventListener('click', () => removeJob(btn.dataset.delete));
-  });
-}
-
-function renderAll() {
-  renderDashboard();
-  renderJobs();
-}
-
-function switchPage(pageId) {
-  els.pages.forEach(page => page.classList.toggle('active', page.id === `page-${pageId}`));
-  els.menuBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.page === pageId));
-  const activeBtn = [...els.menuBtns].find(btn => btn.dataset.page === pageId);
-  els.pageTitle.textContent = activeBtn ? activeBtn.textContent : 'Gestão Empresa';
-}
-
-async function initFirebase() {
-  if (!hasFirebaseConfig()) {
-    loadLocal();
-    state.onlineDb = false;
-    els.dbStatus.textContent = 'Modo local ativo. Falta configurar Firebase.';
-    renderAll();
-    return;
-  }
-
-  try {
-    const app = initializeApp(firebaseSettings);
-    state.db = getFirestore(app);
-    state.onlineDb = true;
-    els.dbStatus.textContent = 'Firebase ligado com sucesso.';
-    await fetchJobs();
-  } catch (error) {
-    console.error(error);
-    loadLocal();
-    state.onlineDb = false;
-    els.dbStatus.textContent = 'Erro no Firebase. App em modo local.';
-    renderAll();
-  }
-}
-
-async function fetchJobs() {
-  if (!state.onlineDb) {
-    loadLocal();
-    renderAll();
-    return;
-  }
-
-  const jobsRef = collection(state.db, 'trabalhos');
-  const q = query(jobsRef, orderBy('createdAtMs', 'desc'));
-  const snapshot = await getDocs(q);
-  state.jobs = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
-  saveLocal();
+document.addEventListener('DOMContentLoaded', () => {
+  cacheElements();
+  bindEvents();
+  loadData();
   renderAll();
+});
+
+function cacheElements() {
+  [
+    'jobForm','jobId','cliente','contacto','tipoTrabalho','valor','dataInicio','dataFim','estado','descricao',
+    'jobsTableBody','searchJobs','filterEstado','clearJobForm',
+    'clientForm','clientId','clientNome','clientTelefone','clientEmail','clientNif','clientMorada','clientsList','searchClients','clearClientForm',
+    'paymentForm','paymentId','paymentCliente','paymentTrabalho','paymentValor','paymentData','paymentMetodo','paymentNotas','paymentsList','clearPaymentForm',
+    'statTotalTrabalhos','statEmAndamento','statConcluidos','statFaturado','recentJobs','monthlySummary','reportMonthly',
+    'pageTitle','pageSubtitle','menuBtn','sidebar','exportJobsCsv','exportClientsCsv','exportPaymentsCsv','exportBackupBtn','importBackupBtn','backupFileInput','useFirebaseToggle'
+  ].forEach(id => els[id] = document.getElementById(id));
 }
 
-function getFormData() {
-  return {
+function bindEvents() {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchPage(btn.dataset.page));
+  });
+
+  els.menuBtn.addEventListener('click', () => els.sidebar.classList.toggle('open'));
+
+  els.jobForm.addEventListener('submit', saveJob);
+  els.clientForm.addEventListener('submit', saveClient);
+  els.paymentForm.addEventListener('submit', savePayment);
+  els.searchJobs.addEventListener('input', renderJobs);
+  els.filterEstado.addEventListener('change', renderJobs);
+  els.searchClients.addEventListener('input', renderClients);
+  els.clearJobForm.addEventListener('click', clearJobForm);
+  els.clearClientForm.addEventListener('click', clearClientForm);
+  els.clearPaymentForm.addEventListener('click', clearPaymentForm);
+
+  els.exportJobsCsv.addEventListener('click', () => exportCsv('trabalhos.csv', state.jobs));
+  els.exportClientsCsv.addEventListener('click', () => exportCsv('clientes.csv', state.clients));
+  els.exportPaymentsCsv.addEventListener('click', () => exportCsv('pagamentos.csv', state.payments));
+  els.exportBackupBtn.addEventListener('click', exportBackup);
+  els.importBackupBtn.addEventListener('click', () => els.backupFileInput.click());
+  els.backupFileInput.addEventListener('change', importBackup);
+  els.useFirebaseToggle.addEventListener('change', () => {
+    state.useFirebase = els.useFirebaseToggle.checked;
+    saveData();
+    alert(state.useFirebase
+      ? 'Modo Firebase ativado. Completa primeiro o firebase-config.js e a integração.'
+      : 'Modo local ativado.');
+  });
+}
+
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  document.querySelector(`.nav-btn[data-page="${page}"]`).classList.add('active');
+  els.sidebar.classList.remove('open');
+
+  const titles = {
+    dashboard: ['Dashboard', 'Resumo rápido da atividade'],
+    trabalhos: ['Trabalhos', 'Registo e gestão de serviços'],
+    clientes: ['Clientes', 'Base de clientes da empresa'],
+    pagamentos: ['Pagamentos', 'Controlo de recebimentos'],
+    relatorios: ['Relatórios', 'Exportações e visão mensal'],
+    config: ['Configurações', 'Ajustes da aplicação'],
+  };
+  const [title, subtitle] = titles[page];
+  els.pageTitle.textContent = title;
+  els.pageSubtitle.textContent = subtitle;
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    state.jobs = parsed.jobs || [];
+    state.clients = parsed.clients || [];
+    state.payments = parsed.payments || [];
+    state.useFirebase = !!parsed.useFirebase;
+    els.useFirebaseToggle.checked = state.useFirebase;
+  } catch (e) {
+    console.error('Erro ao carregar dados', e);
+  }
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function saveJob(e) {
+  e.preventDefault();
+  const job = {
+    id: els.jobId.value || uid(),
     cliente: els.cliente.value.trim(),
     contacto: els.contacto.value.trim(),
     tipoTrabalho: els.tipoTrabalho.value.trim(),
@@ -218,95 +109,349 @@ function getFormData() {
     dataInicio: els.dataInicio.value,
     dataFim: els.dataFim.value,
     estado: els.estado.value,
-    descricao: els.descricao.value.trim()
+    descricao: els.descricao.value.trim(),
+    createdAt: new Date().toISOString(),
   };
-}
 
-function resetForm() {
-  els.jobForm.reset();
-  els.jobId.value = '';
-  els.formTitle.textContent = 'Novo Trabalho';
-  els.cancelEditBtn.classList.add('hidden');
-}
+  const index = state.jobs.findIndex(x => x.id === job.id);
+  if (index >= 0) state.jobs[index] = { ...state.jobs[index], ...job };
+  else state.jobs.unshift(job);
 
-async function upsertJob(event) {
-  event.preventDefault();
-  const data = getFormData();
-  if (!data.cliente || !data.tipoTrabalho || !data.dataInicio || !data.dataFim) {
-    showToast('Preenche os campos obrigatórios.');
-    return;
-  }
-
-  const editingId = els.jobId.value;
-
-  if (state.onlineDb) {
-    if (editingId) {
-      await updateDoc(doc(state.db, 'trabalhos', editingId), data);
-      showToast('Trabalho atualizado.');
-    } else {
-      await addDoc(collection(state.db, 'trabalhos'), {
-        ...data,
-        createdAt: serverTimestamp(),
-        createdAtMs: Date.now()
-      });
-      showToast('Trabalho guardado.');
-    }
-    await fetchJobs();
-  } else {
-    if (editingId) {
-      state.jobs = state.jobs.map(item => item.id === editingId ? { ...item, ...data } : item);
-      showToast('Trabalho atualizado em modo local.');
-    } else {
-      state.jobs.unshift({ id: crypto.randomUUID(), ...data, createdAtMs: Date.now() });
-      showToast('Trabalho guardado em modo local.');
-    }
-    saveLocal();
-    renderAll();
-  }
-
-  resetForm();
+  saveData();
+  clearJobForm();
+  renderAll();
   switchPage('trabalhos');
 }
 
-function startEdit(id) {
-  const job = state.jobs.find(item => item.id === id);
-  if (!job) return;
-
-  els.jobId.value = job.id;
-  els.cliente.value = job.cliente || '';
-  els.contacto.value = job.contacto || '';
-  els.tipoTrabalho.value = job.tipoTrabalho || '';
-  els.valor.value = job.valor ?? '';
-  els.dataInicio.value = job.dataInicio || '';
-  els.dataFim.value = job.dataFim || '';
-  els.estado.value = job.estado || 'Pendente';
-  els.descricao.value = job.descricao || '';
-  els.formTitle.textContent = 'Editar Trabalho';
-  els.cancelEditBtn.classList.remove('hidden');
-  switchPage('novo');
+function saveClient(e) {
+  e.preventDefault();
+  const client = {
+    id: els.clientId.value || uid(),
+    nome: els.clientNome.value.trim(),
+    telefone: els.clientTelefone.value.trim(),
+    email: els.clientEmail.value.trim(),
+    nif: els.clientNif.value.trim(),
+    morada: els.clientMorada.value.trim(),
+    createdAt: new Date().toISOString(),
+  };
+  const index = state.clients.findIndex(x => x.id === client.id);
+  if (index >= 0) state.clients[index] = { ...state.clients[index], ...client };
+  else state.clients.unshift(client);
+  saveData();
+  clearClientForm();
+  renderClients();
 }
 
-async function removeJob(id) {
-  const ok = confirm('Queres apagar este registo?');
-  if (!ok) return;
-
-  if (state.onlineDb) {
-    await deleteDoc(doc(state.db, 'trabalhos', id));
-    await fetchJobs();
-    showToast('Trabalho apagado.');
-  } else {
-    state.jobs = state.jobs.filter(item => item.id !== id);
-    saveLocal();
-    renderAll();
-    showToast('Trabalho apagado em modo local.');
-  }
+function savePayment(e) {
+  e.preventDefault();
+  const payment = {
+    id: els.paymentId.value || uid(),
+    cliente: els.paymentCliente.value.trim(),
+    trabalho: els.paymentTrabalho.value.trim(),
+    valor: Number(els.paymentValor.value || 0),
+    data: els.paymentData.value,
+    metodo: els.paymentMetodo.value,
+    notas: els.paymentNotas.value.trim(),
+    createdAt: new Date().toISOString(),
+  };
+  const index = state.payments.findIndex(x => x.id === payment.id);
+  if (index >= 0) state.payments[index] = { ...state.payments[index], ...payment };
+  else state.payments.unshift(payment);
+  saveData();
+  clearPaymentForm();
+  renderPayments();
+  renderDashboard();
+  renderReports();
 }
 
-els.menuBtns.forEach(btn => btn.addEventListener('click', () => switchPage(btn.dataset.page)));
-els.syncBtn.addEventListener('click', fetchJobs);
-els.jobForm.addEventListener('submit', upsertJob);
-els.cancelEditBtn.addEventListener('click', resetForm);
-els.searchCliente.addEventListener('input', renderJobs);
-els.filterEstado.addEventListener('change', renderJobs);
+function renderAll() {
+  renderJobs();
+  renderClients();
+  renderPayments();
+  renderDashboard();
+  renderReports();
+}
 
-initFirebase();
+function renderJobs() {
+  const q = (els.searchJobs.value || '').toLowerCase();
+  const estado = els.filterEstado.value;
+  const filtered = state.jobs.filter(job => {
+    const matchQ = !q || job.cliente.toLowerCase().includes(q) || job.tipoTrabalho.toLowerCase().includes(q);
+    const matchEstado = !estado || job.estado === estado;
+    return matchQ && matchEstado;
+  });
+
+  els.jobsTableBody.innerHTML = filtered.length ? filtered.map(job => `
+    <tr>
+      <td>${escapeHtml(job.cliente)}</td>
+      <td>${escapeHtml(job.tipoTrabalho)}</td>
+      <td>${formatMoney(job.valor)}</td>
+      <td>${formatDate(job.dataInicio)}</td>
+      <td>${formatDate(job.dataFim)}</td>
+      <td>${statusPill(job.estado)}</td>
+      <td>
+        <div class="actions">
+          <button class="secondary" onclick="editJob('${job.id}')">Editar</button>
+          <button class="danger" onclick="deleteJob('${job.id}')">Apagar</button>
+        </div>
+      </td>
+    </tr>
+  `).join('') : `<tr><td colspan="7" class="muted">Sem trabalhos registados.</td></tr>`;
+}
+
+function renderClients() {
+  const q = (els.searchClients.value || '').toLowerCase();
+  const filtered = state.clients.filter(c => !q || c.nome.toLowerCase().includes(q) || (c.telefone || '').includes(q) || (c.email || '').toLowerCase().includes(q));
+  els.clientsList.innerHTML = filtered.length ? filtered.map(c => `
+    <div class="item-row">
+      <div class="top">
+        <strong>${escapeHtml(c.nome)}</strong>
+        <div class="actions">
+          <button class="secondary" onclick="editClient('${c.id}')">Editar</button>
+          <button class="danger" onclick="deleteClient('${c.id}')">Apagar</button>
+        </div>
+      </div>
+      <div class="meta">${escapeHtml(c.telefone || 'Sem telefone')} • ${escapeHtml(c.email || 'Sem email')}</div>
+      <div class="meta">NIF: ${escapeHtml(c.nif || '---')}</div>
+      <div class="meta">${escapeHtml(c.morada || 'Sem morada')}</div>
+    </div>
+  `).join('') : '<div class="muted">Sem clientes registados.</div>';
+}
+
+function renderPayments() {
+  els.paymentsList.innerHTML = state.payments.length ? state.payments.map(p => `
+    <div class="item-row">
+      <div class="top">
+        <strong>${escapeHtml(p.cliente)}</strong>
+        <div class="actions">
+          <button class="secondary" onclick="editPayment('${p.id}')">Editar</button>
+          <button class="danger" onclick="deletePayment('${p.id}')">Apagar</button>
+        </div>
+      </div>
+      <div class="meta">${escapeHtml(p.trabalho)} • ${formatMoney(p.valor)} • ${formatDate(p.data)}</div>
+      <div class="meta">${escapeHtml(p.metodo)}${p.notas ? ' • ' + escapeHtml(p.notas) : ''}</div>
+    </div>
+  `).join('') : '<div class="muted">Sem pagamentos registados.</div>';
+}
+
+function renderDashboard() {
+  const total = state.jobs.length;
+  const emAndamento = state.jobs.filter(j => j.estado === 'Em andamento').length;
+  const concluidos = state.jobs.filter(j => j.estado === 'Concluído' || j.estado === 'Pago').length;
+  const faturado = state.jobs.reduce((acc, j) => acc + Number(j.valor || 0), 0);
+
+  els.statTotalTrabalhos.textContent = total;
+  els.statEmAndamento.textContent = emAndamento;
+  els.statConcluidos.textContent = concluidos;
+  els.statFaturado.textContent = formatMoney(faturado);
+
+  const recent = [...state.jobs].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0,5);
+  els.recentJobs.innerHTML = recent.length ? recent.map(j => `
+    <div class="item-row">
+      <div class="top">
+        <strong>${escapeHtml(j.cliente)}</strong>
+        ${statusPill(j.estado)}
+      </div>
+      <div class="meta">${escapeHtml(j.tipoTrabalho)} • ${formatMoney(j.valor)}</div>
+      <div class="meta">${formatDate(j.dataInicio)} até ${formatDate(j.dataFim)}</div>
+    </div>
+  `).join('') : '<div class="muted">Ainda não existem trabalhos.</div>';
+
+  const grouped = groupByMonth(state.jobs, 'dataInicio');
+  els.monthlySummary.innerHTML = Object.keys(grouped).length ? Object.entries(grouped).map(([month, items]) => `
+    <div class="item-row">
+      <div class="top">
+        <strong>${month}</strong>
+        <span>${items.length} trabalho(s)</span>
+      </div>
+      <div class="meta">Total: ${formatMoney(items.reduce((a,b) => a + Number(b.valor || 0), 0))}</div>
+    </div>
+  `).join('') : '<div class="muted">Sem dados mensais.</div>';
+}
+
+function renderReports() {
+  const grouped = groupByMonth(state.jobs, 'dataInicio');
+  els.reportMonthly.innerHTML = Object.keys(grouped).length ? Object.entries(grouped).map(([month, items]) => {
+    const total = items.reduce((a,b) => a + Number(b.valor || 0), 0);
+    const pagos = items.filter(x => x.estado === 'Pago').length;
+    return `
+      <div class="item-row">
+        <div class="top">
+          <strong>${month}</strong>
+          <span>${items.length} registo(s)</span>
+        </div>
+        <div class="meta">Total faturado: ${formatMoney(total)}</div>
+        <div class="meta">Pagos: ${pagos} • Concluídos: ${items.filter(x => x.estado === 'Concluído').length}</div>
+      </div>
+    `;
+  }).join('') : '<div class="muted">Ainda sem relatórios disponíveis.</div>';
+}
+
+function editJob(id) {
+  const j = state.jobs.find(x => x.id === id);
+  if (!j) return;
+  els.jobId.value = j.id;
+  els.cliente.value = j.cliente;
+  els.contacto.value = j.contacto || '';
+  els.tipoTrabalho.value = j.tipoTrabalho;
+  els.valor.value = j.valor;
+  els.dataInicio.value = j.dataInicio || '';
+  els.dataFim.value = j.dataFim || '';
+  els.estado.value = j.estado;
+  els.descricao.value = j.descricao || '';
+  switchPage('trabalhos');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function editClient(id) {
+  const c = state.clients.find(x => x.id === id);
+  if (!c) return;
+  els.clientId.value = c.id;
+  els.clientNome.value = c.nome;
+  els.clientTelefone.value = c.telefone || '';
+  els.clientEmail.value = c.email || '';
+  els.clientNif.value = c.nif || '';
+  els.clientMorada.value = c.morada || '';
+  switchPage('clientes');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function editPayment(id) {
+  const p = state.payments.find(x => x.id === id);
+  if (!p) return;
+  els.paymentId.value = p.id;
+  els.paymentCliente.value = p.cliente;
+  els.paymentTrabalho.value = p.trabalho;
+  els.paymentValor.value = p.valor;
+  els.paymentData.value = p.data || '';
+  els.paymentMetodo.value = p.metodo || 'Dinheiro';
+  els.paymentNotas.value = p.notas || '';
+  switchPage('pagamentos');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteJob(id) {
+  if (!confirm('Apagar este trabalho?')) return;
+  state.jobs = state.jobs.filter(x => x.id !== id);
+  saveData();
+  renderAll();
+}
+function deleteClient(id) {
+  if (!confirm('Apagar este cliente?')) return;
+  state.clients = state.clients.filter(x => x.id !== id);
+  saveData();
+  renderClients();
+}
+function deletePayment(id) {
+  if (!confirm('Apagar este pagamento?')) return;
+  state.payments = state.payments.filter(x => x.id !== id);
+  saveData();
+  renderPayments();
+  renderDashboard();
+  renderReports();
+}
+
+function clearJobForm() { els.jobForm.reset(); els.jobId.value = ''; }
+function clearClientForm() { els.clientForm.reset(); els.clientId.value = ''; }
+function clearPaymentForm() { els.paymentForm.reset(); els.paymentId.value = ''; }
+
+function exportCsv(filename, rows) {
+  if (!rows.length) return alert('Não existem dados para exportar.');
+  const headers = Object.keys(rows[0]);
+  const csv = [headers.join(',')]
+    .concat(rows.map(row => headers.map(h => csvValue(row[h])).join(',')))
+    .join('\n');
+  downloadFile(filename, 'text/csv;charset=utf-8;', csv);
+}
+
+function exportBackup() {
+  downloadFile('gestao-empresa-backup.json', 'application/json', JSON.stringify(state, null, 2));
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      state.jobs = parsed.jobs || [];
+      state.clients = parsed.clients || [];
+      state.payments = parsed.payments || [];
+      state.useFirebase = !!parsed.useFirebase;
+      els.useFirebaseToggle.checked = state.useFirebase;
+      saveData();
+      renderAll();
+      alert('Backup importado com sucesso.');
+    } catch {
+      alert('Ficheiro inválido.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function groupByMonth(items, field) {
+  return items.reduce((acc, item) => {
+    if (!item[field]) return acc;
+    const date = new Date(item[field]);
+    if (Number.isNaN(date.getTime())) return acc;
+    const key = date.toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' });
+    acc[key] = acc[key] || [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+}
+
+function statusPill(status) {
+  const cls = status === 'Pendente' ? 'pendente'
+    : status === 'Em andamento' ? 'andamento'
+    : status === 'Concluído' ? 'concluido'
+    : 'pago';
+  return `<span class="pill ${cls}">${escapeHtml(status)}</span>`;
+}
+
+function formatMoney(value) {
+  return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(Number(value || 0));
+}
+
+function formatDate(value) {
+  if (!value) return 'Sem data';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleDateString('pt-PT');
+}
+
+function csvValue(v) {
+  const s = String(v ?? '').replace(/"/g, '""');
+  return `"${s}"`;
+}
+
+function downloadFile(filename, mime, content) {
+  const blob = new Blob([content], { type: mime });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function uid() {
+  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+}
+
+function escapeHtml(text) {
+  return String(text ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+window.editJob = editJob;
+window.deleteJob = deleteJob;
+window.editClient = editClient;
+window.deleteClient = deleteClient;
+window.editPayment = editPayment;
+window.deletePayment = deletePayment;
