@@ -2,122 +2,109 @@
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestão Empresa</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#111827" />
+  <meta name="theme-color" content="#121212" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-badge">GE</div>
+        <div class="brand-logo">GE</div>
         <div>
           <h1>Gestão Empresa</h1>
-          <p>Serviços e clientes</p>
+          <p>PC + Android</p>
         </div>
       </div>
 
-      <nav class="nav">
-        <button class="nav-btn active" data-view="dashboard">Dashboard</button>
-        <button class="nav-btn" data-view="novo">Novo Trabalho</button>
-        <button class="nav-btn" data-view="trabalhos">Trabalhos</button>
-        <button class="nav-btn" data-view="config">Configurações</button>
+      <nav class="menu">
+        <button class="menu-btn active" data-page="dashboard">Dashboard</button>
+        <button class="menu-btn" data-page="novo">Novo Trabalho</button>
+        <button class="menu-btn" data-page="trabalhos">Trabalhos</button>
+        <button class="menu-btn" data-page="config">Configurações</button>
       </nav>
 
-      <div class="sidebar-footer">
-        <p>Fase 1</p>
-        <small>PC + Android</small>
+      <div class="sidebar-card">
+        <strong>Base de dados</strong>
+        <p id="dbStatus">A verificar ligação…</p>
       </div>
     </aside>
 
-    <main class="content">
+    <main class="main-content">
       <header class="topbar">
         <div>
           <h2 id="pageTitle">Dashboard</h2>
-          <p id="pageSubtitle">Resumo rápido da atividade</p>
+          <p>Registo de trabalhos da empresa</p>
         </div>
-        <button id="mobileMenuBtn" class="mobile-menu-btn">☰</button>
+        <button id="syncBtn" class="secondary-btn">Atualizar dados</button>
       </header>
 
-      <section class="view active" id="view-dashboard">
-        <div class="stats-grid">
-          <article class="stat-card">
-            <span>Total trabalhos</span>
-            <strong id="statTotal">0</strong>
+      <section id="page-dashboard" class="page active">
+        <div class="cards-grid">
+          <article class="card metric-card">
+            <span>Total de trabalhos</span>
+            <strong id="metricTotal">0</strong>
           </article>
-          <article class="stat-card">
-            <span>Pendentes</span>
-            <strong id="statPendentes">0</strong>
-          </article>
-          <article class="stat-card">
-            <span>Concluídos</span>
-            <strong id="statConcluidos">0</strong>
-          </article>
-          <article class="stat-card highlight">
+          <article class="card metric-card">
             <span>Total faturado</span>
-            <strong id="statFaturado">0,00 €</strong>
+            <strong id="metricValor">0 €</strong>
+          </article>
+          <article class="card metric-card">
+            <span>Em andamento</span>
+            <strong id="metricAndamento">0</strong>
+          </article>
+          <article class="card metric-card">
+            <span>Concluídos</span>
+            <strong id="metricConcluidos">0</strong>
           </article>
         </div>
 
-        <div class="panel-grid">
-          <section class="panel">
-            <div class="panel-head">
-              <h3>Últimos trabalhos</h3>
-            </div>
-            <div id="recentList" class="empty-state">Ainda não existem trabalhos registados.</div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-head">
-              <h3>Valores por estado</h3>
-            </div>
-            <div class="mini-stats" id="estadoResumo"></div>
-          </section>
+        <div class="card">
+          <h3>Últimos trabalhos</h3>
+          <div id="recentList" class="empty-state">Sem trabalhos registados.</div>
         </div>
       </section>
 
-      <section class="view" id="view-novo">
-        <form id="jobForm" class="panel form-panel">
-          <div class="panel-head">
-            <h3>Novo Trabalho</h3>
-            <p>Regista um serviço da empresa</p>
-          </div>
+      <section id="page-novo" class="page">
+        <div class="card">
+          <h3 id="formTitle">Novo Trabalho</h3>
+          <form id="jobForm" class="form-grid">
+            <input type="hidden" id="jobId" />
 
-          <div class="form-grid">
             <label>
-              <span>Cliente</span>
+              Cliente
               <input type="text" id="cliente" required placeholder="Nome do cliente" />
             </label>
 
             <label>
-              <span>Contacto</span>
-              <input type="text" id="contacto" placeholder="Telemóvel ou email" />
+              Contacto
+              <input type="text" id="contacto" placeholder="Telefone ou email" />
             </label>
 
             <label>
-              <span>Tipo de trabalho</span>
-              <input type="text" id="tipoTrabalho" required placeholder="Ex: Pintura, eletricidade" />
+              Tipo de trabalho
+              <input type="text" id="tipoTrabalho" required placeholder="Ex: Instalação, Pintura, Reparação" />
             </label>
 
             <label>
-              <span>Valor (€)</span>
+              Valor (€)
               <input type="number" id="valor" min="0" step="0.01" required placeholder="0.00" />
             </label>
 
             <label>
-              <span>Data de início</span>
+              Data de início
               <input type="date" id="dataInicio" required />
             </label>
 
             <label>
-              <span>Data de fim</span>
+              Data de fim
               <input type="date" id="dataFim" required />
             </label>
 
-            <label>
-              <span>Estado</span>
+            <label class="full-width">
+              Estado
               <select id="estado" required>
                 <option value="Pendente">Pendente</option>
                 <option value="Em andamento">Em andamento</option>
@@ -126,73 +113,81 @@
               </select>
             </label>
 
-            <label class="full">
-              <span>Descrição</span>
-              <textarea id="descricao" rows="4" placeholder="Detalhes do trabalho"></textarea>
+            <label class="full-width">
+              Descrição
+              <textarea id="descricao" rows="4" placeholder="Detalhes do trabalho feito"></textarea>
             </label>
-          </div>
 
-          <div class="form-actions">
-            <button type="submit" class="primary-btn" id="submitBtn">Guardar trabalho</button>
-            <button type="button" class="secondary-btn" id="clearBtn">Limpar</button>
-          </div>
-        </form>
+            <div class="form-actions full-width">
+              <button type="submit" class="primary-btn">Guardar Trabalho</button>
+              <button type="button" id="cancelEditBtn" class="secondary-btn hidden">Cancelar edição</button>
+            </div>
+          </form>
+        </div>
       </section>
 
-      <section class="view" id="view-trabalhos">
-        <div class="panel">
-          <div class="panel-head stack-mobile">
-            <div>
-              <h3>Lista de Trabalhos</h3>
-              <p>Pesquisa, filtra e gere os registos</p>
-            </div>
-            <div class="filters">
-              <input type="text" id="searchInput" placeholder="Pesquisar cliente ou tipo" />
+      <section id="page-trabalhos" class="page">
+        <div class="card filters-card">
+          <div class="filters-grid">
+            <label>
+              Pesquisar cliente
+              <input type="text" id="searchCliente" placeholder="Nome do cliente" />
+            </label>
+            <label>
+              Filtrar estado
               <select id="filterEstado">
-                <option value="">Todos os estados</option>
+                <option value="">Todos</option>
                 <option value="Pendente">Pendente</option>
                 <option value="Em andamento">Em andamento</option>
                 <option value="Concluído">Concluído</option>
                 <option value="Pago">Pago</option>
               </select>
-            </div>
+            </label>
           </div>
+        </div>
 
-          <div id="jobsTableWrap" class="table-wrap"></div>
+        <div class="card table-card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Tipo</th>
+                  <th>Valor</th>
+                  <th>Início</th>
+                  <th>Fim</th>
+                  <th>Estado</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="jobsTableBody">
+                <tr>
+                  <td colspan="7" class="empty-cell">Sem trabalhos registados.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      <section class="view" id="view-config">
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Configurações</h3>
-            <p>Opções simples para a fase inicial</p>
-          </div>
-
-          <div class="config-list">
-            <label class="config-row">
-              <div>
-                <strong>Exportar dados</strong>
-                <p>Guarda todos os trabalhos num ficheiro JSON</p>
-              </div>
-              <button id="exportBtn" class="secondary-btn">Exportar</button>
-            </label>
-
-            <label class="config-row danger-row">
-              <div>
-                <strong>Apagar todos os dados</strong>
-                <p>Remove todos os trabalhos guardados neste dispositivo</p>
-              </div>
-              <button id="clearAllBtn" class="danger-btn">Apagar tudo</button>
-            </label>
-          </div>
+      <section id="page-config" class="page">
+        <div class="card">
+          <h3>Configurações Firebase</h3>
+          <p>Abre o ficheiro <strong>firebase-config.js</strong> e cola lá os dados do teu projeto Firebase.</p>
+          <ol>
+            <li>Criar projeto Firebase</li>
+            <li>Ativar Firestore Database</li>
+            <li>Copiar a configuração web</li>
+            <li>Substituir no ficheiro</li>
+          </ol>
+          <p class="small-note">Enquanto não colocares os dados reais, a app funciona mas não guarda na cloud.</p>
         </div>
       </section>
     </main>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <div id="toast" class="toast hidden"></div>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
