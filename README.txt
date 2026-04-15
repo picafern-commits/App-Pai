@@ -19,3 +19,8 @@ Setup Firebase:
 3. Cria Firestore Database
 4. Cola a config em js/firebase-config.js
 5. Cria coleção users e um documento com o UID do utilizador
+
+
+Correção aplicada:
+- login Google trocado de popup para redirect
+- mensagens de erro melhoradas para Firebase Auth

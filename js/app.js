@@ -28,11 +28,11 @@ async function initFirebase(){
   if(!firebaseConfig){ dataMode='Local'; firebaseReady=false; return false; }
   try{
     const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-    const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app); db = getFirestore(app); googleProvider = new GoogleAuthProvider();
-    window.firebaseApi = { signInWithPopup, signOut, onAuthStateChanged, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc };
+    window.firebaseApi = { signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc };
     firebaseReady = true; dataMode = 'Firebase'; return true;
   }catch(err){ console.error(err); firebaseReady=false; dataMode='Local'; return false; }
 }
@@ -77,9 +77,19 @@ async function handleSignedInUser(firebaseUser){
   setRoleUI(); renderAll();
 }
 async function loginWithGoogle(){
-  const errorEl = $('loginError'); errorEl.textContent = '';
-  if(!firebaseReady || !auth || !googleProvider){ errorEl.textContent = 'Firebase não está configurado. Preenche js/firebase-config.js.'; return; }
-  try{ const { signInWithPopup } = window.firebaseApi; const result = await signInWithPopup(auth, googleProvider); await handleSignedInUser(result.user); }catch(err){ console.error(err); errorEl.textContent = 'Não foi possível entrar com Google.'; }
+  const errorEl = $('loginError');
+  errorEl.textContent = '';
+  if(!firebaseReady || !auth || !googleProvider){
+    errorEl.textContent = 'Firebase não está configurado. Preenche js/firebase-config.js.';
+    return;
+  }
+  try{
+    const { signInWithRedirect } = window.firebaseApi;
+    await signInWithRedirect(auth, googleProvider);
+  }catch(err){
+    console.error(err);
+    errorEl.textContent = 'Não foi possível iniciar o login Google.';
+  }
 }
 $('googleLoginBtn').addEventListener('click', loginWithGoogle);
 async function logout(){ if(firebaseReady && auth){ const { signOut } = window.firebaseApi; await signOut(auth); } currentRole=null; currentUsername=null; currentUser=null; $('loginScreen').classList.remove('hidden'); $('appRoot').classList.add('hidden'); }
@@ -125,4 +135,34 @@ $('exportMonthlyPdfBtn').addEventListener('click', ()=>{ const html=$('resumoMen
 
 async function checkForUpdates(){ try{ const res=await fetch(`./version.json?v=${Date.now()}`, { cache:'no-store' }); if(!res.ok) return; const data=await res.json(); const lastSeen=localStorage.getItem(VERSION_KEY); if(lastSeen && data.version && data.version!==lastSeen){ /* reserved */ } if(data.version){ localStorage.setItem(VERSION_KEY,data.version); if($('versionBadge')) $('versionBadge').textContent=data.version; } }catch(err){ console.log('Sem verificação de update:', err);} }
 
-(async function init(){ const ok=await initFirebase(); await checkForUpdates(); if(ok && auth){ const { onAuthStateChanged } = window.firebaseApi; onAuthStateChanged(auth, async (user)=>{ if(user){ await handleSignedInUser(user); } else { currentRole=null; currentUsername=null; currentUser=null; $('loginScreen').classList.remove('hidden'); $('appRoot').classList.add('hidden'); } }); } else { $('loginError').textContent='Firebase ainda não está configurado. Preenche js/firebase-config.js.'; } })();
+(async function init(){
+  const ok = await initFirebase();
+  await checkForUpdates();
+
+  if(ok && auth){
+    try{
+      const { getRedirectResult, onAuthStateChanged } = window.firebaseApi;
+      const redirectResult = await getRedirectResult(auth);
+      if(redirectResult && redirectResult.user){
+        await handleSignedInUser(redirectResult.user);
+      }
+
+      onAuthStateChanged(auth, async (user) => {
+        if(user){
+          await handleSignedInUser(user);
+        } else {
+          currentRole = null;
+          currentUsername = null;
+          currentUser = null;
+          $('loginScreen').classList.remove('hidden');
+          $('appRoot').classList.add('hidden');
+        }
+      });
+    }catch(err){
+      console.error(err);
+      $('loginError').textContent = 'Erro no login Google. Confirma Google Sign-In e Authorized domains no Firebase.';
+    }
+  } else {
+    $('loginError').textContent = 'Firebase ainda não está configurado. Preenche js/firebase-config.js.';
+  }
+})();
