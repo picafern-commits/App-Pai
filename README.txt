@@ -24,8 +24,7 @@ Para publicar:
 - abre o site e faz Ctrl + F5
 
 
-Refresh visual clean:
-- paleta nova mais clean
-- botões mais discretos
-- estados com cores suaves
-- layout mais leve e profissional
+Atualização premium:
+- layout e esquema visual baseados no zip de referência
+- login, dashboard e sidebar mais premium
+- branding e cartões mais fortes

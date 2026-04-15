@@ -6,47 +6,65 @@
   <title>Gestão Empresa</title>
   <meta name="theme-color" content="#0b1020" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png" />
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" href="assets/favicon-32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="assets/favicon-16.png" sizes="16x16" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
   <div id="loginScreen" class="login-screen">
     <div class="login-card">
-      <div class="login-logo">GE</div>
-      <div class="login-copy">
-        <div class="eyebrow">Modo empresa</div>
-        <h1>Gestão Empresa</h1>
-        <p>Login interno estável, rápido e sem dependência do Google.</p>
+      <div class="login-brand">
+        <div class="login-copy">
+          <span class="eyebrow">Modo empresa premium</span>
+          <h1>Gestão Empresa</h1>
+          <p>Sistema profissional para controlo de trabalhos, clientes e pagamentos com um visual mais premium e limpo.</p>
+        </div>
+        <img src="assets/logo-dark.png" alt="Logo Gestão Empresa" />
       </div>
 
-      <form id="loginForm" class="login-form">
-        <div class="field">
-          <label>Utilizador</label>
-          <input id="loginUsername" type="text" placeholder="Ricardo, admin ou user" required />
+      <div class="login-panel">
+        <div class="login-badge">GE</div>
+        <div class="login-copy">
+          <span class="eyebrow">Acesso</span>
+          <h1>Entrar</h1>
+          <p>Login interno estável com permissões separadas por utilizador.</p>
         </div>
-        <div class="field">
-          <label>Palavra-passe</label>
-          <input id="loginPassword" type="password" placeholder="••••••••" required />
-        </div>
-        <button type="submit" class="btn btn-primary full">Entrar</button>
-      </form>
 
-      <div class="login-help">
-        App pronta para Android/Web e PC online. O Firebase fica opcional só para dados numa fase seguinte.
+        <form id="loginForm" class="login-form">
+          <div class="field">
+            <label>Utilizador</label>
+            <input id="loginUsername" type="text" placeholder="Ricardo, admin ou user" required />
+          </div>
+          <div class="field">
+            <label>Palavra-passe</label>
+            <input id="loginPassword" type="password" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary full">Entrar</button>
+        </form>
+
+        <div class="login-help">
+          <div><strong>Ricardo:</strong> admin mestre</div>
+          <div><strong>Admin:</strong> gestão total</div>
+          <div><strong>User:</strong> só consulta</div>
+        </div>
+        <div class="login-version">Versão <strong>Premium</strong></div>
+        <div id="loginError" class="login-error"></div>
       </div>
-      <div id="loginError" class="login-error"></div>
     </div>
   </div>
 
   <div id="appRoot" class="app-shell hidden">
     <aside class="sidebar">
       <div class="brand-card">
-        <div class="brand-logo">GE</div>
+        <img src="assets/logo-icon-dark.png" alt="Logo ícone" />
         <div>
           <h1>Gestão Empresa</h1>
-          <p>Android / Web principal</p>
+          <p>App principal</p>
         </div>
       </div>
 
@@ -74,38 +92,51 @@
 
     <main class="main">
       <header class="topbar">
-        <div>
-          <h2 id="pageTitle">Dashboard</h2>
-          <div class="subline">
-            <span id="roleLine">Role: -</span>
-            <span>•</span>
-            <span id="modeLine">Modo: Local</span>
-            <span>•</span>
-            <span id="currentUserName">Utilizador</span>
+        <div class="topbar-left">
+          <div>
+            <h2 id="pageTitle">Dashboard</h2>
+            <div class="subline">
+              <span id="roleLine">Role: -</span>
+              <span>•</span>
+              <span id="modeLine">Modo: Local</span>
+              <span>•</span>
+              <span id="currentUserName">Utilizador</span>
+            </div>
           </div>
         </div>
-
         <div class="topbar-actions">
+          <button class="btn btn-ghost" data-go="relatorios">Resumo mensal</button>
           <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
         </div>
       </header>
 
       <section class="page active" id="dashboard-page">
         <div class="hero panel">
-          <div>
-            <h3>Controlo total da empresa num painel simples, bonito e rápido.</h3>
+          <div class="hero-copy">
+            <h3>Controlo total dos trabalhos, clientes e pagamentos.</h3>
+            <p>Painel rápido para uso diário com visual premium e mais organização.</p>
             <div class="hero-actions">
               <button class="btn btn-primary admin-only" data-go="trabalhos">Adicionar trabalho</button>
-              <button class="btn btn-ghost" data-go="relatorios">Resumo mensal</button>
+              <button class="btn btn-ghost" data-go="clientes">Ver clientes</button>
+            </div>
+          </div>
+          <div class="hero-side">
+            <div class="hero-chip">
+              <span>Estado</span>
+              <strong>Premium</strong>
+            </div>
+            <div class="hero-chip">
+              <span>Base</span>
+              <strong>Login interno</strong>
             </div>
           </div>
         </div>
 
         <div class="stats-grid">
-          <div class="stat-card panel"><span>Total trabalhos</span><strong id="statTotalTrabalhos">0</strong><small>Todos os registos</small></div>
-          <div class="stat-card panel"><span>Em andamento</span><strong id="statEmAndamento">0</strong><small>Serviços abertos</small></div>
-          <div class="stat-card panel"><span>Concluídos</span><strong id="statConcluidos">0</strong><small>Fechados ou pagos</small></div>
-          <div class="stat-card panel"><span>Total faturado</span><strong id="statTotalFaturado">0 €</strong><small>Soma dos valores</small></div>
+          <div class="stat-card panel pink"><span>Total trabalhos</span><strong id="statTotalTrabalhos">0</strong><small>Todos os registos</small></div>
+          <div class="stat-card panel blue"><span>Em andamento</span><strong id="statEmAndamento">0</strong><small>Serviços abertos</small></div>
+          <div class="stat-card panel green"><span>Concluídos</span><strong id="statConcluidos">0</strong><small>Fechados ou pagos</small></div>
+          <div class="stat-card panel gold"><span>Total faturado</span><strong id="statTotalFaturado">0 €</strong><small>Soma dos valores</small></div>
         </div>
 
         <section class="panel">
@@ -233,9 +264,9 @@
         <section class="panel">
           <div class="panel-head"><h3>Configurações e dados</h3></div>
           <div class="settings-grid">
-            <div class="setting-card"><span class="mini-label">Login</span><strong>Interno</strong><p>Sem Google e sem dependência externa.</p></div>
-            <div class="setting-card"><span class="mini-label">Sincronização</span><strong>Local estável</strong><p>Base pronta para futura ligação ao Firebase só para dados.</p></div>
-            <div class="setting-card"><span class="mini-label">Backup invisível</span><strong>Ativo</strong><p>Os dados ficam no browser e tens exportação JSON.</p></div>
+            <div class="setting-card"><span class="mini-label">Login</span><strong>Interno</strong><p>Base estável e rápida para uso diário.</p></div>
+            <div class="setting-card"><span class="mini-label">Layout</span><strong>Premium</strong><p>Esquema visual inspirado na tua versão de referência.</p></div>
+            <div class="setting-card"><span class="mini-label">Backup</span><strong>JSON</strong><p>Exportação manual para não perder dados.</p></div>
           </div>
 
           <div id="usersSection" class="panel users-master-panel">
@@ -243,7 +274,7 @@
             <div class="settings-grid">
               <div class="setting-card"><span class="mini-label">Admin Mestre</span><strong>Ricardo</strong><p>Só o Ricardo consegue ver esta área.</p></div>
               <div class="setting-card"><span class="mini-label">Credenciais</span><strong>Internas</strong><p>Sem dependência de Google ou Firebase Auth.</p></div>
-              <div class="setting-card"><span class="mini-label">Estado</span><strong>Estável</strong><p>Preparado para uso direto.</p></div>
+              <div class="setting-card"><span class="mini-label">Estado</span><strong>Premium</strong><p>Visual melhorado mantendo a app estável.</p></div>
             </div>
           </div>
         </section>

@@ -1,5 +1,5 @@
 
-const APP_VERSION = '1.0.6';
+const APP_VERSION = '4.2.0';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' };
 const USERS = [
   { username: 'Ricardo', password: '2297', role: 'master_admin' },
