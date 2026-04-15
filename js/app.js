@@ -4,7 +4,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const APP_VERSION = '5.1.0';
+const APP_VERSION = '1.0.6';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' };
 const USERS = [
   { username: 'Ricardo', password: '2297', role: 'master_admin', permissions: ['all','users','billing','clients_history'] },
@@ -345,7 +345,7 @@ window.editTrabalho = function(id){
 };
 window.deleteTrabalho = async function(id){
   if(!adminGuard()) return;
-  if(!confirm('Apagar este trabalho?')) return;
+  if(!customConfirm('Apagar este trabalho?')) return;
   trabalhos=trabalhos.filter(x=>x.id!==id);
   saveLocal(); renderAll();
   try{ await removeRemote('trabalhos', id); }catch(err){ console.error(err); setSyncMessage('Erro a apagar no Firebase', 'bad'); }
@@ -358,7 +358,7 @@ window.editCliente = function(id){
 };
 window.deleteCliente = async function(id){
   if(!adminGuard()) return;
-  if(!confirm('Apagar este cliente?')) return;
+  if(!customConfirm('Apagar este cliente?')) return;
   clientes=clientes.filter(x=>x.id!==id);
   saveLocal(); renderAll();
   try{ await removeRemote('clientes', id); }catch(err){ console.error(err); setSyncMessage('Erro a apagar no Firebase', 'bad'); }
@@ -371,7 +371,7 @@ window.editPagamento = function(id){
 };
 window.deletePagamento = async function(id){
   if(!adminGuard()) return;
-  if(!confirm('Apagar este pagamento?')) return;
+  if(!customConfirm('Apagar este pagamento?')) return;
   pagamentos=pagamentos.filter(x=>x.id!==id);
   saveLocal(); renderAll();
   try{ await removeRemote('pagamentos', id); }catch(err){ console.error(err); setSyncMessage('Erro a apagar no Firebase', 'bad'); }
@@ -437,7 +437,26 @@ window.openClientHistory = function(id){
   clientModal.classList.remove('hidden');
 };
 
+
 window.generateInvoice = function(id){
+  const t = trabalhos.find(x=>x.id===id);
+  if(!t) return;
+  const invoiceNumber = localStorage.getItem("invoice_counter") || 1;
+  localStorage.setItem("invoice_counter", Number(invoiceNumber)+1);
+
+  printHtml(`Fatura FT-${invoiceNumber}`, `
+    <h1 style="text-align:center;">Jorge Torneiro</h1>
+    <p style="text-align:center;">Serviços Mecânicos</p>
+    <hr/>
+    <p><strong>Fatura nº:</strong> FT-${invoiceNumber}</p>
+    <p><strong>Cliente:</strong> ${t.cliente}</p>
+    <p><strong>Serviço:</strong> ${t.tipoTrabalho}</p>
+    <p><strong>Data:</strong> ${t.dataInicio}</p>
+    <hr/>
+    <h2>Total: ${t.valor}€</h2>
+  `);
+}
+ = function(id){
   const t = trabalhos.find(x=>x.id===id);
   if(!t) return;
   const invoiceNumber = `FT-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
@@ -465,3 +484,33 @@ $('exportMonthlyPdfBtn').addEventListener('click', ()=>{ const html=$('resumoMen
 loadLocal();
 autoBackupInvisible();
 initFirebaseSync();
+
+window.openClientPage = function(nome){
+  const relT = trabalhos.filter(t=>t.cliente===nome);
+  const total = relT.reduce((s,t)=>s+Number(t.valor||0),0);
+  alert(`Cliente: ${nome}\nTrabalhos: ${relT.length}\nTotal: ${total}€`);
+}
+
+window.filterByDate = function(){
+  const start = prompt("Data inicio (YYYY-MM-DD)");
+  const end = prompt("Data fim (YYYY-MM-DD)");
+  if(!start || !end) return;
+  const res = trabalhos.filter(t=> t.dataInicio >= start && t.dataInicio <= end);
+  alert("Resultados: " + res.length);
+}
+
+window.exportCSV = function(){
+  let csv = "Cliente,Valor,Data\n";
+  trabalhos.forEach(t=>{
+    csv += `${t.cliente},${t.valor},${t.dataInicio}\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "dados.csv";
+  a.click();
+}
+
+function customConfirm(msg){
+  return confirm("⚠️ " + msg);
+}
