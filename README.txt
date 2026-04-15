@@ -1,26 +1,24 @@
-Jorge Fernandes Gestão Empresa - Android/PWA
+Gestão Empresa - Android
 
-O que inclui:
-- branding e ícones do pack enviado
-- admin mestre / admin / user
-- dashboard inteligente
-- gestão de utilizadores
-- exportação PDF por trabalho, cliente, pagamento e relatório mensal
-- auto-check de versão
-- base Firebase pronta
-- manifest para instalar no Android
+Novidades:
+- Visual igual à versão PC
+- PDF por trabalho, cliente e pagamento
+- PDF do relatório mensal
+- Firebase pronto a ligar
 
-Credenciais:
-- adminmestre / master123
+Login:
+- Ricardo / 2297
 - admin / admin123
 - user / user123
 
-Publicação:
+Como publicar:
 1. Extrai o ZIP
-2. Envia os ficheiros para o GitHub Pages
+2. Publica no GitHub Pages mantendo a estrutura
 3. Abre no Android
 4. Adiciona ao ecrã principal
 
-Para update:
-- muda version.json
-- publica/substitui ficheiros
+Como ligar Firebase:
+1. Abre js/firebase-config.js
+2. Cola a config do teu projeto
+3. Volta a publicar
+4. Vai a Configurações > Ligar Firebase
