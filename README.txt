@@ -28,3 +28,9 @@ Atualização premium:
 - layout e esquema visual baseados no zip de referência
 - login, dashboard e sidebar mais premium
 - branding e cartões mais fortes
+
+
+Correção layout PC:
+- removido uso de imagens grandes no login e sidebar
+- hero e sidebar ajustados para desktop
+- conteúdo já não sobrepõe nem rebenta o layout no PC
