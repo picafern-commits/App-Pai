@@ -1,4 +1,4 @@
 {
-  "version": "1.0.6",
-  "device": "web"
+  "version": "5.0.0",
+  "device": "web-firebase-sync"
 }

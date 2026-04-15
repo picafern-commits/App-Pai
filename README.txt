@@ -1,43 +1,37 @@
-App Pai final com login interno
+App Pai 5.0.0 - Firebase Sync a sério
 
-Credenciais:
-- Ricardo / 2297
-- admin / admin123
-- user / user123
+Esta versão liga dispositivos entre si por Cloud Firestore.
 
-Inclui:
-- login interno estável
-- dashboard
+Mantém:
+- login interno da app
+- visual premium
+- faturas PDF
+- histórico do cliente
+- permissões
+
+Firebase necessário:
+1. Authentication > Sign-in method > Anonymous = ATIVO
+2. Firestore Database criado
+3. Regras Firestore publicadas
+
+Regras recomendadas para esta versão:
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+
+Coleções usadas:
 - trabalhos
 - clientes
 - pagamentos
-- relatórios
-- PDF
-- ícones
-- manifest
-- backup JSON
 
-Para publicar:
-- apaga os ficheiros antigos do repo
-- envia estes ficheiros
-- faz commit
-- abre o site e faz Ctrl + F5
+Como funciona:
+- a app faz sign-in anónimo no Firebase
+- depois sincroniza em tempo real entre dispositivos
+- continua a guardar backup local invisível
 
-
-Atualização premium:
-- layout e esquema visual baseados no zip de referência
-- login, dashboard e sidebar mais premium
-- branding e cartões mais fortes
-
-
-Correção layout PC:
-- removido uso de imagens grandes no login e sidebar
-- hero e sidebar ajustados para desktop
-- conteúdo já não sobrepõe nem rebenta o layout no PC
-
-
-Upgrade 4.3.0:
-- faturas PDF por trabalho
-- backup automático invisível
-- permissões melhoradas por role
-- histórico completo por cliente
+Se o Firebase falhar, a app continua a abrir em modo local.

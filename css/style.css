@@ -537,3 +537,8 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   .global-search{min-width:100%; max-width:none;}
   .client-summary-grid{grid-template-columns:1fr 1fr;}
 }
+
+
+.sync-ok{color:#86efac !important}
+.sync-warn{color:#fcd34d !important}
+.sync-bad{color:#fca5a5 !important}
