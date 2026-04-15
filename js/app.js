@@ -345,7 +345,7 @@ window.editTrabalho = function(id){
 };
 window.deleteTrabalho = async function(id){
   if(!adminGuard()) return;
-  if(!customConfirm('Apagar este trabalho?')) return;
+  if(!confirm('Apagar este trabalho?')) return;
   trabalhos=trabalhos.filter(x=>x.id!==id);
   saveLocal(); renderAll();
   try{ await removeRemote('trabalhos', id); }catch(err){ console.error(err); setSyncMessage('Erro a apagar no Firebase', 'bad'); }
@@ -358,7 +358,7 @@ window.editCliente = function(id){
 };
 window.deleteCliente = async function(id){
   if(!adminGuard()) return;
-  if(!customConfirm('Apagar este cliente?')) return;
+  if(!confirm('Apagar este cliente?')) return;
   clientes=clientes.filter(x=>x.id!==id);
   saveLocal(); renderAll();
   try{ await removeRemote('clientes', id); }catch(err){ console.error(err); setSyncMessage('Erro a apagar no Firebase', 'bad'); }
@@ -371,7 +371,7 @@ window.editPagamento = function(id){
 };
 window.deletePagamento = async function(id){
   if(!adminGuard()) return;
-  if(!customConfirm('Apagar este pagamento?')) return;
+  if(!confirm('Apagar este pagamento?')) return;
   pagamentos=pagamentos.filter(x=>x.id!==id);
   saveLocal(); renderAll();
   try{ await removeRemote('pagamentos', id); }catch(err){ console.error(err); setSyncMessage('Erro a apagar no Firebase', 'bad'); }
@@ -509,8 +509,4 @@ window.exportCSV = function(){
   a.href = URL.createObjectURL(blob);
   a.download = "dados.csv";
   a.click();
-}
-
-function customConfirm(msg){
-  return confirm("⚠️ " + msg);
 }
