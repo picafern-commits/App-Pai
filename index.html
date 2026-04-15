@@ -240,15 +240,7 @@
       <section class="page" id="relatorios-page">
         <section class="panel">
           <div class="panel-head"><h3>Resumo mensal</h3><button id="exportMonthlyPdfBtn" class="btn btn-secondary">PDF mensal</button></div>
-          <div class="toolbar report-toolbar">
-            <input id="reportStartDate" type="date" />
-            <input id="reportEndDate" type="date" />
-            <button id="applyDateFilterBtn" class="btn btn-secondary">Filtrar datas</button>
-            <button id="clearDateFilterBtn" class="btn btn-ghost">Limpar filtro</button>
-            <button id="exportCsvBtn" class="btn btn-secondary">Exportar CSV</button>
-          </div>
           <div id="resumoMensal" class="report-grid"></div>
-          <div id="dateFilterInfo" class="filter-info"></div>
         </section>
       </section>
 
@@ -260,7 +252,7 @@
             <div class="setting-card"><span class="mini-label">Sincronização</span><strong>Firebase</strong><p>Ligação entre dispositivos ativa.</p></div>
             <div class="setting-card"><span class="mini-label">Backup</span><strong>Manual</strong><p>Exportação JSON disponível aqui.</p></div>
           </div>
-          <div class="config-tools"><div class="setting-card"><span class="mini-label">Utilidades</span><strong>CSV + Datas</strong><p>Filtros por datas e exportação para Excel/CSV ativos.</p></div></div><div class="config-actions">
+          <div class="config-actions">
             <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
           </div>
 

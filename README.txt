@@ -45,9 +45,6 @@ Ajustes clean Jorge Torneiro:
 - layout mais clean
 
 
-ZIP limpo 5.2.0:
-- login mantido intacto e funcional
-- fatura PDF profissional
-- histórico por cliente
-- filtros por datas
-- exportação CSV/Excel
+Correção 5.1.1:
+- revertido para base estável com login funcional
+- removidas alterações que estavam a bloquear o botão Entrar
