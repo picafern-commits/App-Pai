@@ -50,21 +50,7 @@ Correção 5.1.1:
 - removidas alterações que estavam a bloquear o botão Entrar
 
 
-Backup semanal Excel 5.3.0:
-- gera ficheiro .xlsx com Trabalhos, Clientes, Pagamentos e Resumo
-- faz verificação automática semanal depois do login
-- mantém botão manual 'Backup Excel' em Configurações
-- em alguns browsers pode pedir confirmação de download por segurança
-
-
-Backup Excel profissional 5.3.1:
-- nome de ficheiro mais profissional
-- folhas: Resumo Geral, Trabalhos, Clientes, Pagamentos
-- larguras de colunas ajustadas
-- metadados do ficheiro configurados
-
-
-Backup Excel profissional plus 5.3.2:
-- cabeçalho da empresa no Excel
-- totais destacados no Resumo Geral
-- folhas mais organizadas para leitura imediata
+Correção inputs 5.1.2:
+- removido código que estava a interferir com escrita nos campos
+- mantida a base estável com login funcional
+- versão segura para voltar a trabalhar sem bloqueios
