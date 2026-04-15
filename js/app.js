@@ -13,6 +13,7 @@ const USERS = [
 ];
 
 let currentRole = null, currentUsername = null;
+let reportDateFilter = { start: '', end: '' };
 let trabalhos = [], clientes = [], pagamentos = [];
 
 let firebaseApp = null;
@@ -218,9 +219,15 @@ function trabalhoActions(t){
   const invoice = isAdminLike() ? `<button class="small-btn" onclick="generateInvoice('${t.id}')">Fatura PDF</button>` : '';
   const pdf=`<button class="small-btn" onclick="pdfTrabalho('${t.id}')">PDF</button>`;
   return !isAdminLike() ? pdf : `${invoice}${pdf}<button class="small-btn" onclick="editTrabalho('${t.id}')">Editar</button><button class="small-btn danger" onclick="deleteTrabalho('${t.id}')">Apagar</button>`;
+}')">Fatura PDF</button>` : '';
+  const pdf=`<button class="small-btn" onclick="pdfTrabalho('${t.id}')">PDF</button>`;
+  return !isAdminLike() ? pdf : `${invoice}${pdf}<button class="small-btn" onclick="editTrabalho('${t.id}')">Editar</button><button class="small-btn danger" onclick="deleteTrabalho('${t.id}')">Apagar</button>`;
 }
 function clienteActions(c){
   const history=`<button class="small-btn" onclick="openClientHistory('${c.id}')">Histórico</button>`;
+  const pdf=`<button class="small-btn" onclick="pdfCliente('${c.id}')">PDF</button>`;
+  return !isAdminLike() ? `${history}${pdf}` : `${history}${pdf}<button class="small-btn" onclick="editCliente('${c.id}')">Editar</button><button class="small-btn danger" onclick="deleteCliente('${c.id}')">Apagar</button>`;
+}')">Histórico</button>`;
   const pdf=`<button class="small-btn" onclick="pdfCliente('${c.id}')">PDF</button>`;
   return !isAdminLike() ? `${history}${pdf}` : `${history}${pdf}<button class="small-btn" onclick="editCliente('${c.id}')">Editar</button><button class="small-btn danger" onclick="deleteCliente('${c.id}')">Apagar</button>`;
 }
@@ -248,15 +255,45 @@ function renderClientes(){
   $('clientesTableBody').innerHTML = rows.length ? rows.slice().reverse().map(c=>`<tr><td>${escapeHtml(c.nome||'-')}</td><td>${escapeHtml(c.telefone||'-')}</td><td>${escapeHtml(c.email||'-')}</td><td>${escapeHtml(c.nif||'-')}</td><td><div class="row-actions">${clienteActions(c)}</div></td></tr>`).join('') : '<tr><td colspan="5">Sem clientes registados.</td></tr>';
 }
 function renderPagamentos(){
-  const globalTerm=($('globalSearch')?.value||'').trim().toLowerCase();
-  const rows=pagamentos.filter(p=>{
-    const hay=[p.cliente,p.referencia,p.metodo,p.notas].join(' ').toLowerCase();
-    return !globalTerm || hay.includes(globalTerm)
+  const globalTerm = ($('globalSearch')?.value || '').trim().toLowerCase();
+  const rows = pagamentos.filter(p=>{
+    const hay = [p.cliente,p.referencia,p.metodo,p.notas].join(' ').toLowerCase();
+    return !globalTerm || hay.includes(globalTerm);
   });
+  $('pagamentosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(p=>`<tr><td>${escapeHtml(p.cliente||'-')}</td><td>${escapeHtml(p.referencia||'-')}</td><td>${euro(p.valor||0)}</td><td>${fmtDate(p.data)}</td><td>${escapeHtml(p.metodo||'-')}</td><td><div class="row-actions">${pagamentoActions(p)}</div></td></tr>`).join('') : '<tr><td colspan="6">Sem pagamentos registados.</td></tr>';
+});
   $('pagamentosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(p=>`<tr><td>${escapeHtml(p.cliente||'-')}</td><td>${escapeHtml(p.referencia||'-')}</td><td>${euro(p.valor||0)}</td><td>${fmtDate(p.data)}</td><td>${escapeHtml(p.metodo||'-')}</td><td><div class="row-actions">${pagamentoActions(p)}</div></td></tr>`).join('') : '<tr><td colspan="6">Sem pagamentos registados.</td></tr>';
 }
 function renderRelatorios(){
+  const filtered = trabalhos.filter(t=>{
+    const source = t.dataInicio || t.dataFim || '';
+    if(!reportDateFilter.start && !reportDateFilter.end) return true;
+    if(!source) return false;
+    if(reportDateFilter.start && source < reportDateFilter.start) return false;
+    if(reportDateFilter.end && source > reportDateFilter.end) return false;
+    return true;
+  });
+
   const monthMap={};
+  filtered.forEach(t=>{
+    const source=t.dataInicio||t.dataFim;
+    if(!source) return;
+    const d=new Date(source);
+    if(isNaN(d)) return;
+    const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    monthMap[key]=monthMap[key]||{trabalhos:0,faturado:0};
+    monthMap[key].trabalhos+=1;
+    monthMap[key].faturado+=Number(t.valor||0);
+  });
+  const entries=Object.entries(monthMap).sort((a,b)=>b[0].localeCompare(a[0]));
+  $('resumoMensal').innerHTML = entries.length ? entries.map(([m,d])=>`<div class="report-card"><div class="mini-label">${m}</div><div>Trabalhos</div><strong>${d.trabalhos}</strong><div class="recent-meta">Faturado: ${euro(d.faturado)}</div></div>`).join('') : '<div class="report-card">Sem dados para relatório.</div>';
+  const info = $('dateFilterInfo');
+  if(info){
+    info.textContent = reportDateFilter.start || reportDateFilter.end
+      ? `Filtro ativo: ${reportDateFilter.start || '...'} até ${reportDateFilter.end || '...'}`
+      : '';
+  }
+};
   trabalhos.forEach(t=>{const source=t.dataInicio||t.dataFim; if(!source) return; const d=new Date(source); if(isNaN(d)) return; const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; monthMap[key]=monthMap[key]||{trabalhos:0,faturado:0}; monthMap[key].trabalhos+=1; monthMap[key].faturado+=Number(t.valor||0);});
   const entries=Object.entries(monthMap).sort((a,b)=>b[0].localeCompare(a[0]));
   $('resumoMensal').innerHTML = entries.length ? entries.map(([m,d])=>`<div class="report-card"><div class="mini-label">${m}</div><div>Trabalhos</div><strong>${d.trabalhos}</strong><div class="recent-meta">Faturado: ${euro(d.faturado)}</div></div>`).join('') : '<div class="report-card">Sem dados para relatório.</div>';
@@ -437,26 +474,7 @@ window.openClientHistory = function(id){
   clientModal.classList.remove('hidden');
 };
 
-
 window.generateInvoice = function(id){
-  const t = trabalhos.find(x=>x.id===id);
-  if(!t) return;
-  const invoiceNumber = localStorage.getItem("invoice_counter") || 1;
-  localStorage.setItem("invoice_counter", Number(invoiceNumber)+1);
-
-  printHtml(`Fatura FT-${invoiceNumber}`, `
-    <h1 style="text-align:center;">Jorge Torneiro</h1>
-    <p style="text-align:center;">Serviços Mecânicos</p>
-    <hr/>
-    <p><strong>Fatura nº:</strong> FT-${invoiceNumber}</p>
-    <p><strong>Cliente:</strong> ${t.cliente}</p>
-    <p><strong>Serviço:</strong> ${t.tipoTrabalho}</p>
-    <p><strong>Data:</strong> ${t.dataInicio}</p>
-    <hr/>
-    <h2>Total: ${t.valor}€</h2>
-  `);
-}
- = function(id){
   const t = trabalhos.find(x=>x.id===id);
   if(!t) return;
   const invoiceNumber = `FT-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
@@ -484,29 +502,3 @@ $('exportMonthlyPdfBtn').addEventListener('click', ()=>{ const html=$('resumoMen
 loadLocal();
 autoBackupInvisible();
 initFirebaseSync();
-
-window.openClientPage = function(nome){
-  const relT = trabalhos.filter(t=>t.cliente===nome);
-  const total = relT.reduce((s,t)=>s+Number(t.valor||0),0);
-  alert(`Cliente: ${nome}\nTrabalhos: ${relT.length}\nTotal: ${total}€`);
-}
-
-window.filterByDate = function(){
-  const start = prompt("Data inicio (YYYY-MM-DD)");
-  const end = prompt("Data fim (YYYY-MM-DD)");
-  if(!start || !end) return;
-  const res = trabalhos.filter(t=> t.dataInicio >= start && t.dataInicio <= end);
-  alert("Resultados: " + res.length);
-}
-
-window.exportCSV = function(){
-  let csv = "Cliente,Valor,Data\n";
-  trabalhos.forEach(t=>{
-    csv += `${t.cliente},${t.valor},${t.dataInicio}\n`;
-  });
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "dados.csv";
-  a.click();
-}

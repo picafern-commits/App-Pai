@@ -43,3 +43,11 @@ Ajustes clean Jorge Torneiro:
 - backup JSON movido para Configurações
 - logos GE substituídos pelo logo da empresa
 - layout mais clean
+
+
+ZIP limpo 5.2.0:
+- login mantido intacto e funcional
+- fatura PDF profissional
+- histórico por cliente
+- filtros por datas
+- exportação CSV/Excel
