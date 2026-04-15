@@ -1,6 +1,6 @@
 import { firebaseConfig } from './firebase-config.js';
 
-const APP_VERSION = '3.0.0';
+const APP_VERSION = '3.0.1';
 const VERSION_KEY = 'ge_app_version_seen';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' };
 

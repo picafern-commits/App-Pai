@@ -1,26 +1,20 @@
-Gestão Empresa - Android com Google Login Firebase
+App-Pai online corrigida
 
-Esta versão já vem com:
-- login via Google
-- sincronização automática Firebase
-- backup automático invisível local
-- layout de login restaurado
-- PDF por trabalho, cliente, pagamento e relatório mensal
+Esta versão já vem corrigida para GitHub Pages:
+- index.html com script module
+- js/firebase-config.js no sítio certo
+- login Google por redirect
+- sincronização Firebase automática
+- backup local invisível
 
-Como publicar:
-1. Extrai o ZIP
-2. Publica no GitHub Pages
-3. Abre no Android
-4. Adiciona ao ecrã principal
+Muito importante no Firebase:
+1. Authentication > Método de login > Google = ativo
+2. Authentication > Settings > Authorized domains:
+   - picafern-commits.github.io
+3. Firestore Database criado
+4. coleção users criada quando fizeres login
 
-Setup Firebase:
-1. Cria projeto no Firebase
-2. Ativa Authentication > Google
-3. Cria Firestore Database
-4. Cola a config em js/firebase-config.js
-5. Cria coleção users e um documento com o UID do utilizador
-
-
-Correção aplicada:
-- login Google trocado de popup para redirect
-- mensagens de erro melhoradas para Firebase Auth
+No GitHub:
+- substitui os ficheiros antigos por estes
+- apaga firebase-config.js da raiz se existir
+- mantém só js/firebase-config.js
