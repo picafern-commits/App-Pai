@@ -35,3 +35,11 @@ Como funciona:
 - continua a guardar backup local invisível
 
 Se o Firebase falhar, a app continua a abrir em modo local.
+
+
+Ajustes clean Jorge Torneiro:
+- removido conteúdo extra do login
+- Gestão Empresa alterado para Jorge Torneiro
+- backup JSON movido para Configurações
+- logos GE substituídos pelo logo da empresa
+- layout mais clean

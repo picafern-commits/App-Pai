@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestão Empresa</title>
+  <title>Jorge Torneiro</title>
   <meta name="theme-color" content="#0b1020" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
@@ -19,34 +19,15 @@
   <div id="loginScreen" class="login-screen">
     <div class="login-card">
       <div class="login-brand">
-        <div class="premium-mark">GE</div>
-        <div class="login-copy">
-          <span class="eyebrow">Modo empresa premium</span>
-          <h1>Gestão Empresa</h1>
-          <p>Sistema profissional para controlo de trabalhos, clientes e pagamentos com um visual mais premium e limpo.</p>
-        </div>
-        <div class="brand-showcase">
-          <div class="showcase-card">
-            <span>Visual</span>
-            <strong>Premium</strong>
-          </div>
-          <div class="showcase-card">
-            <span>Base</span>
-            <strong>Estável</strong>
-          </div>
-          <div class="showcase-card">
-            <span>Uso</span>
-            <strong>PC + Android</strong>
-          </div>
+        <img class="company-logo-large" src="assets/logo-dark.png" alt="Logo Jorge Torneiro" />
+        <div class="login-copy clean-brand-copy">
+          <h1>Jorge Torneiro</h1>
         </div>
       </div>
 
       <div class="login-panel">
-        <div class="login-badge">GE</div>
-        <div class="login-copy">
-          <span class="eyebrow">Acesso</span>
+        <div class="login-copy login-only-title">
           <h1>Entrar</h1>
-          <p>Login interno estável com permissões separadas por utilizador.</p>
         </div>
 
         <form id="loginForm" class="login-form">
@@ -60,14 +41,6 @@
           </div>
           <button type="submit" class="btn btn-primary full">Entrar</button>
         </form>
-
-        <div class="login-help">
-          <div><strong>Ricardo:</strong> admin mestre</div>
-          <div><strong>Admin:</strong> gestão total</div>
-          <div><strong>User:</strong> só consulta</div>
-          <div id="syncLoginNote"><strong>Sync:</strong> a preparar Firebase…</div>
-        </div>
-        <div class="login-version">Versão <strong>5.0.0 Firebase Sync</strong></div>
         <div id="loginError" class="login-error"></div>
       </div>
     </div>
@@ -76,9 +49,9 @@
   <div id="appRoot" class="app-shell hidden">
     <aside class="sidebar">
       <div class="brand-card">
-        <div class="brand-mini-logo">GE</div>
+        <img class="sidebar-logo" src="assets/logo-icon-dark.png" alt="Logo Jorge Torneiro" />
         <div>
-          <h1>Gestão Empresa</h1>
+          <h1>Jorge Torneiro</h1>
           <p>App principal</p>
         </div>
       </div>
@@ -121,7 +94,7 @@
         </div>
         <div class="topbar-actions"><input id="globalSearch" class="global-search" type="text" placeholder="Pesquisar cliente, trabalho ou pagamento" />
           <button class="btn btn-ghost" data-go="relatorios">Resumo mensal</button>
-          <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
+          
         </div>
       </header>
 
@@ -273,19 +246,22 @@
 
       <section class="page" id="configuracoes-page">
         <section class="panel">
-          <div class="panel-head"><h3>Configurações e dados</h3></div>
-          <div class="settings-grid">
-            <div class="setting-card"><span class="mini-label">Login</span><strong>Interno</strong><p>Base estável e rápida para uso diário.</p></div>
-            <div class="setting-card"><span class="mini-label">Layout</span><strong>Premium</strong><p>Esquema visual inspirado na tua versão de referência.</p></div>
-            <div class="setting-card"><span class="mini-label">Backup</span><strong>JSON</strong><p>Exportação manual para não perder dados.</p></div>
+          <div class="panel-head"><h3>Configurações</h3></div>
+          <div class="settings-grid clean-settings-grid">
+            <div class="setting-card"><span class="mini-label">Login</span><strong>Interno</strong><p>Acesso simples e estável.</p></div>
+            <div class="setting-card"><span class="mini-label">Sincronização</span><strong>Firebase</strong><p>Ligação entre dispositivos ativa.</p></div>
+            <div class="setting-card"><span class="mini-label">Backup</span><strong>Manual</strong><p>Exportação JSON disponível aqui.</p></div>
+          </div>
+          <div class="config-actions">
+            <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
           </div>
 
           <div id="usersSection" class="panel users-master-panel">
             <div class="panel-head"><h3>Gestão de utilizadores</h3></div>
-            <div class="settings-grid">
+            <div class="settings-grid clean-settings-grid">
               <div class="setting-card"><span class="mini-label">Admin Mestre</span><strong>Ricardo</strong><p>Só o Ricardo consegue ver esta área.</p></div>
-              <div class="setting-card"><span class="mini-label">Credenciais</span><strong>Internas</strong><p>Sem dependência de Google ou Firebase Auth.</p></div>
-              <div class="setting-card"><span class="mini-label">Estado</span><strong>Premium</strong><p>Visual melhorado mantendo a app estável.</p></div>
+              <div class="setting-card"><span class="mini-label">Credenciais</span><strong>Internas</strong><p>Sem dependência de Google.</p></div>
+              <div class="setting-card"><span class="mini-label">Estado</span><strong>Ativo</strong><p>Base pronta para uso.</p></div>
             </div>
           </div>
         </section>
