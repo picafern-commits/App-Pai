@@ -356,7 +356,6 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   .bottom-btn.active{background:linear-gradient(135deg,rgba(111,92,255,.18),rgba(36,200,255,.12))}
 }
 
-
 .config-tools{
   display:grid;
   grid-template-columns:minmax(0,1fr);
