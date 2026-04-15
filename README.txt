@@ -34,3 +34,10 @@ Correção layout PC:
 - removido uso de imagens grandes no login e sidebar
 - hero e sidebar ajustados para desktop
 - conteúdo já não sobrepõe nem rebenta o layout no PC
+
+
+Upgrade 4.3.0:
+- faturas PDF por trabalho
+- backup automático invisível
+- permissões melhoradas por role
+- histórico completo por cliente

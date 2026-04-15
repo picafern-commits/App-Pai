@@ -118,7 +118,7 @@
             </div>
           </div>
         </div>
-        <div class="topbar-actions">
+        <div class="topbar-actions"><input id="globalSearch" class="global-search" type="text" placeholder="Pesquisar cliente, trabalho ou pagamento" />
           <button class="btn btn-ghost" data-go="relatorios">Resumo mensal</button>
           <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
         </div>
@@ -300,5 +300,16 @@
   </nav>
 
   <script type="module" src="js/app.js"></script>
+
+  <div id="clientModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="panel-head">
+        <h3 id="clientModalTitle">Ficha de cliente</h3>
+        <button id="closeClientModal" class="btn btn-secondary">Fechar</button>
+      </div>
+      <div id="clientModalContent" class="client-modal-content"></div>
+    </div>
+  </div>
+
 </body>
 </html>
