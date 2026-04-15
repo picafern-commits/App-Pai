@@ -6,6 +6,8 @@ import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'ht
 
 const APP_VERSION = '1.0.6';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' };
+const WEEKLY_BACKUP_KEY = 'ge_last_weekly_excel_backup';
+const WEEKLY_BACKUP_MS = 7 * 24 * 60 * 60 * 1000;
 const USERS = [
   { username: 'Ricardo', password: '2297', role: 'master_admin', permissions: ['all','users','billing','clients_history'] },
   { username: 'admin', password: 'admin123', role: 'admin', permissions: ['manage','billing','clients_history'] },
@@ -182,6 +184,7 @@ $('loginForm').addEventListener('submit', (e) => {
   $('appRoot').classList.remove('hidden');
   setRoleUI();
   renderAll();
+  checkWeeklyExcelBackup();
 });
 
 $('logoutBtn').addEventListener('click', () => {
@@ -460,6 +463,7 @@ window.pdfPagamento = function(id){ const p=pagamentos.find(x=>x.id===id); if(!p
 
 function exportBackup(){ const payload={ exportadoEm:new Date().toISOString(), appVersion:APP_VERSION, currentUsername, currentRole, trabalhos, clientes, pagamentos }; const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='gestao-empresa-backup.json'; a.click(); URL.revokeObjectURL(a.href); }
 $('exportBackupBtn').addEventListener('click', exportBackup);
+$('exportExcelBtn')?.addEventListener('click', ()=> exportExcelBackup('manual_excel'));
 $('exportMonthlyPdfBtn').addEventListener('click', ()=>{ const html=$('resumoMensal').innerHTML; printHtml('Relatório mensal', `<h1>Relatório Mensal</h1><div style="display:grid;gap:14px">${html}</div>`); });
 
 loadLocal();

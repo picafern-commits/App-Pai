@@ -252,7 +252,7 @@
             <div class="setting-card"><span class="mini-label">Sincronização</span><strong>Firebase</strong><p>Ligação entre dispositivos ativa.</p></div>
             <div class="setting-card"><span class="mini-label">Backup</span><strong>Manual</strong><p>Exportação JSON disponível aqui.</p></div>
           </div>
-          <div class="config-actions">
+          <div class="config-tools"><div class="setting-card"><span class="mini-label">Backup semanal</span><strong>Excel (.xlsx)</strong><p id="weeklyBackupStatus">Estado do backup semanal</p></div></div><div class="config-actions"><button class="btn btn-secondary" id="exportExcelBtn">Backup Excel</button>
             <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
           </div>
 
@@ -276,6 +276,7 @@
     <button class="bottom-btn" data-tab="pagamentos">Pagamentos</button>
   </nav>
 
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
   <script type="module" src="js/app.js"></script>
 
   <div id="clientModal" class="modal hidden">
