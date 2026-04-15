@@ -1,5 +1,5 @@
 
-const APP_VERSION = '4.0.0';
+const APP_VERSION = '1.0.5';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' };
 const USERS = [
   { username: 'Ricardo', password: '2297', role: 'master_admin' },
@@ -41,6 +41,7 @@ function setRoleUI(){
   $('roleLine').textContent = `Role: ${roleLabel}`;
   $('modeLine').textContent = 'Modo: Local';
   $('versionBadge').textContent = APP_VERSION;
+  const loginVersion = $('loginVersion'); if (loginVersion) loginVersion.textContent = APP_VERSION;
   $('currentUserName').textContent = currentUsername || 'Utilizador';
   const usersSection = $('usersSection');
   if(usersSection) usersSection.style.display = isMasterAdmin() ? 'block' : 'none';

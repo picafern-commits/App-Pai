@@ -23,3 +23,9 @@ Publicação:
 Ficheiro de versão:
 - version.json
 - quando quiseres forçar o PC a recarregar, muda o número da versão
+
+
+Atualização:
+- versão visível no login
+- banner visual quando houver nova versão
+- reload automático ao detetar update
