@@ -4,7 +4,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const APP_VERSION = '5.1.3';
+const APP_VERSION = '5.1.2';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' };
 const USERS = [
   { username: 'Ricardo', password: '2297', role: 'master_admin', permissions: ['all','users','billing','clients_history'] },
@@ -13,7 +13,6 @@ const USERS = [
 ];
 
 let currentRole = null, currentUsername = null;
-let pendingPaymentWorkId = null;
 let trabalhos = [], clientes = [], pagamentos = [];
 
 let firebaseApp = null;
@@ -216,16 +215,7 @@ function renderAlerts(){
   $('alertCards').innerHTML = `<div class="alert-card"><span class="mini-label">Pendentes</span><strong>${pend}</strong><p>Trabalhos ainda por arrancar ou fechar.</p></div><div class="alert-card"><span class="mini-label">Em andamento</span><strong>${andam}</strong><p>Serviços que precisam de acompanhamento.</p></div><div class="alert-card"><span class="mini-label">Sem data fim</span><strong>${semFim}</strong><p>Registos que convém completar.</p></div>`;
 }
 function trabalhoActions(t){
-  return `
-    <div class="row-actions">
-      <button class="btn-action primary" onclick="generateInvoice('${t.id}')">Fatura</button>
-      <button class="btn-action" onclick="pdfTrabalho('${t.id}')">PDF</button>
-      <button class="btn-action" onclick="editTrabalho('${t.id}')">Editar</button>
-      <button class="btn-action success" onclick="openMarkPaidModal('${t.id}')">Pago ✔</button>
-      <button class="btn-action danger" onclick="deleteTrabalho('${t.id}')">🗑</button>
-    </div>
-  `;
-}')">Fatura PDF</button>` : '';
+  const invoice = isAdminLike() ? `<button class="small-btn" onclick="generateInvoice('${t.id}')">Fatura PDF</button>` : '';
   const pdf=`<button class="small-btn" onclick="pdfTrabalho('${t.id}')">PDF</button>`;
   return !isAdminLike() ? pdf : `${invoice}${pdf}<button class="small-btn" onclick="editTrabalho('${t.id}')">Editar</button><button class="small-btn danger" onclick="deleteTrabalho('${t.id}')">Apagar</button>`;
 }
@@ -463,54 +453,6 @@ window.generateInvoice = function(id){
     <div class="card"><strong>Total:</strong> ${euro(t.valor||0)}</div>
   `);
 };
-
-
-const paymentModal = $('paymentConfirmModal');
-$('closePaymentModal')?.addEventListener('click', ()=> { pendingPaymentWorkId = null; paymentModal?.classList.add('hidden'); });
-$('cancelMarkPaidBtn')?.addEventListener('click', ()=> { pendingPaymentWorkId = null; paymentModal?.classList.add('hidden'); });
-paymentModal?.addEventListener('click', (e)=>{ if(e.target === paymentModal){ pendingPaymentWorkId = null; paymentModal.classList.add('hidden'); } });
-
-window.openMarkPaidModal = function(id){
-  const t = trabalhos.find(x => x.id === id);
-  if(!t || !paymentModal) return;
-  pendingPaymentWorkId = id;
-  $('paymentModalJobTitle').textContent = t.tipoTrabalho || 'Trabalho';
-  $('paymentModalJobClient').textContent = `${t.cliente || '-'} • ${euro(t.valor || 0)}`;
-  $('paymentMethodSelect').value = 'Dinheiro';
-  $('paymentMethodNotes').value = '';
-  paymentModal.classList.remove('hidden');
-};
-
-function markAsPaidConfirmed(){
-  if(!pendingPaymentWorkId) return;
-  const t = trabalhos.find(x => x.id === pendingPaymentWorkId);
-  if(!t) return;
-  const metodo = $('paymentMethodSelect').value || 'Dinheiro';
-  const notas = $('paymentMethodNotes').value.trim();
-
-  t.estado = 'Pago';
-  if(!t.dataFim){
-    const hoje = new Date();
-    t.dataFim = hoje.toISOString().split('T')[0];
-  }
-
-  pagamentos.push({
-    id: 'local_' + Date.now().toString(36),
-    cliente: t.cliente || '',
-    referencia: t.tipoTrabalho || '',
-    valor: Number(t.valor || 0),
-    data: new Date().toISOString().split('T')[0],
-    metodo,
-    notas: notas || 'Gerado ao marcar trabalho como pago'
-  });
-
-  saveLocal();
-  renderAll();
-  pendingPaymentWorkId = null;
-  paymentModal?.classList.add('hidden');
-}
-
-$('confirmMarkPaidBtn')?.addEventListener('click', markAsPaidConfirmed);
 
 window.pdfTrabalho = function(id){ const t=trabalhos.find(x=>x.id===id); if(!t) return; printHtml(`Trabalho ${t.cliente}`, `<h1>Ficha de Trabalho</h1><div class='meta'>${escapeHtml(t.cliente||'-')} • ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(t.cliente||'-')}</div><div class='card'><strong>Contacto:</strong> ${escapeHtml(t.contacto||'-')}</div><div class='card'><strong>Tipo de trabalho:</strong> ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(t.valor||0)}</div><div class='card'><strong>Início:</strong> ${fmtDate(t.dataInicio)}<br><strong>Fim:</strong> ${fmtDate(t.dataFim)}</div><div class='card'><strong>Estado:</strong> ${escapeHtml(t.estado||'-')}</div><div class='card'><strong>Descrição:</strong><br>${escapeHtml(t.descricao||'-')}</div>`); };
 window.pdfCliente = function(id){ const c=clientes.find(x=>x.id===id); if(!c) return; const trabalhosCliente=trabalhos.filter(t=>(t.cliente||'').trim().toLowerCase()===(c.nome||'').trim().toLowerCase()); const linhas=trabalhosCliente.map(t=>`<tr><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${fmtDate(t.dataInicio)}</td><td>${euro(t.valor||0)}</td></tr>`).join(''); printHtml(`Cliente ${c.nome}`, `<h1>Ficha de Cliente</h1><div class='meta'>${escapeHtml(c.nome||'-')}</div><div class='card'><strong>Telefone:</strong> ${escapeHtml(c.telefone||'-')}</div><div class='card'><strong>Email:</strong> ${escapeHtml(c.email||'-')}</div><div class='card'><strong>NIF:</strong> ${escapeHtml(c.nif||'-')}</div><div class='card'><strong>Morada:</strong><br>${escapeHtml(c.morada||'-')}</div><h2>Trabalhos associados</h2><table><thead><tr><th>Tipo</th><th>Data</th><th>Valor</th></tr></thead><tbody>${linhas || '<tr><td colspan="3">Sem trabalhos associados</td></tr>'}</tbody></table>`); };
