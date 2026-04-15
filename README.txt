@@ -1,31 +1,31 @@
-App principal Android / Web
+App Pai final com login interno
 
-Esta é a versão principal da app.
-Tudo deve ser atualizado aqui primeiro.
-
-Fluxo recomendado:
-1. Alteras esta versão
-2. Publicas no GitHub Pages
-3. O tablet/Android usa esta versão principal
-4. O PC abre esta mesma versão online
-
-Login interno:
+Credenciais:
 - Ricardo / 2297
 - admin / admin123
 - user / user123
 
-Publicação:
-- coloca estes ficheiros no repositório App-Pai
+Inclui:
+- login interno estável
+- dashboard
+- trabalhos
+- clientes
+- pagamentos
+- relatórios
+- PDF
+- ícones
+- manifest
+- backup JSON
+
+Para publicar:
+- apaga os ficheiros antigos do repo
+- envia estes ficheiros
 - faz commit
-- espera o GitHub Pages atualizar
-- abre no Android e adiciona ao ecrã principal
-
-Ficheiro de versão:
-- version.json
-- quando quiseres forçar o PC a recarregar, muda o número da versão
+- abre o site e faz Ctrl + F5
 
 
-Atualização:
-- versão visível no login
-- banner visual quando houver nova versão
-- reload automático ao detetar update
+Refresh visual clean:
+- paleta nova mais clean
+- botões mais discretos
+- estados com cores suaves
+- layout mais leve e profissional
