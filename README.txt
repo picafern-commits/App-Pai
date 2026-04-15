@@ -1,20 +1,24 @@
-App-Pai online corrigida
+App Pai final com login interno
 
-Esta versão já vem corrigida para GitHub Pages:
-- index.html com script module
-- js/firebase-config.js no sítio certo
-- login Google por redirect
-- sincronização Firebase automática
-- backup local invisível
+Credenciais:
+- Ricardo / 2297
+- admin / admin123
+- user / user123
 
-Muito importante no Firebase:
-1. Authentication > Método de login > Google = ativo
-2. Authentication > Settings > Authorized domains:
-   - picafern-commits.github.io
-3. Firestore Database criado
-4. coleção users criada quando fizeres login
+Inclui:
+- login interno estável
+- dashboard
+- trabalhos
+- clientes
+- pagamentos
+- relatórios
+- PDF
+- ícones
+- manifest
+- backup JSON
 
-No GitHub:
-- substitui os ficheiros antigos por estes
-- apaga firebase-config.js da raiz se existir
-- mantém só js/firebase-config.js
+Para publicar:
+- apaga os ficheiros antigos do repo
+- envia estes ficheiros
+- faz commit
+- abre o site e faz Ctrl + F5

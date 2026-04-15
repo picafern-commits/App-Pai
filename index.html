@@ -18,15 +18,23 @@
       <div class="login-copy">
         <div class="eyebrow">Modo empresa</div>
         <h1>Gestão Empresa</h1>
-        <p>Layout do login restaurado. Entra com a tua conta Google autorizada no Firebase.</p>
+        <p>Login interno estável, rápido e sem dependência do Google.</p>
       </div>
 
-      <div class="login-form">
-        <button id="googleLoginBtn" class="btn btn-primary full">Entrar com Google</button>
-      </div>
+      <form id="loginForm" class="login-form">
+        <div class="field">
+          <label>Utilizador</label>
+          <input id="loginUsername" type="text" placeholder="Ricardo, admin ou user" required />
+        </div>
+        <div class="field">
+          <label>Palavra-passe</label>
+          <input id="loginPassword" type="password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-primary full">Entrar</button>
+      </form>
 
       <div class="login-help">
-        Ativa Google Sign-In no Firebase, cola a config em <code>js/firebase-config.js</code> e cria o teu perfil na coleção <code>users</code>.
+        App pronta para Android/Web e PC online. O Firebase fica opcional só para dados numa fase seguinte.
       </div>
       <div id="loginError" class="login-error"></div>
     </div>
@@ -225,17 +233,17 @@
         <section class="panel">
           <div class="panel-head"><h3>Configurações e dados</h3></div>
           <div class="settings-grid">
-            <div class="setting-card"><span class="mini-label">Login</span><strong>Google Sign-In</strong><p>Login real via Firebase Authentication com Google.</p></div>
-            <div class="setting-card"><span class="mini-label">Sincronização</span><strong>Automática</strong><p>A app tenta ligar ao Firebase automaticamente ao arrancar.</p></div>
-            <div class="setting-card"><span class="mini-label">Backup invisível</span><strong>Ativo</strong><p>Mesmo com Firebase, a app mantém cópia local dos dados como segurança.</p></div>
+            <div class="setting-card"><span class="mini-label">Login</span><strong>Interno</strong><p>Sem Google e sem dependência externa.</p></div>
+            <div class="setting-card"><span class="mini-label">Sincronização</span><strong>Local estável</strong><p>Base pronta para futura ligação ao Firebase só para dados.</p></div>
+            <div class="setting-card"><span class="mini-label">Backup invisível</span><strong>Ativo</strong><p>Os dados ficam no browser e tens exportação JSON.</p></div>
           </div>
 
           <div id="usersSection" class="panel users-master-panel">
             <div class="panel-head"><h3>Gestão de utilizadores</h3></div>
             <div class="settings-grid">
               <div class="setting-card"><span class="mini-label">Admin Mestre</span><strong>Ricardo</strong><p>Só o Ricardo consegue ver esta área.</p></div>
-              <div class="setting-card"><span class="mini-label">Fonte do role</span><strong>Firestore / users</strong><p>A role do utilizador vem da coleção <code>users</code>.</p></div>
-              <div class="setting-card"><span class="mini-label">Auth</span><strong>Firebase Google</strong><p>Login gerido pelo Firebase Authentication.</p></div>
+              <div class="setting-card"><span class="mini-label">Credenciais</span><strong>Internas</strong><p>Sem dependência de Google ou Firebase Auth.</p></div>
+              <div class="setting-card"><span class="mini-label">Estado</span><strong>Estável</strong><p>Preparado para uso direto.</p></div>
             </div>
           </div>
         </section>
