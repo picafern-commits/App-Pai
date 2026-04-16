@@ -217,10 +217,10 @@ function renderTrabalhos(){
   const globalTerm=($('globalSearch')?.value||'').trim().toLowerCase();
   const estado=$('filterEstado').value;
   const rows=trabalhos.filter(t=>{
-    const hay=[t.cliente,t.tipoTrabalho,t.contacto,t.descricao,t.estado].join(' ').toLowerCase();
+    const hay=[t.cliente,t.tipoTrabalho,t.contacto,t.descricao,t.estado,t.invoiceType].join(' ').toLowerCase();
     return (!term||hay.includes(term))&&(!globalTerm||hay.includes(globalTerm))&&(!estado||t.estado===estado)
   });
-  $('trabalhosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(t=>`<tr><td>${escapeHtml(t.cliente||'-')}</td><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valor||0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></td><td><div class="row-actions">${trabalhoActions(t)}</div></td></tr>`).join('') : '<tr><td colspan="7">Sem resultados.</td></tr>';
+  $('trabalhosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(t=>`<tr><td>${escapeHtml(t.cliente||'-')}</td><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valor||0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></td><td>${escapeHtml(t.invoiceType||'Com Fatura')}</td><td><div class="row-actions">${trabalhoActions(t)}</div></td></tr>`).join('') : '<tr><td colspan="8">Sem resultados.</td></tr>';
 }
 function renderClientes(){
   const term=$('searchClientes').value.trim().toLowerCase();
@@ -511,7 +511,7 @@ function markAsPaid(id){
     t.dataFim = new Date().toISOString().split('T')[0];
   }
 
-  pagamentos.push({
+  const pagamento = {
     id: genId('pay'),
     cliente: t.cliente || '',
     referencia: t.tipoTrabalho || '',
@@ -521,8 +521,13 @@ function markAsPaid(id){
     metodo: 'Manual',
     invoiceType: t.invoiceType || 'Com Fatura',
     notas: 'Gerado ao marcar como pago'
-  });
+  };
 
+  pagamentos.push(pagamento);
   saveLocal();
   renderAll();
+
+  // Sync remoto sem mexer no login
+  upsertRemote('trabalhos', t).catch(err => console.error(err));
+  upsertRemote('pagamentos', pagamento).catch(err => console.error(err));
 }

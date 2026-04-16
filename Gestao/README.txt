@@ -89,3 +89,9 @@ Correções finais 1.0.6:
 - removido código de pagamentos inexistente que partia botões
 - botão Pago funcional
 - guardar cliente estabilizado
+
+
+Fix 1.0.6:
+- botão Pago no histórico
+- ao marcar Pago cria registo em Pagamentos
+- histórico mostra coluna Faturação
