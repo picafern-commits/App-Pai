@@ -1265,141 +1265,9 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   }
 }
 
-
-/* ===== MOBILE SIDEBAR SAFE 1.0.6 ===== */
-.mobile-menu-btn,
-.mobile-sidebar-overlay,
-.mobile-sidebar-drawer{display:none}
-@media (max-width: 900px){
-  .mobile-menu-btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:42px;
-    height:42px;
-    border:none;
-    border-radius:14px;
-    background:rgba(255,255,255,.06);
-    color:#eef3ff;
-    font-size:22px;
-    cursor:pointer;
-    flex:0 0 auto;
-    margin-right:8px;
-  }
-  .mobile-sidebar-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(4,8,18,.62);
-    z-index:150;
-    display:block;
-  }
-  .mobile-sidebar-overlay.hidden{display:none !important}
-  .mobile-sidebar-drawer{
-    position:fixed;
-    top:0;
-    left:0;
-    bottom:0;
-    width:min(82vw,320px);
-    padding:14px;
-    z-index:160;
-    background:linear-gradient(180deg, rgba(10,14,24,.98), rgba(10,14,24,.95));
-    border-right:1px solid rgba(255,255,255,.08);
-    box-shadow:0 20px 50px rgba(0,0,0,.35);
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-  }
-  .mobile-sidebar-drawer.hidden{display:none !important}
-  .mobile-sidebar-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-  }
-  .mobile-sidebar-brand{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    min-width:0;
-  }
-  .mobile-sidebar-brand img{
-    width:44px;
-    height:44px;
-    border-radius:14px;
-    object-fit:cover;
-    background:rgba(255,255,255,.05);
-  }
-  .mobile-sidebar-brand strong{
-    display:block;
-    font-size:16px;
-    color:#eef3ff;
-  }
-  .mobile-sidebar-brand span{
-    display:block;
-    font-size:12px;
-    color:#97a5c6;
-  }
-  .mobile-sidebar-close{
-    width:40px;
-    height:40px;
-    border:none;
-    border-radius:12px;
-    background:rgba(255,255,255,.06);
-    color:#eef3ff;
-    cursor:pointer;
-    font-size:18px;
-  }
-  .mobile-sidebar-nav{
-    display:grid;
-    gap:10px;
-    overflow:auto;
-    padding-bottom:10px;
-  }
-  .mobile-side-btn{
-    border:none;
-    text-align:left;
-    border-radius:16px;
-    padding:14px;
-    font-weight:700;
-    font-size:15px;
-    color:#eef3ff;
-    background:rgba(255,255,255,.04);
-    cursor:pointer;
-  }
-  .mobile-side-btn.active{
-    background:linear-gradient(135deg,rgba(111,92,255,.26),rgba(36,200,255,.16));
-    border:1px solid rgba(255,255,255,.08);
-  }
-  .bottom-nav{display:none !important}
-}
-
 </style>
 </head>
-<body>
-
-<div id="mobileSidebarOverlay" class="mobile-sidebar-overlay hidden"></div>
-<aside id="mobileSidebarDrawer" class="mobile-sidebar-drawer hidden">
-  <div class="mobile-sidebar-head">
-    <div class="mobile-sidebar-brand">
-      <img src="logo-icon-dark.png" alt="logo" />
-      <div>
-        <strong>Jorge Torneiro</strong>
-        <span>Menu mobile</span>
-      </div>
-    </div>
-    <button id="mobileSidebarClose" class="mobile-sidebar-close" type="button">✕</button>
-  </div>
-  <nav class="mobile-sidebar-nav">
-    <button class="mobile-side-btn active" data-tab="dashboard" type="button">Dashboard</button>
-    <button class="mobile-side-btn" data-tab="adicionar" type="button">Adicionar Trabalho</button>
-    <button class="mobile-side-btn" data-tab="trabalhos" type="button">Histórico Trabalhos</button>
-    <button class="mobile-side-btn" data-tab="clientes" type="button">Clientes</button>
-    <button class="mobile-side-btn" data-tab="pagamentos" type="button">Pagamentos</button>
-    <button class="mobile-side-btn" data-tab="relatorios" type="button">Relatórios</button>
-    <button class="mobile-side-btn" data-tab="configuracoes" type="button">Configurações</button>
-  </nav>
-</aside>
-<a class="env-switch-btn" href="../Gestao/">Ir para PRODUÇÃO</a><div class="env-badge test">TESTE</div>
+<body><a class="env-switch-btn" href="../Gestao/">Ir para PRODUÇÃO</a><div class="env-badge test">TESTE</div>
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
 
@@ -1468,7 +1336,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 
     <main class="main">
       <header class="topbar">
-        <div class="topbar-left"><button id="mobileMenuBtn" class="mobile-menu-btn" type="button">☰</button>
+        <div class="topbar-left">
           <div>
             <h2 id="pageTitle">Dashboard</h2>
             <div class="subline">
@@ -2311,68 +2179,7 @@ function printHtml(title, bodyHtml){ const win=window.open('', '_blank'); if(!wi
   }
 }
 
-</style></head><body>${bodyHtml}
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  const menuBtn = document.getElementById('mobileMenuBtn');
-  const drawer = document.getElementById('mobileSidebarDrawer');
-  const overlay = document.getElementById('mobileSidebarOverlay');
-  const closeBtn = document.getElementById('mobileSidebarClose');
-  const sideBtns = document.querySelectorAll('.mobile-side-btn');
-
-  function openDrawer(){
-    if(drawer) drawer.classList.remove('hidden');
-    if(overlay) overlay.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeDrawer(){
-    if(drawer) drawer.classList.add('hidden');
-    if(overlay) overlay.classList.add('hidden');
-    document.body.style.overflow = '';
-  }
-  function activateMobileButton(tab){
-    sideBtns.forEach(function(btn){
-      btn.classList.toggle('active', btn.dataset.tab === tab);
-    });
-  }
-
-  menuBtn && menuBtn.addEventListener('click', openDrawer);
-  closeBtn && closeBtn.addEventListener('click', closeDrawer);
-  overlay && overlay.addEventListener('click', closeDrawer);
-
-  sideBtns.forEach(function(btn){
-    btn.addEventListener('click', function(){
-      const tab = btn.dataset.tab;
-      if(typeof window.switchTab === 'function'){
-        window.switchTab(tab);
-      }else{
-        document.querySelectorAll('.nav-btn').forEach(function(nb){
-          nb.classList.toggle('active', nb.dataset.tab === tab);
-        });
-        document.querySelectorAll('.page').forEach(function(p){
-          p.classList.toggle('active', p.id === tab + '-page');
-        });
-      }
-      activateMobileButton(tab);
-      closeDrawer();
-    });
-  });
-
-  document.addEventListener('click', function(e){
-    const activeNav = e.target.closest('.nav-btn, .bottom-btn');
-    if(activeNav){
-      const tab = activeNav.dataset.tab;
-      if(tab) activateMobileButton(tab);
-    }
-  });
-
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape') closeDrawer();
-  });
-});
-</script>
-
-</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
+</style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 function renderDashboard(){
   const totalTrabalhos = trabalhos.length;
