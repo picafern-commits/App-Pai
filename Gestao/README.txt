@@ -95,3 +95,7 @@ Fix 1.0.6:
 - botão Pago no histórico
 - ao marcar Pago cria registo em Pagamentos
 - histórico mostra coluna Faturação
+
+
+Fix 1.0.6:
+- markAsPaid passado para window.markAsPaid para o botão inline funcionar dentro de app.js module

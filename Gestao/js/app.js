@@ -501,7 +501,7 @@ window.startApp = function(role, username){
 };
 
 
-function markAsPaid(id){
+window.markAsPaid = function(id){
   const t = trabalhos.find(x => x.id === id);
   if(!t) return;
   if(!confirm('Marcar este trabalho como pago?')) return;
@@ -527,7 +527,6 @@ function markAsPaid(id){
   saveLocal();
   renderAll();
 
-  // Sync remoto sem mexer no login
   upsertRemote('trabalhos', t).catch(err => console.error(err));
   upsertRemote('pagamentos', pagamento).catch(err => console.error(err));
 }
