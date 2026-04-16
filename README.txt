@@ -69,3 +69,11 @@ Ajuste clean 5.1.5:
 - página Pagamentos simplificada e limpa
 - removido formulário manual de pagamento
 - pagamentos agora aparecem por mês + lista dos já registados
+
+
+Correção visual e funcional 5.1.6:
+- botões dos trabalhos corrigidos e mais clean
+- removido PDF da lista de trabalhos
+- Fatura só aparece quando o trabalho é Com Fatura
+- botão Pago funciona e regista pagamento
+- página Pagamentos limpa, sem ações desnecessárias

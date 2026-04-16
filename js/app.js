@@ -216,12 +216,13 @@ function renderAlerts(){
   $('alertCards').innerHTML = `<div class="alert-card"><span class="mini-label">Pendentes</span><strong>${pend}</strong><p>Trabalhos ainda por arrancar ou fechar.</p></div><div class="alert-card"><span class="mini-label">Em andamento</span><strong>${andam}</strong><p>Serviços que precisam de acompanhamento.</p></div><div class="alert-card"><span class="mini-label">Sem data fim</span><strong>${semFim}</strong><p>Registos que convém completar.</p></div>`;
 }
 function trabalhoActions(t){
+  const showInvoice = (t.invoiceType || 'Com Fatura') === 'Com Fatura';
   return `
     <div class="row-actions">
-      <button class="btn-action primary" onclick="generateInvoice('${t.id}')">Fatura</button>
+      ${showInvoice ? `<button class="btn-action primary" onclick="generateInvoice('${t.id}')">Fatura</button>` : ''}
       <button class="btn-action" onclick="editTrabalho('${t.id}')">Editar</button>
       <button class="btn-action success" onclick="openMarkPaidModal('${t.id}')">Pago ✔</button>
-      <button class="btn-action danger" onclick="deleteTrabalho('${t.id}')">🗑</button>
+      <button class="btn-action danger icon" onclick="deleteTrabalho('${t.id}')">🗑</button>
     </div>
   `;
 }
@@ -231,8 +232,7 @@ function clienteActions(c){
   return !isAdminLike() ? `${history}${pdf}` : `${history}${pdf}<button class="small-btn" onclick="editCliente('${c.id}')">Editar</button><button class="small-btn danger" onclick="deleteCliente('${c.id}')">Apagar</button>`;
 }
 function pagamentoActions(p){
-  const pdf=`<button class="small-btn" onclick="pdfPagamento('${p.id}')">PDF</button>`;
-  return !isAdminLike() ? pdf : `${pdf}<button class="small-btn" onclick="editPagamento('${p.id}')">Editar</button><button class="small-btn danger" onclick="deletePagamento('${p.id}')">Apagar</button>`;
+  return ``;
 }
 function renderTrabalhos(){
   const term=$('searchTrabalhos').value.trim().toLowerCase();
@@ -255,7 +255,11 @@ function renderClientes(){
 }
 function renderPagamentos(){
   const rows = pagamentos.slice().reverse();
-  $('pagamentosTableBody').innerHTML = rows.length ? rows.map(p=>`<tr><td>${escapeHtml(p.cliente||'-')}</td><td>${escapeHtml(p.referencia||'-')}</td><td>${euro(p.valor||0)}</td><td>${fmtDate(p.data)}</td><td>${escapeHtml(p.metodo||'-')}</td><td>${escapeHtml(p.invoiceType||'-')}</td><td><div class="row-actions">${pagamentoActions(p)}</div></td></tr>`).join('') : '<tr><td colspan="7">Sem pagamentos registados.</td></tr>';
+  $('pagamentosTableBody').innerHTML = rows.length ? rows.map(p=>{
+    const tipo = p.invoiceType || (String(p.notas||'').includes('Sem Fatura') ? 'Sem Fatura' : 'Com Fatura');
+    const cls = tipo === 'Sem Fatura' ? 'sem' : 'com';
+    return `<tr><td>${escapeHtml(p.cliente||'-')}</td><td>${escapeHtml(p.referencia||'-')}</td><td>${euro(p.valor||0)}</td><td>${fmtDate(p.data)}</td><td>${escapeHtml(p.metodo||'-')}</td><td><span class="payment-fatura-badge ${cls}">${escapeHtml(tipo)}</span></td></tr>`;
+  }).join('') : '<tr><td colspan="6">Sem pagamentos registados.</td></tr>';
 
   const monthMap = {};
   pagamentos.forEach(p=>{
@@ -476,62 +480,6 @@ window.generateInvoice = function(id){
 };
 
 
-const paymentModal = $('paymentConfirmModal');
-$('closePaymentModal')?.addEventListener('click', ()=> { pendingPaymentWorkId = null; paymentModal?.classList.add('hidden'); });
-$('cancelMarkPaidBtn')?.addEventListener('click', ()=> { pendingPaymentWorkId = null; paymentModal?.classList.add('hidden'); });
-paymentModal?.addEventListener('click', (e)=>{ if(e.target === paymentModal){ pendingPaymentWorkId = null; paymentModal.classList.add('hidden'); } });
-
-window.openMarkPaidModal = function(id){
-  const t = trabalhos.find(x => x.id === id);
-  if(!t || !paymentModal) return;
-  pendingPaymentWorkId = id;
-  $('paymentModalJobTitle').textContent = t.tipoTrabalho || 'Trabalho';
-  $('paymentModalJobClient').textContent = `${t.cliente || '-'} • ${euro(t.valor || 0)}`;
-  $('paymentMethodSelect').value = 'Dinheiro';
-  $('paymentInvoiceTypeSelect').value = t.invoiceType || 'Com Fatura';
-  $('paymentMethodNotes').value = '';
-  paymentModal.classList.remove('hidden');
-};
-
-function markAsPaidConfirmed(){
-  if(!pendingPaymentWorkId) return;
-  const t = trabalhos.find(x => x.id === pendingPaymentWorkId);
-  if(!t) return;
-
-  const metodo = $('paymentMethodSelect').value || 'Dinheiro';
-  const tipoFatura = $('paymentInvoiceTypeSelect').value || 'Com Fatura';
-  t.invoiceType = tipoFatura;
-  const invoiceType: tipoFatura,
-    notasExtra = $('paymentMethodNotes').value.trim();
-
-  t.estado = 'Pago';
-  if(!t.dataFim){
-    const hoje = new Date();
-    t.dataFim = hoje.toISOString().split('T')[0];
-  }
-
-  const invoiceType: tipoFatura,
-    notas = [tipoFatura, invoiceType: tipoFatura,
-    notasExtra || 'Pagamento registado manualmente'].join(' • ');
-
-  pagamentos.push({
-    id: 'local_' + Date.now().toString(36),
-    cliente: t.cliente || '',
-    referencia: t.tipoTrabalho || '',
-    valor: Number(t.valor || 0),
-    data: new Date().toISOString().split('T')[0],
-    metodo,
-    invoiceType: tipoFatura,
-    notas
-  });
-
-  saveLocal();
-  renderAll();
-  pendingPaymentWorkId = null;
-  paymentModal?.classList.add('hidden');
-}
-
-$('confirmMarkPaidBtn')?.addEventListener('click', markAsPaidConfirmed);
 
 window.pdfTrabalho = function(id){ const t=trabalhos.find(x=>x.id===id); if(!t) return; printHtml(`Trabalho ${t.cliente}`, `<h1>Ficha de Trabalho</h1><div class='meta'>${escapeHtml(t.cliente||'-')} • ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(t.cliente||'-')}</div><div class='card'><strong>Contacto:</strong> ${escapeHtml(t.contacto||'-')}</div><div class='card'><strong>Tipo de trabalho:</strong> ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(t.valor||0)}</div><div class='card'><strong>Início:</strong> ${fmtDate(t.dataInicio)}<br><strong>Fim:</strong> ${fmtDate(t.dataFim)}</div><div class='card'><strong>Estado:</strong> ${escapeHtml(t.estado||'-')}</div><div class='card'><strong>Descrição:</strong><br>${escapeHtml(t.descricao||'-')}</div>`); };
 window.pdfCliente = function(id){ const c=clientes.find(x=>x.id===id); if(!c) return; const trabalhosCliente=trabalhos.filter(t=>(t.cliente||'').trim().toLowerCase()===(c.nome||'').trim().toLowerCase()); const linhas=trabalhosCliente.map(t=>`<tr><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${fmtDate(t.dataInicio)}</td><td>${euro(t.valor||0)}</td></tr>`).join(''); printHtml(`Cliente ${c.nome}`, `<h1>Ficha de Cliente</h1><div class='meta'>${escapeHtml(c.nome||'-')}</div><div class='card'><strong>Telefone:</strong> ${escapeHtml(c.telefone||'-')}</div><div class='card'><strong>Email:</strong> ${escapeHtml(c.email||'-')}</div><div class='card'><strong>NIF:</strong> ${escapeHtml(c.nif||'-')}</div><div class='card'><strong>Morada:</strong><br>${escapeHtml(c.morada||'-')}</div><h2>Trabalhos associados</h2><table><thead><tr><th>Tipo</th><th>Data</th><th>Valor</th></tr></thead><tbody>${linhas || '<tr><td colspan="3">Sem trabalhos associados</td></tr>'}</tbody></table>`); };
