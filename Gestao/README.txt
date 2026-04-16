@@ -136,3 +136,8 @@ Sistema de utilizadores 1.0.6:
 - editar/apagar utilizadores na configuração
 - login usa localStorage app_users com fallback para defaults
 - gestão disponível para master admin
+
+
+Fix Ricardo master 1.0.6:
+- força o utilizador ricardo a master_admin mesmo que o app_users antigo diga user
+- atualiza automaticamente o localStorage app_users
