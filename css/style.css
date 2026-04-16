@@ -401,3 +401,13 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   color:#ff6b6b;
 }
 .btn-action.danger:hover{background:rgba(255,80,80,.25)}
+
+
+.single-panel-grid{
+  grid-template-columns:1fr !important;
+}
+.select-helper{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:6px;
+}

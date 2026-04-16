@@ -219,7 +219,6 @@ function trabalhoActions(t){
   return `
     <div class="row-actions">
       <button class="btn-action primary" onclick="generateInvoice('${t.id}')">Fatura</button>
-      <button class="btn-action" onclick="pdfTrabalho('${t.id}')">PDF</button>
       <button class="btn-action" onclick="editTrabalho('${t.id}')">Editar</button>
       <button class="btn-action success" onclick="openMarkPaidModal('${t.id}')">Pago ✔</button>
       <button class="btn-action danger" onclick="deleteTrabalho('${t.id}')">🗑</button>
@@ -255,11 +254,25 @@ function renderClientes(){
   $('clientesTableBody').innerHTML = rows.length ? rows.slice().reverse().map(c=>`<tr><td>${escapeHtml(c.nome||'-')}</td><td>${escapeHtml(c.telefone||'-')}</td><td>${escapeHtml(c.email||'-')}</td><td>${escapeHtml(c.nif||'-')}</td><td><div class="row-actions">${clienteActions(c)}</div></td></tr>`).join('') : '<tr><td colspan="5">Sem clientes registados.</td></tr>';
 }
 function renderPagamentos(){
-  const globalTerm=($('globalSearch')?.value||'').trim().toLowerCase();
-  const rows=pagamentos.filter(p=>{
-    const hay=[p.cliente,p.referencia,p.metodo,p.notas].join(' ').toLowerCase();
-    return !globalTerm || hay.includes(globalTerm)
+  const rows = pagamentos.slice().reverse();
+  $('pagamentosTableBody').innerHTML = rows.length ? rows.map(p=>`<tr><td>${escapeHtml(p.cliente||'-')}</td><td>${escapeHtml(p.referencia||'-')}</td><td>${euro(p.valor||0)}</td><td>${fmtDate(p.data)}</td><td>${escapeHtml(p.metodo||'-')}</td><td>${escapeHtml(p.invoiceType||'-')}</td><td><div class="row-actions">${pagamentoActions(p)}</div></td></tr>`).join('') : '<tr><td colspan="7">Sem pagamentos registados.</td></tr>';
+
+  const monthMap = {};
+  pagamentos.forEach(p=>{
+    if(!p.data) return;
+    const d = new Date(p.data);
+    if(isNaN(d)) return;
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    monthMap[key] = monthMap[key] || { total:0, count:0 };
+    monthMap[key].total += Number(p.valor||0);
+    monthMap[key].count += 1;
   });
+  const entries = Object.entries(monthMap).sort((a,b)=>b[0].localeCompare(a[0]));
+  const wrap = $('pagamentosResumoMes');
+  if(wrap){
+    wrap.innerHTML = entries.length ? entries.map(([m,d])=>`<div class="report-card"><div class="mini-label">${m}</div><div>Pagamentos</div><strong>${d.count}</strong><div class="recent-meta">Total: ${euro(d.total)}</div></div>`).join('') : '<div class="report-card">Sem pagamentos por mês.</div>';
+  }
+});
   $('pagamentosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(p=>`<tr><td>${escapeHtml(p.cliente||'-')}</td><td>${escapeHtml(p.referencia||'-')}</td><td>${euro(p.valor||0)}</td><td>${fmtDate(p.data)}</td><td>${escapeHtml(p.metodo||'-')}</td><td><div class="row-actions">${pagamentoActions(p)}</div></td></tr>`).join('') : '<tr><td colspan="6">Sem pagamentos registados.</td></tr>';
 }
 function renderRelatorios(){
@@ -277,7 +290,6 @@ $('globalSearch').addEventListener('input', ()=>{ renderTrabalhos(); renderClien
 
 $('clearTrabalhoBtn').addEventListener('click', ()=>{$('trabalhoForm').reset();$('trabalhoId').value='';});
 $('clearClienteBtn').addEventListener('click', ()=>{$('clienteForm').reset();$('clienteId').value='';});
-$('clearPagamentoBtn').addEventListener('click', ()=>{$('pagamentoForm').reset();$('pagamentoId').value='';});
 
 $('trabalhoForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
@@ -332,6 +344,7 @@ $('pagamentoForm').addEventListener('submit', async (e)=>{
     valor:Number($('pagamentoValor').value||0),
     data:$('pagamentoData').value,
     metodo:$('pagamentoMetodo').value,
+    invoiceType: tipoFatura,
     notas:$('pagamentoNotas').value.trim()
   };
   if(!item.cliente){alert('Preenche o cliente do pagamento.');return;}
@@ -347,7 +360,7 @@ window.editTrabalho = function(id){
   if(!adminGuard()) return;
   const t=trabalhos.find(x=>x.id===id); if(!t) return;
   $('trabalhoId').value=t.id; $('cliente').value=t.cliente||''; $('contacto').value=t.contacto||''; $('tipoTrabalho').value=t.tipoTrabalho||'';
-  $('valor').value=t.valor||''; $('dataInicio').value=t.dataInicio||''; $('dataFim').value=t.dataFim||''; $('estado').value=t.estado||'Pendente'; $('descricao').value=t.descricao||'';
+  $('valor').value=t.valor||''; $('dataInicio').value=t.dataInicio||''; $('dataFim').value=t.dataFim||''; $('estado').value=t.estado||'Pendente'; if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value=t.invoiceType||'Com Fatura'; $('descricao').value=t.descricao||'';
   switchTab('trabalhos');
 };
 window.deleteTrabalho = async function(id){
@@ -373,7 +386,8 @@ window.deleteCliente = async function(id){
 window.editPagamento = function(id){
   if(!adminGuard()) return;
   const p=pagamentos.find(x=>x.id===id); if(!p) return;
-  $('pagamentoId').value=p.id; $('pagamentoCliente').value=p.cliente||''; $('pagamentoReferencia').value=p.referencia||''; $('pagamentoValor').value=p.valor||''; $('pagamentoData').value=p.data||''; $('pagamentoMetodo').value=p.metodo||'Dinheiro'; $('pagamentoNotas').value=p.notas||'';
+  $('pagamentoId').value=p.id; $('pagamentoCliente').value=p.cliente||''; $('pagamentoReferencia').value=p.referencia||''; $('pagamentoValor').value=p.valor||''; $('pagamentoData').value=p.data||''; $('pagamentoMetodo').value=p.metodo||'Dinheiro'; $('pagamentoNotas').value=p.invoiceType: tipoFatura,
+    notas||'';
   switchTab('pagamentos');
 };
 window.deletePagamento = async function(id){
@@ -474,7 +488,7 @@ window.openMarkPaidModal = function(id){
   $('paymentModalJobTitle').textContent = t.tipoTrabalho || 'Trabalho';
   $('paymentModalJobClient').textContent = `${t.cliente || '-'} • ${euro(t.valor || 0)}`;
   $('paymentMethodSelect').value = 'Dinheiro';
-  $('paymentInvoiceTypeSelect').value = 'Com Fatura';
+  $('paymentInvoiceTypeSelect').value = t.invoiceType || 'Com Fatura';
   $('paymentMethodNotes').value = '';
   paymentModal.classList.remove('hidden');
 };
@@ -486,7 +500,9 @@ function markAsPaidConfirmed(){
 
   const metodo = $('paymentMethodSelect').value || 'Dinheiro';
   const tipoFatura = $('paymentInvoiceTypeSelect').value || 'Com Fatura';
-  const notasExtra = $('paymentMethodNotes').value.trim();
+  t.invoiceType = tipoFatura;
+  const invoiceType: tipoFatura,
+    notasExtra = $('paymentMethodNotes').value.trim();
 
   t.estado = 'Pago';
   if(!t.dataFim){
@@ -494,7 +510,9 @@ function markAsPaidConfirmed(){
     t.dataFim = hoje.toISOString().split('T')[0];
   }
 
-  const notas = [tipoFatura, notasExtra || 'Pagamento registado manualmente'].join(' • ');
+  const invoiceType: tipoFatura,
+    notas = [tipoFatura, invoiceType: tipoFatura,
+    notasExtra || 'Pagamento registado manualmente'].join(' • ');
 
   pagamentos.push({
     id: 'local_' + Date.now().toString(36),
@@ -503,6 +521,7 @@ function markAsPaidConfirmed(){
     valor: Number(t.valor || 0),
     data: new Date().toISOString().split('T')[0],
     metodo,
+    invoiceType: tipoFatura,
     notas
   });
 
@@ -516,7 +535,8 @@ $('confirmMarkPaidBtn')?.addEventListener('click', markAsPaidConfirmed);
 
 window.pdfTrabalho = function(id){ const t=trabalhos.find(x=>x.id===id); if(!t) return; printHtml(`Trabalho ${t.cliente}`, `<h1>Ficha de Trabalho</h1><div class='meta'>${escapeHtml(t.cliente||'-')} • ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(t.cliente||'-')}</div><div class='card'><strong>Contacto:</strong> ${escapeHtml(t.contacto||'-')}</div><div class='card'><strong>Tipo de trabalho:</strong> ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(t.valor||0)}</div><div class='card'><strong>Início:</strong> ${fmtDate(t.dataInicio)}<br><strong>Fim:</strong> ${fmtDate(t.dataFim)}</div><div class='card'><strong>Estado:</strong> ${escapeHtml(t.estado||'-')}</div><div class='card'><strong>Descrição:</strong><br>${escapeHtml(t.descricao||'-')}</div>`); };
 window.pdfCliente = function(id){ const c=clientes.find(x=>x.id===id); if(!c) return; const trabalhosCliente=trabalhos.filter(t=>(t.cliente||'').trim().toLowerCase()===(c.nome||'').trim().toLowerCase()); const linhas=trabalhosCliente.map(t=>`<tr><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${fmtDate(t.dataInicio)}</td><td>${euro(t.valor||0)}</td></tr>`).join(''); printHtml(`Cliente ${c.nome}`, `<h1>Ficha de Cliente</h1><div class='meta'>${escapeHtml(c.nome||'-')}</div><div class='card'><strong>Telefone:</strong> ${escapeHtml(c.telefone||'-')}</div><div class='card'><strong>Email:</strong> ${escapeHtml(c.email||'-')}</div><div class='card'><strong>NIF:</strong> ${escapeHtml(c.nif||'-')}</div><div class='card'><strong>Morada:</strong><br>${escapeHtml(c.morada||'-')}</div><h2>Trabalhos associados</h2><table><thead><tr><th>Tipo</th><th>Data</th><th>Valor</th></tr></thead><tbody>${linhas || '<tr><td colspan="3">Sem trabalhos associados</td></tr>'}</tbody></table>`); };
-window.pdfPagamento = function(id){ const p=pagamentos.find(x=>x.id===id); if(!p) return; printHtml(`Pagamento ${p.cliente}`, `<h1>Comprovativo de Pagamento</h1><div class='meta'>${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Referência:</strong> ${escapeHtml(p.referencia||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(p.valor||0)}</div><div class='card'><strong>Data:</strong> ${fmtDate(p.data)}</div><div class='card'><strong>Método:</strong> ${escapeHtml(p.metodo||'-')}</div><div class='card'><strong>Notas:</strong><br>${escapeHtml(p.notas||'-')}</div>`); };
+window.pdfPagamento = function(id){ const p=pagamentos.find(x=>x.id===id); if(!p) return; printHtml(`Pagamento ${p.cliente}`, `<h1>Comprovativo de Pagamento</h1><div class='meta'>${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Referência:</strong> ${escapeHtml(p.referencia||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(p.valor||0)}</div><div class='card'><strong>Data:</strong> ${fmtDate(p.data)}</div><div class='card'><strong>Método:</strong> ${escapeHtml(p.metodo||'-')}</div><div class='card'><strong>Notas:</strong><br>${escapeHtml(p.invoiceType: tipoFatura,
+    notas||'-')}</div>`); };
 
 function exportBackup(){ const payload={ exportadoEm:new Date().toISOString(), appVersion:APP_VERSION, currentUsername, currentRole, trabalhos, clientes, pagamentos }; const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='gestao-empresa-backup.json'; a.click(); URL.revokeObjectURL(a.href); }
 $('exportBackupBtn').addEventListener('click', exportBackup);

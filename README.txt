@@ -61,3 +61,11 @@ Pago + Fatura 5.1.4:
 - confirmação antes de marcar como pago
 - escolha do método de pagamento
 - opção Com Fatura / Sem Fatura
+
+
+Ajuste clean 5.1.5:
+- removido botão PDF da página Trabalhos
+- adicionada opção Com Fatura / Sem Fatura no formulário do trabalho
+- página Pagamentos simplificada e limpa
+- removido formulário manual de pagamento
+- pagamentos agora aparecem por mês + lista dos já registados

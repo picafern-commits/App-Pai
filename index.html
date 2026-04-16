@@ -153,7 +153,7 @@
               <div class="field"><label>Valor (€)</label><input id="valor" type="number" min="0" step="0.01" required /></div>
               <div class="field"><label>Data de início</label><input id="dataInicio" type="date" /></div>
               <div class="field"><label>Data de fim</label><input id="dataFim" type="date" /></div>
-              <div class="field"><label>Estado</label><select id="estado"><option>Pendente</option><option>Em andamento</option><option>Concluído</option><option>Pago</option></select></div>
+              <div class="field"><label>Estado</label><select id="estado"><option>Pendente</option><option>Em andamento</option><option>Concluído</option><option>Pago</option></select></div><div class="field"><label>Faturação</label><select id="trabalhoInvoiceType"><option>Com Fatura</option><option>Sem Fatura</option></select><div class="select-helper">Define se este trabalho deve ou não ter fatura.</div></div>
               <div class="field field-span-2"><label>Descrição</label><textarea id="descricao" rows="5"></textarea></div>
               <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar trabalho</button><button type="button" class="btn btn-secondary" id="clearTrabalhoBtn">Limpar</button></div></div>
             </form>
@@ -210,26 +210,14 @@
       </section>
 
       <section class="page" id="pagamentos-page">
-        <div class="content-grid">
-          <section class="panel admin-only">
-            <div class="panel-head"><h3>Registar pagamento</h3></div>
-            <form id="pagamentoForm" class="form-grid">
-              <input type="hidden" id="pagamentoId" />
-              <div class="field"><label>Cliente</label><input id="pagamentoCliente" type="text" required /></div>
-              <div class="field"><label>Referência do trabalho</label><input id="pagamentoReferencia" type="text" /></div>
-              <div class="field"><label>Valor pago (€)</label><input id="pagamentoValor" type="number" min="0" step="0.01" required /></div>
-              <div class="field"><label>Data de pagamento</label><input id="pagamentoData" type="date" /></div>
-              <div class="field"><label>Método</label><select id="pagamentoMetodo"><option>Dinheiro</option><option>Transferência</option><option>Multibanco</option><option>MB Way</option></select></div>
-              <div class="field field-span-2"><label>Notas</label><textarea id="pagamentoNotas" rows="4"></textarea></div>
-              <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar pagamento</button><button type="button" class="btn btn-secondary" id="clearPagamentoBtn">Limpar</button></div></div>
-            </form>
-          </section>
-
+        <div class="content-grid single-panel-grid">
           <section class="panel wide-panel">
-            <div class="panel-head"><h3>Pagamentos</h3></div>
+            <div class="panel-head"><h3>Pagamentos por mês</h3></div>
+            <div id="pagamentosResumoMes" class="report-grid"></div>
+            <div class="panel-head" style="margin-top:18px;"><h3>Pagamentos registados</h3></div>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Cliente</th><th>Referência</th><th>Valor</th><th>Data</th><th>Método</th><th>Ações</th></tr></thead>
+                <thead><tr><th>Cliente</th><th>Referência</th><th>Valor</th><th>Data</th><th>Método</th><th>Fatura</th><th>Ações</th></tr></thead>
                 <tbody id="pagamentosTableBody"></tbody>
               </table>
             </div>
