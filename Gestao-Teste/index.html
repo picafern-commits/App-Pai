@@ -1265,9 +1265,145 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   }
 }
 
+
+/* ===== MOBILE SIDEBAR 1.0.6 ===== */
+.mobile-menu-btn{display:none}
+.mobile-sidebar-overlay,
+.mobile-sidebar-drawer{display:none}
+@media (max-width: 900px){
+  .mobile-menu-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:42px;
+    height:42px;
+    border:none;
+    border-radius:14px;
+    background:rgba(255,255,255,.06);
+    color:#eef3ff;
+    font-size:22px;
+    cursor:pointer;
+    flex:0 0 auto;
+  }
+  .mobile-sidebar-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(4,8,18,.6);
+    z-index:80;
+    display:block;
+  }
+  .mobile-sidebar-overlay.hidden{
+    display:none !important;
+  }
+  .mobile-sidebar-drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    width:min(82vw, 320px);
+    padding:14px;
+    z-index:90;
+    background:linear-gradient(180deg, rgba(10,14,24,.98), rgba(10,14,24,.94));
+    border-right:1px solid rgba(255,255,255,.08);
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    transform:translateX(0);
+  }
+  .mobile-sidebar-drawer.hidden{
+    display:none !important;
+  }
+  .mobile-sidebar-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .mobile-sidebar-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+  }
+  .mobile-sidebar-brand img{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    object-fit:cover;
+    background:rgba(255,255,255,.05);
+  }
+  .mobile-sidebar-brand strong{
+    display:block;
+    font-size:16px;
+    color:#eef3ff;
+  }
+  .mobile-sidebar-brand span{
+    display:block;
+    font-size:12px;
+    color:#97a5c6;
+  }
+  .mobile-sidebar-close{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:12px;
+    background:rgba(255,255,255,.06);
+    color:#eef3ff;
+    cursor:pointer;
+    font-size:18px;
+  }
+  .mobile-sidebar-nav{
+    display:grid;
+    gap:10px;
+    overflow:auto;
+    padding-bottom:10px;
+  }
+  .mobile-side-btn{
+    border:none;
+    text-align:left;
+    border-radius:16px;
+    padding:14px 14px;
+    font-weight:700;
+    font-size:15px;
+    color:#eef3ff;
+    background:rgba(255,255,255,.04);
+    cursor:pointer;
+  }
+  .mobile-side-btn.active{
+    background:linear-gradient(135deg,rgba(111,92,255,.26),rgba(36,200,255,.16));
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .bottom-nav{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
-<body><a class="env-switch-btn" href="../Gestao/">Ir para PRODUÇÃO</a><div class="env-badge test">TESTE</div>
+<body>
+<div id="mobileSidebarOverlay" class="mobile-sidebar-overlay hidden"></div>
+<aside id="mobileSidebarDrawer" class="mobile-sidebar-drawer hidden">
+  <div class="mobile-sidebar-head">
+    <div class="mobile-sidebar-brand">
+      <img src="logo-icon-dark.png" alt="logo" />
+      <div>
+        <strong>Jorge Torneiro</strong>
+        <span id="mobileEnvLabel">App mobile</span>
+      </div>
+    </div>
+    <button id="mobileSidebarClose" class="mobile-sidebar-close" type="button">✕</button>
+  </div>
+  <nav class="mobile-sidebar-nav">
+    <button class="mobile-side-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="mobile-side-btn" data-tab="adicionar">Adicionar Trabalho</button>
+    <button class="mobile-side-btn" data-tab="trabalhos">Histórico Trabalhos</button>
+    <button class="mobile-side-btn" data-tab="clientes">Clientes</button>
+    <button class="mobile-side-btn" data-tab="pagamentos">Pagamentos</button>
+    <button class="mobile-side-btn" data-tab="relatorios">Relatórios</button>
+    <button class="mobile-side-btn" data-tab="configuracoes">Configurações</button>
+  </nav>
+</aside><a class="env-switch-btn" href="../Gestao/">Ir para PRODUÇÃO</a><div class="env-badge test">TESTE</div>
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
 
@@ -1336,7 +1472,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 
     <main class="main">
       <header class="topbar">
-        <div class="topbar-left">
+        <div class="topbar-left"><button id="mobileMenuBtn" class="mobile-menu-btn" type="button">☰</button>
           <div>
             <h2 id="pageTitle">Dashboard</h2>
             <div class="subline">
@@ -2179,7 +2315,183 @@ function printHtml(title, bodyHtml){ const win=window.open('', '_blank'); if(!wi
   }
 }
 
-</style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
+
+/* ===== MOBILE SIDEBAR 1.0.6 ===== */
+.mobile-menu-btn{display:none}
+.mobile-sidebar-overlay,
+.mobile-sidebar-drawer{display:none}
+@media (max-width: 900px){
+  .mobile-menu-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:42px;
+    height:42px;
+    border:none;
+    border-radius:14px;
+    background:rgba(255,255,255,.06);
+    color:#eef3ff;
+    font-size:22px;
+    cursor:pointer;
+    flex:0 0 auto;
+  }
+  .mobile-sidebar-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(4,8,18,.6);
+    z-index:80;
+    display:block;
+  }
+  .mobile-sidebar-overlay.hidden{
+    display:none !important;
+  }
+  .mobile-sidebar-drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    width:min(82vw, 320px);
+    padding:14px;
+    z-index:90;
+    background:linear-gradient(180deg, rgba(10,14,24,.98), rgba(10,14,24,.94));
+    border-right:1px solid rgba(255,255,255,.08);
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    transform:translateX(0);
+  }
+  .mobile-sidebar-drawer.hidden{
+    display:none !important;
+  }
+  .mobile-sidebar-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .mobile-sidebar-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+  }
+  .mobile-sidebar-brand img{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    object-fit:cover;
+    background:rgba(255,255,255,.05);
+  }
+  .mobile-sidebar-brand strong{
+    display:block;
+    font-size:16px;
+    color:#eef3ff;
+  }
+  .mobile-sidebar-brand span{
+    display:block;
+    font-size:12px;
+    color:#97a5c6;
+  }
+  .mobile-sidebar-close{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:12px;
+    background:rgba(255,255,255,.06);
+    color:#eef3ff;
+    cursor:pointer;
+    font-size:18px;
+  }
+  .mobile-sidebar-nav{
+    display:grid;
+    gap:10px;
+    overflow:auto;
+    padding-bottom:10px;
+  }
+  .mobile-side-btn{
+    border:none;
+    text-align:left;
+    border-radius:16px;
+    padding:14px 14px;
+    font-weight:700;
+    font-size:15px;
+    color:#eef3ff;
+    background:rgba(255,255,255,.04);
+    cursor:pointer;
+  }
+  .mobile-side-btn.active{
+    background:linear-gradient(135deg,rgba(111,92,255,.26),rgba(36,200,255,.16));
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .bottom-nav{
+    display:none !important;
+  }
+}
+
+</style></head><body>
+<div id="mobileSidebarOverlay" class="mobile-sidebar-overlay hidden"></div>
+<aside id="mobileSidebarDrawer" class="mobile-sidebar-drawer hidden">
+  <div class="mobile-sidebar-head">
+    <div class="mobile-sidebar-brand">
+      <img src="logo-icon-dark.png" alt="logo" />
+      <div>
+        <strong>Jorge Torneiro</strong>
+        <span id="mobileEnvLabel">App mobile</span>
+      </div>
+    </div>
+    <button id="mobileSidebarClose" class="mobile-sidebar-close" type="button">✕</button>
+  </div>
+  <nav class="mobile-sidebar-nav">
+    <button class="mobile-side-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="mobile-side-btn" data-tab="adicionar">Adicionar Trabalho</button>
+    <button class="mobile-side-btn" data-tab="trabalhos">Histórico Trabalhos</button>
+    <button class="mobile-side-btn" data-tab="clientes">Clientes</button>
+    <button class="mobile-side-btn" data-tab="pagamentos">Pagamentos</button>
+    <button class="mobile-side-btn" data-tab="relatorios">Relatórios</button>
+    <button class="mobile-side-btn" data-tab="configuracoes">Configurações</button>
+  </nav>
+</aside>${bodyHtml}
+<script>
+function bindMobileSidebar(){
+  const menuBtn = document.getElementById('mobileMenuBtn');
+  const drawer = document.getElementById('mobileSidebarDrawer');
+  const overlay = document.getElementById('mobileSidebarOverlay');
+  const closeBtn = document.getElementById('mobileSidebarClose');
+  const sideBtns = document.querySelectorAll('.mobile-side-btn');
+
+  function openDrawer(){
+    drawer?.classList.remove('hidden');
+    overlay?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer(){
+    drawer?.classList.add('hidden');
+    overlay?.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  menuBtn?.addEventListener('click', openDrawer);
+  closeBtn?.addEventListener('click', closeDrawer);
+  overlay?.addEventListener('click', closeDrawer);
+
+  sideBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const tab = btn.dataset.tab;
+      if(window.switchTab) window.switchTab(tab);
+      sideBtns.forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+      closeDrawer();
+    });
+  });
+
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') closeDrawer();
+  });
+}
+document.addEventListener('DOMContentLoaded', bindMobileSidebar);
+</script>
+
+</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 function renderDashboard(){
   const totalTrabalhos = trabalhos.length;
@@ -2826,6 +3138,46 @@ function renderMobileCards(){
       </div>
     </div>
   </div>
+
+
+<script>
+function bindMobileSidebar(){
+  const menuBtn = document.getElementById('mobileMenuBtn');
+  const drawer = document.getElementById('mobileSidebarDrawer');
+  const overlay = document.getElementById('mobileSidebarOverlay');
+  const closeBtn = document.getElementById('mobileSidebarClose');
+  const sideBtns = document.querySelectorAll('.mobile-side-btn');
+
+  function openDrawer(){
+    drawer?.classList.remove('hidden');
+    overlay?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer(){
+    drawer?.classList.add('hidden');
+    overlay?.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  menuBtn?.addEventListener('click', openDrawer);
+  closeBtn?.addEventListener('click', closeDrawer);
+  overlay?.addEventListener('click', closeDrawer);
+
+  sideBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const tab = btn.dataset.tab;
+      if(window.switchTab) window.switchTab(tab);
+      sideBtns.forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+      closeDrawer();
+    });
+  });
+
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') closeDrawer();
+  });
+}
+document.addEventListener('DOMContentLoaded', bindMobileSidebar);
+</script>
 
 </body>
 </html>
