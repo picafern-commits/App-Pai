@@ -5,12 +5,27 @@ const DEFAULT_USERS = [
   { username: 'ricardo', password: '2297', role: 'master_admin' }
 ];
 
+function normalizeUsers(users){
+  const list = Array.isArray(users) ? users.slice() : [];
+  const idx = list.findIndex(u => String(u.username || '').toLowerCase() === 'ricardo');
+  const ricardo = { username: 'ricardo', password: '2297', role: 'master_admin' };
+  if(idx >= 0) list[idx] = { ...list[idx], ...ricardo };
+  else list.push(ricardo);
+  return list;
+}
+
 function getUsers(){
   try{
     const stored = JSON.parse(localStorage.getItem('app_users') || 'null');
-    if(Array.isArray(stored) && stored.length) return stored;
+    if(Array.isArray(stored) && stored.length){
+      const fixed = normalizeUsers(stored);
+      localStorage.setItem('app_users', JSON.stringify(fixed));
+      return fixed;
+    }
   }catch{}
-  return DEFAULT_USERS;
+  const fixedDefaults = normalizeUsers(DEFAULT_USERS);
+  localStorage.setItem('app_users', JSON.stringify(fixedDefaults));
+  return fixedDefaults;
 }
 
 const loginForm = document.getElementById('loginForm');

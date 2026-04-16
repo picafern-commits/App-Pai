@@ -65,16 +65,31 @@ function fillClientContactFromSelection(){
 }
 
 
+function normalizeManagedUsers(users){
+  const list = Array.isArray(users) ? users.slice() : [];
+  const idx = list.findIndex(u => String(u.username || '').toLowerCase() === 'ricardo');
+  const ricardo = { username: 'ricardo', password: '2297', role: 'master_admin' };
+  if(idx >= 0) list[idx] = { ...list[idx], ...ricardo };
+  else list.push(ricardo);
+  return list;
+}
+
 function getManagedUsers(){
   try{
     const stored = JSON.parse(localStorage.getItem('app_users') || 'null');
-    if(Array.isArray(stored) && stored.length) return stored;
+    if(Array.isArray(stored) && stored.length){
+      const fixed = normalizeManagedUsers(stored);
+      localStorage.setItem('app_users', JSON.stringify(fixed));
+      return fixed;
+    }
   }catch{}
-  return [
+  const fixedDefaults = normalizeManagedUsers([
     { username: 'jorge', password: 'jfernandes', role: 'admin' },
     { username: 'fatima', password: 'ffernandes', role: 'user' },
     { username: 'ricardo', password: '2297', role: 'master_admin' }
-  ];
+  ]);
+  localStorage.setItem('app_users', JSON.stringify(fixedDefaults));
+  return fixedDefaults;
 }
 
 function saveManagedUsers(users){
