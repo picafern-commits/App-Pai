@@ -61,3 +61,11 @@ Login automático 5.5.0:
 - sessão guardada no browser
 - auto-login ao abrir a app
 - logout limpa a sessão
+
+
+Reorganização 5.6.0 (sem mexer no login):
+- página nova Adicionar Trabalho
+- Trabalhos fica só histórico
+- Pagamentos fica só registo dos pagamentos
+- Relatórios por cliente e mês
+- clientes criados ficam disponíveis ao adicionar trabalho

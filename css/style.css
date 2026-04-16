@@ -362,3 +362,5 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   gap:14px;
   margin-top:16px;
 }
+
+.single-panel-grid{grid-template-columns:1fr !important;}

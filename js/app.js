@@ -242,19 +242,76 @@ function renderClientes(){
   });
   $('clientesTableBody').innerHTML = rows.length ? rows.slice().reverse().map(c=>`<tr><td>${escapeHtml(c.nome||'-')}</td><td>${escapeHtml(c.telefone||'-')}</td><td>${escapeHtml(c.email||'-')}</td><td>${escapeHtml(c.nif||'-')}</td><td><div class="row-actions">${clienteActions(c)}</div></td></tr>`).join('') : '<tr><td colspan="5">Sem clientes registados.</td></tr>';
 }
-function renderPagamentos(){
-  const globalTerm=($('globalSearch')?.value||'').trim().toLowerCase();
-  const rows=pagamentos.filter(p=>{
-    const hay=[p.cliente,p.referencia,p.metodo,p.notas].join(' ').toLowerCase();
-    return !globalTerm || hay.includes(globalTerm)
-  });
-  $('pagamentosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(p=>`<tr><td>${escapeHtml(p.cliente||'-')}</td><td>${escapeHtml(p.referencia||'-')}</td><td>${euro(p.valor||0)}</td><td>${fmtDate(p.data)}</td><td>${escapeHtml(p.metodo||'-')}</td><td><div class="row-actions">${pagamentoActions(p)}</div></td></tr>`).join('') : '<tr><td colspan="6">Sem pagamentos registados.</td></tr>';
+function renderPagamentos() {
+  const tbody = $('pagamentosTableBody');
+  if (!tbody) return;
+
+  tbody.innerHTML = pagamentos.length
+    ? pagamentos
+        .slice()
+        .reverse()
+        .map(
+          (p) => `
+            <tr>
+              <td>${escapeHtml(p.cliente || '-')}</td>
+              <td>${escapeHtml(p.referencia || '-')}</td>
+              <td>${fmtDate(p.workDate || p.data || '')}</td>
+              <td>${euro(p.valor || 0)}</td>
+            </tr>
+          `
+        )
+        .join('')
+    : '<tr><td colspan="4">Sem pagamentos registados.</td></tr>';
 }
-function renderRelatorios(){
-  const monthMap={};
-  trabalhos.forEach(t=>{const source=t.dataInicio||t.dataFim; if(!source) return; const d=new Date(source); if(isNaN(d)) return; const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; monthMap[key]=monthMap[key]||{trabalhos:0,faturado:0}; monthMap[key].trabalhos+=1; monthMap[key].faturado+=Number(t.valor||0);});
-  const entries=Object.entries(monthMap).sort((a,b)=>b[0].localeCompare(a[0]));
-  $('resumoMensal').innerHTML = entries.length ? entries.map(([m,d])=>`<div class="report-card"><div class="mini-label">${m}</div><div>Trabalhos</div><strong>${d.trabalhos}</strong><div class="recent-meta">Faturado: ${euro(d.faturado)}</div></div>`).join('') : '<div class="report-card">Sem dados para relatório.</div>';
+function renderRelatorios() {
+  const map = {};
+
+  trabalhos.forEach((t) => {
+    const src = t.dataInicio || t.dataFim;
+    if (!src) return;
+
+    const d = new Date(src);
+    if (Number.isNaN(d.getTime())) return;
+
+    const mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const cliente = t.cliente || 'Sem Cliente';
+    const key = `${cliente}__${mes}`;
+
+    if (!map[key]) {
+      map[key] = {
+        cliente,
+        mes,
+        total: 0,
+        trabalhos: 0
+      };
+    }
+
+    map[key].total += Number(t.valor || 0);
+    map[key].trabalhos += 1;
+  });
+
+  const wrap = $('resumoMensal');
+  if (!wrap) return;
+
+  const entries = Object.values(map).sort((a, b) => {
+    if (a.mes === b.mes) return a.cliente.localeCompare(b.cliente);
+    return b.mes.localeCompare(a.mes);
+  });
+
+  wrap.innerHTML = entries.length
+    ? entries
+        .map(
+          (r) => `
+            <div class="report-card">
+              <div class="mini-label">${escapeHtml(r.mes)}</div>
+              <div>${escapeHtml(r.cliente)}</div>
+              <strong>${euro(r.total)}</strong>
+              <div class="recent-meta">Trabalhos: ${r.trabalhos}</div>
+            </div>
+          `
+        )
+        .join('')
+    : '<div class="report-card">Sem dados para relatório.</div>';
 }
 function renderAll(){ if(!currentRole) return; setRoleUI(); renderDashboard(); renderAlerts(); renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios(); }
 
@@ -336,7 +393,7 @@ window.editTrabalho = function(id){
   const t=trabalhos.find(x=>x.id===id); if(!t) return;
   $('trabalhoId').value=t.id; $('cliente').value=t.cliente||''; $('contacto').value=t.contacto||''; $('tipoTrabalho').value=t.tipoTrabalho||'';
   $('valor').value=t.valor||''; $('dataInicio').value=t.dataInicio||''; $('dataFim').value=t.dataFim||''; $('estado').value=t.estado||'Pendente'; $('descricao').value=t.descricao||'';
-  switchTab('trabalhos');
+  switchTab('adicionar');
 };
 window.deleteTrabalho = async function(id){
   if(!adminGuard()) return;
