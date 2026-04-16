@@ -56,8 +56,9 @@ Correção inputs 5.1.2:
 - versão segura para voltar a trabalhar sem bloqueios
 
 
-Versão 5.1.7:
-- botões dos trabalhos simplificados
-- Fatura só aparece em trabalhos 'Com Fatura'
-- botão Pago funcional
-- apagar com ícone discreto
+Reorganização 5.2.0:
+- nova página Adicionar Trabalho
+- Trabalhos passa a ser Histórico
+- Pagamentos mostra só registo dos pagamentos dos trabalhos feitos
+- Relatórios por cliente e mês
+- cliente criado na ficha de cliente fica disponível no formulário de trabalho

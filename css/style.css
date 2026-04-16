@@ -364,36 +364,6 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 }
 
 
-.btn-action{
-  padding:7px 10px;
-  border-radius:10px;
-  font-size:12px;
-  border:none;
-  cursor:pointer;
-  background:rgba(255,255,255,.06);
-  color:#dbe4ff;
-  transition:.18s ease;
-}
-.btn-action:hover{background:rgba(255,255,255,.12)}
-.btn-action.primary{
-  background:linear-gradient(135deg,#4facfe,#00f2fe);
-  color:#fff;
-  font-weight:600;
-}
-.btn-action.success{
-  background:rgba(34,197,94,.16);
-  color:#86efac;
-  font-weight:600;
-}
-.btn-action.success:hover{background:rgba(34,197,94,.26)}
-.btn-action.danger{
-  background:rgba(255,80,80,.14);
-  color:#ff7b7b;
-}
-.btn-action.icon{
-  width:34px;
-  height:34px;
-  padding:0;
-  display:grid;
-  place-items:center;
+.single-panel-grid{
+  grid-template-columns:1fr !important;
 }
