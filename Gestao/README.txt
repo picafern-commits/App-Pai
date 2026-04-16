@@ -106,3 +106,10 @@ Melhorias premium 1.0.6:
 - escolha de método ao marcar como pago
 - dashboard com métricas melhores
 - ações por permissões (empresa)
+
+
+Firebase religado 1.0.6:
+- reforçada a inicialização do Firebase sem mexer no login.js
+- startApp volta a tentar ligar ao Firebase após login/auto-login
+- listeners em tempo real reiniciados ao autenticar
+- se continuar em modo local, ativa Anonymous Auth no Firebase

@@ -108,16 +108,23 @@ document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', 
 
 async function initFirebaseSync(){
   try{
+    if (firebaseApp && firebaseAuth && firestoreDb) {
+      if (syncReady) setSyncMessage('Firebase Sync', 'ok');
+      return;
+    }
+
     firebaseApp = initializeApp(firebaseConfig);
     firebaseAuth = getAuth(firebaseApp);
     firestoreDb = getFirestore(firebaseApp);
     setSyncMessage('A ligar ao Firebase…', 'warn');
 
     await signInAnonymously(firebaseAuth);
+
     onAuthStateChanged(firebaseAuth, user => {
       if (user) {
         syncReady = true;
         setSyncMessage('Firebase Sync', 'ok');
+        clearRealtimeListeners();
         attachRealtimeListeners();
       } else {
         syncReady = false;
@@ -560,6 +567,7 @@ window.startApp = function(role, username){
   loadLocal();
   setRoleUI();
   renderAll();
+  initFirebaseSync().catch(err => console.error(err));
 };
 
 
