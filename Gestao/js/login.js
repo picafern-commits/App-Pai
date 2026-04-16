@@ -1,7 +1,8 @@
 
 const USERS = [
-  { username: 'jorge', password: 'jfernandes', role: 'admin' },
-  { username: 'fatima', password: 'ffernandes', role: 'user' }
+  { username: 'Ricardo', password: '22970', role: 'admin-master' },
+  { username: 'Jorge', password: 'jfernandes', role: 'admin' },
+  { username: 'Fatima', password: 'ffernandes', role: 'user' }
 ];
 
 const loginForm = document.getElementById('loginForm');
