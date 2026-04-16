@@ -1,7 +1,6 @@
 const USERS = [
-  { username: 'Ricardo', password: '2297', role: 'master_admin' },
-  { username: 'admin', password: 'admin123', role: 'admin' },
-  { username: 'user', password: 'user123', role: 'user' }
+  { username: 'Jorge', password: 'jfernandes', role: 'master_admin' },
+  { username: 'Fátima', password: 'ffernandes', role: 'user' }
 ];
 
 function saveSession(role, username){
