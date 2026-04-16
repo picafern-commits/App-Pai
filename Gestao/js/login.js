@@ -1,22 +1,21 @@
+
 const USERS = [
-  { username: 'Jorge', password: 'jfernandes', role: 'master_admin' },
-  { username: 'Fátima', password: 'ffernandes', role: 'user' }
+  { username: 'jorge', password: 'jfernandes', role: 'admin' },
+  { username: 'fatima', password: 'ffernandes', role: 'user' }
 ];
 
-function saveSession(role, username){
-  localStorage.setItem('jt_login_session', JSON.stringify({ role, username }));
-}
+const loginForm = document.getElementById('loginForm');
 
-function clearSession(){
-  localStorage.removeItem('jt_login_session');
+function saveSession(role, username){
+  localStorage.setItem('app_session', JSON.stringify({ role, username }));
 }
 
 function readSession(){
-  try{
-    return JSON.parse(localStorage.getItem('jt_login_session')) || null;
-  }catch{
-    return null;
-  }
+  return JSON.parse(localStorage.getItem('app_session') || 'null');
+}
+
+function clearSession(){
+  localStorage.removeItem('app_session');
 }
 
 function showApp(){
@@ -32,55 +31,45 @@ function showLogin(){
 function bootFromSession(){
   const session = readSession();
   if(!session || !window.startApp) return false;
+
   showApp();
   window.startApp(session.role, session.username);
   return true;
 }
 
-function initLogin(){
-  const loginForm = document.getElementById('loginForm');
-  if(!loginForm) return;
+loginForm?.addEventListener('submit', (e) => {
+  e.preventDefault();
 
-  if(bootFromSession()) return;
+  const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
 
-  loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+  const found = USERS.find(
+    u => u.username.toLowerCase() === username && u.password === password
+  );
 
-    const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-    const password = document.getElementById('loginPassword').value;
+  if (!found) {
+    document.getElementById('loginError').textContent = 'Credenciais inválidas.';
+    return;
+  }
 
-    const found = USERS.find(
-      u => u.username.toLowerCase() === username && u.password === password
-    );
+  saveSession(found.role, found.username);
+  document.getElementById('loginError').textContent = '';
+  showApp();
 
-    if (!found) {
-      document.getElementById('loginError').textContent = 'Credenciais inválidas.';
-      return;
-    }
+  if(window.startApp){
+    window.startApp(found.role, found.username);
+  }
+});
 
-    saveSession(found.role, found.username);
-    document.getElementById('loginError').textContent = '';
-    showApp();
-
-    if(window.startApp){
-      window.startApp(found.role, found.username);
-    }
-  });
-
-  document.getElementById('logoutBtn')?.addEventListener('click', () => {
-    clearSession();
-    showLogin();
-    loginForm.reset();
-  });
-}
+document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  clearSession();
+  showLogin();
+  loginForm.reset();
+});
 
 document.addEventListener('DOMContentLoaded', () => {
-  initLogin();
-  setTimeout(() => {
-    if(document.getElementById('appRoot')?.classList.contains('hidden') && readSession() && window.startApp){
-      const s = readSession();
-      showApp();
-      window.startApp(s.role, s.username);
-    }
-  }, 50);
+  if(!bootFromSession()){
+    showLogin();
+  }
 });

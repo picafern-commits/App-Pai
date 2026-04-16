@@ -512,3 +512,21 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   display:inline-flex;
   width:max-content;
 }
+
+/* ===== LOGIN FIX ===== */
+.hidden{ display:none !important; }
+
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#appRoot{
+  min-height:100vh;
+}
+
+#appRoot.hidden{
+  display:none !important;
+}
