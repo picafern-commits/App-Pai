@@ -113,3 +113,9 @@ Firebase religado 1.0.6:
 - startApp volta a tentar ligar ao Firebase após login/auto-login
 - listeners em tempo real reiniciados ao autenticar
 - se continuar em modo local, ativa Anonymous Auth no Firebase
+
+
+Sidebar fix 1.0.6:
+- navegação lateral ligada novamente
+- switchTab global e bindNavigation robusto
+- listeners tornados seguros para não parar o JS
