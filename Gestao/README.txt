@@ -117,3 +117,9 @@ Firebase religado 1.0.6:
 
 Firebase fix 1.0.6:
 - corrigido erro de sintaxe no prompt do método de pagamento que bloqueava o app.js e o Firebase.
+
+
+Remoção de registos 1.0.6:
+- apagar registos em Pagamentos
+- apagar registos no Histórico Trabalhos
+- remoção local + tentativa de sync remoto

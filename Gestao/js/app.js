@@ -244,7 +244,7 @@ function trabalhoActions(t){
   const showInvoice = (t.invoiceType || 'Com Fatura') === 'Com Fatura';
   const canMarkPaid = (t.estado || '') !== 'Pago';
   const canEdit = isAdminLike();
-  const canDelete = isMasterAdmin();
+  const canDelete = isAdminLike();
   return `
     <div class="row-actions">
       ${showInvoice ? `<button class="small-btn primary" onclick="generateInvoice('${t.id}')">Fatura</button>` : ''}
@@ -310,9 +310,10 @@ function renderPagamentos() {
         <td>${euro(p.valor || 0)}</td>
         <td>${escapeHtml(p.metodo || 'Manual')}</td>
         <td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td>
+        <td><div class="row-actions">${isAdminLike() ? `<button class="small-btn danger" onclick="deletePagamento('${p.id}')">Apagar</button>` : ''}</div></td>
       </tr>`;
     }).join('')
-    : '<tr><td colspan="6">Sem pagamentos registados.</td></tr>';
+    : '<tr><td colspan="7">Sem pagamentos registados.</td></tr>';
 }
 function renderRelatorios() {
   const map = {};
@@ -608,3 +609,13 @@ Método: ${metodo}`)) return;
   upsertRemote('trabalhos', t).catch(err => console.error(err));
   upsertRemote('pagamentos', pagamento).catch(err => console.error(err));
 }
+
+
+window.deletePagamento = function(id){
+  if(!adminGuard()) return;
+  if(!confirm('Apagar este registo de pagamento?')) return;
+  pagamentos = pagamentos.filter(x => x.id !== id);
+  saveLocal();
+  renderAll();
+  removeRemote('pagamentos', id).catch(err => console.error(err));
+};
