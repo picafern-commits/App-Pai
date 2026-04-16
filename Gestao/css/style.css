@@ -426,3 +426,89 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
     width:100%;
   }
 }
+
+
+/* ===== Melhorias premium 1.0.6 ===== */
+.badge[data-state="Pendente"]{
+  background:rgba(245,158,11,.16);
+  border-color:rgba(245,158,11,.24);
+  color:#fcd34d;
+}
+.badge[data-state="Em andamento"]{
+  background:rgba(59,130,246,.16);
+  border-color:rgba(59,130,246,.24);
+  color:#93c5fd;
+}
+.badge[data-state="Concluído"]{
+  background:rgba(34,197,94,.16);
+  border-color:rgba(34,197,94,.24);
+  color:#86efac;
+}
+.badge[data-state="Pago"]{
+  background:rgba(139,92,246,.18);
+  border-color:rgba(139,92,246,.26);
+  color:#c4b5fd;
+}
+.invoice-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+  border:1px solid rgba(255,255,255,.08);
+}
+.invoice-badge.com{
+  background:rgba(6,182,212,.14);
+  border-color:rgba(6,182,212,.24);
+  color:#67e8f9;
+}
+.invoice-badge.sem{
+  background:rgba(148,163,184,.14);
+  border-color:rgba(148,163,184,.24);
+  color:#cbd5e1;
+}
+.row-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.small-btn{
+  border:none;
+  border-radius:12px;
+  padding:8px 12px;
+  cursor:pointer;
+  background:rgba(255,255,255,.06);
+  color:#eef3ff;
+  transition:.18s ease;
+}
+.small-btn:hover{
+  transform:translateY(-1px);
+  background:rgba(255,255,255,.1);
+}
+.small-btn.primary{
+  background:linear-gradient(135deg,#38bdf8,#22d3ee);
+  color:#fff;
+  font-weight:700;
+}
+.small-btn.success{
+  background:rgba(34,197,94,.16);
+  color:#86efac;
+  font-weight:700;
+}
+.small-btn.danger{
+  background:rgba(239,68,68,.14);
+  color:#fca5a5;
+}
+.hero-chip strong.status-ok{
+  color:#86efac;
+}
+.hero-chip strong.status-warn{
+  color:#fcd34d;
+}
+.recent-item .mini-label{
+  display:inline-flex;
+  width:max-content;
+}

@@ -173,33 +173,77 @@ function adminGuard(){ if(!isAdminLike()){ alert('Só o Admin pode fazer altera�
 function printHtml(title, bodyHtml){ const win=window.open('', '_blank'); if(!win) return; win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"/><title>${title}</title><style>body{font-family:Arial,sans-serif;padding:32px;color:#111}h1,h2{margin:0 0 10px}.meta{color:#555;margin-bottom:20px}.card{border:1px solid #ddd;border-radius:12px;padding:18px;margin:12px 0}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border-bottom:1px solid #ddd;padding:10px;text-align:left}</style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 function renderDashboard(){
-  $('statTotalTrabalhos').textContent=trabalhos.length;
-  $('statEmAndamento').textContent=trabalhos.filter(t=>t.estado==='Em andamento'||t.estado==='Pendente').length;
-  $('statConcluidos').textContent=trabalhos.filter(t=>t.estado==='Concluído'||t.estado==='Pago').length;
-  $('statTotalFaturado').textContent=euro(trabalhos.reduce((s,t)=>s+Number(t.valor||0),0));
+  const totalTrabalhos = trabalhos.length;
+  const emAndamento = trabalhos.filter(t=>t.estado==='Em andamento'||t.estado==='Pendente').length;
+  const concluidos = trabalhos.filter(t=>t.estado==='Concluído'||t.estado==='Pago').length;
+  const totalFaturado = trabalhos.reduce((s,t)=>s+Number(t.valor||0),0);
+  const totalPago = pagamentos.reduce((s,p)=>s+Number(p.valor||0),0);
+  const clientesAtivos = new Set(trabalhos.map(t=>(t.cliente||'').trim()).filter(Boolean)).size;
+
+  $('statTotalTrabalhos').textContent = totalTrabalhos;
+  $('statEmAndamento').textContent = emAndamento;
+  $('statConcluidos').textContent = concluidos;
+  $('statTotalFaturado').textContent = euro(totalFaturado);
+
   const recentWrap=$('recentTrabalhos');
-  recentWrap.innerHTML = !trabalhos.length ? '<div class="recent-item">Ainda não tens trabalhos registados.</div>' : [...trabalhos].slice(-5).reverse().map(t=>`<div class="recent-item"><div class="mini-label">${escapeHtml(t.estado||'Sem estado')}</div><strong>${escapeHtml(t.cliente||'-')}</strong><div>${escapeHtml(t.tipoTrabalho||'-')}</div><div class="recent-meta">${euro(t.valor||0)} • ${fmtDate(t.dataInicio)} → ${fmtDate(t.dataFim)}</div></div>`).join('');
+  recentWrap.innerHTML = !trabalhos.length
+    ? '<div class="recent-item">Ainda não tens trabalhos registados.</div>'
+    : [...trabalhos].slice(-5).reverse().map(t=>`
+      <div class="recent-item">
+        <div class="mini-label badge" data-state="${escapeHtml(t.estado||'Sem estado')}">${escapeHtml(t.estado||'Sem estado')}</div>
+        <strong>${escapeHtml(t.cliente||'-')}</strong>
+        <div>${escapeHtml(t.tipoTrabalho||'-')}</div>
+        <div class="recent-meta">${euro(t.valor||0)} • ${fmtDate(t.dataInicio)} → ${fmtDate(t.dataFim)}</div>
+      </div>`).join('');
+
   const monthMap={};
-  trabalhos.forEach(t=>{ if(!t.dataInicio) return; const d=new Date(t.dataInicio); if(isNaN(d)) return; const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; monthMap[key]=(monthMap[key]||0)+Number(t.valor||0);});
+  trabalhos.forEach(t=>{
+    if(!t.dataInicio) return;
+    const d=new Date(t.dataInicio);
+    if(isNaN(d)) return;
+    const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    monthMap[key]=(monthMap[key]||0)+Number(t.valor||0);
+  });
   const entries=Object.entries(monthMap).sort((a,b)=>a[0].localeCompare(b[0])).slice(-6);
   const max=Math.max(...entries.map(([,v])=>v),1);
-  $('monthlyBars').innerHTML = entries.length ? entries.map(([m,v])=>`<div class="bar-row"><span>${m}</span><div class="bar-track"><div class="bar-fill" style="width:${(v/max)*100}%"></div></div><strong>${euro(v)}</strong></div>`).join('') : '<div class="recent-item">Sem dados mensais ainda.</div>';
+  $('monthlyBars').innerHTML = entries.length
+    ? entries.map(([m,v])=>`<div class="bar-row"><span>${m}</span><div class="bar-track"><div class="bar-fill" style="width:${(v/max)*100}%"></div></div><strong>${euro(v)}</strong></div>`).join('')
+    : '<div class="recent-item">Sem dados mensais ainda.</div>';
+
+  const chip = document.querySelector('.hero-chip strong');
+  if(chip){
+    chip.textContent = totalTrabalhos ? 'Empresa Ativa' : 'Pronto a usar';
+    chip.className = totalTrabalhos ? 'status-ok' : 'status-warn';
+  }
 }
 function renderAlerts(){
-  const pend=trabalhos.filter(t=>t.estado==='Pendente').length;
-  const andam=trabalhos.filter(t=>t.estado==='Em andamento').length;
-  const semFim=trabalhos.filter(t=>!t.dataFim).length;
-  $('alertCards').innerHTML = `<div class="alert-card"><span class="mini-label">Pendentes</span><strong>${pend}</strong><p>Trabalhos ainda por arrancar ou fechar.</p></div><div class="alert-card"><span class="mini-label">Em andamento</span><strong>${andam}</strong><p>Serviços que precisam de acompanhamento.</p></div><div class="alert-card"><span class="mini-label">Sem data fim</span><strong>${semFim}</strong><p>Registos que convém completar.</p></div>`;
+  const pend = trabalhos.filter(t=>t.estado==='Pendente').length;
+  const andam = trabalhos.filter(t=>t.estado==='Em andamento').length;
+  const pagos = trabalhos.filter(t=>t.estado==='Pago').length;
+  const totalPago = pagamentos.reduce((s,p)=>s+Number(p.valor||0),0);
+  const clientesAtivos = new Set(trabalhos.map(t=>(t.cliente||'').trim()).filter(Boolean)).size;
+
+  const wrap = $('alertCards');
+  if(!wrap) return;
+  wrap.innerHTML = `
+    <div class="alert-card"><span class="mini-label">Pendentes</span><strong>${pend}</strong><p>Trabalhos ainda por arrancar.</p></div>
+    <div class="alert-card"><span class="mini-label">Em andamento</span><strong>${andam}</strong><p>Serviços que precisam de acompanhamento.</p></div>
+    <div class="alert-card"><span class="mini-label">Pagos</span><strong>${pagos}</strong><p>Trabalhos já fechados com pagamento registado.</p></div>
+    <div class="alert-card"><span class="mini-label">Recebido</span><strong>${euro(totalPago)}</strong><p>Total recebido em pagamentos registados.</p></div>
+    <div class="alert-card"><span class="mini-label">Clientes ativos</span><strong>${clientesAtivos}</strong><p>Clientes com trabalhos registados.</p></div>
+  `;
 }
 function trabalhoActions(t){
   const showInvoice = (t.invoiceType || 'Com Fatura') === 'Com Fatura';
   const canMarkPaid = (t.estado || '') !== 'Pago';
+  const canEdit = isAdminLike();
+  const canDelete = isMasterAdmin();
   return `
     <div class="row-actions">
-      ${showInvoice ? `<button class="small-btn" onclick="generateInvoice('${t.id}')">Fatura</button>` : ''}
-      <button class="small-btn" onclick="editTrabalho('${t.id}')">Editar</button>
-      ${canMarkPaid ? `<button class="small-btn" onclick="markAsPaid('${t.id}')">Pago</button>` : ''}
-      <button class="small-btn danger" onclick="deleteTrabalho('${t.id}')">Apagar</button>
+      ${showInvoice ? `<button class="small-btn primary" onclick="generateInvoice('${t.id}')">Fatura</button>` : ''}
+      ${canEdit ? `<button class="small-btn" onclick="editTrabalho('${t.id}')">Editar</button>` : ''}
+      ${canMarkPaid && canEdit ? `<button class="small-btn success" onclick="markAsPaid('${t.id}')">Pago</button>` : ''}
+      ${canDelete ? `<button class="small-btn danger" onclick="deleteTrabalho('${t.id}')">Apagar</button>` : ''}
     </div>
   `;
 }
@@ -220,7 +264,20 @@ function renderTrabalhos(){
     const hay=[t.cliente,t.tipoTrabalho,t.contacto,t.descricao,t.estado,t.invoiceType].join(' ').toLowerCase();
     return (!term||hay.includes(term))&&(!globalTerm||hay.includes(globalTerm))&&(!estado||t.estado===estado)
   });
-  $('trabalhosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(t=>`<tr><td>${escapeHtml(t.cliente||'-')}</td><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valor||0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></td><td>${escapeHtml(t.invoiceType||'Com Fatura')}</td><td><div class="row-actions">${trabalhoActions(t)}</div></td></tr>`).join('') : '<tr><td colspan="8">Sem resultados.</td></tr>';
+  $('trabalhosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(t=>{
+    const invoiceType = t.invoiceType || 'Com Fatura';
+    const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
+    return `<tr>
+      <td>${escapeHtml(t.cliente||'-')}</td>
+      <td>${escapeHtml(t.tipoTrabalho||'-')}</td>
+      <td>${euro(t.valor||0)}</td>
+      <td>${fmtDate(t.dataInicio)}</td>
+      <td>${fmtDate(t.dataFim)}</td>
+      <td><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></td>
+      <td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td>
+      <td><div class="row-actions">${trabalhoActions(t)}</div></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="8">Sem resultados.</td></tr>';
 }
 function renderClientes(){
   const term=$('searchClientes').value.trim().toLowerCase();
@@ -235,15 +292,20 @@ function renderPagamentos() {
   const tbody = $('pagamentosTableBody');
   if (!tbody) return;
   tbody.innerHTML = pagamentos.length
-    ? pagamentos.slice().reverse().map((p) => `
+    ? pagamentos.slice().reverse().map((p) => {
+      const invoiceType = p.invoiceType || 'Com Fatura';
+      const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
+      return `
       <tr>
         <td>${escapeHtml(p.cliente || '-')}</td>
         <td>${escapeHtml(p.referencia || '-')}</td>
         <td>${fmtDate(p.workDate || p.data || '')}</td>
         <td>${euro(p.valor || 0)}</td>
-      </tr>
-    `).join('')
-    : '<tr><td colspan="4">Sem pagamentos registados.</td></tr>';
+        <td>${escapeHtml(p.metodo || 'Manual')}</td>
+        <td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td>
+      </tr>`;
+    }).join('')
+    : '<tr><td colspan="6">Sem pagamentos registados.</td></tr>';
 }
 function renderRelatorios() {
   const map = {};
@@ -504,7 +566,19 @@ window.startApp = function(role, username){
 window.markAsPaid = function(id){
   const t = trabalhos.find(x => x.id === id);
   if(!t) return;
-  if(!confirm('Marcar este trabalho como pago?')) return;
+
+  const metodoRaw = prompt('Método de pagamento:
+1 - Dinheiro
+2 - MB Way
+3 - Transferência
+4 - Multibanco', '1');
+  if(metodoRaw === null) return;
+
+  const map = { '1':'Dinheiro', '2':'MB Way', '3':'Transferência', '4':'Multibanco' };
+  const metodo = map[metodoRaw] || metodoRaw || 'Manual';
+
+  if(!confirm(`Marcar este trabalho como pago?
+Método: ${metodo}`)) return;
 
   t.estado = 'Pago';
   if(!t.dataFim){
@@ -518,7 +592,7 @@ window.markAsPaid = function(id){
     valor: Number(t.valor || 0),
     data: new Date().toISOString().split('T')[0],
     workDate: t.dataInicio || t.dataFim || '',
-    metodo: 'Manual',
+    metodo,
     invoiceType: t.invoiceType || 'Com Fatura',
     notas: 'Gerado ao marcar como pago'
   };
