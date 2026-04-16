@@ -69,3 +69,9 @@ Reorganização 5.6.0 (sem mexer no login):
 - Pagamentos fica só registo dos pagamentos
 - Relatórios por cliente e mês
 - clientes criados ficam disponíveis ao adicionar trabalho
+
+
+Melhoria visual 5.6.1:
+- páginas Adicionar Trabalho, Histórico Trabalhos e Pagamentos mais bonitas
+- ajuste ao ecrã com grelhas e tabelas mais limpas
+- hero compacto em cada página
