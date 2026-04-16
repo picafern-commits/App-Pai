@@ -215,7 +215,16 @@ function renderAlerts(){
   $('alertCards').innerHTML = `<div class="alert-card"><span class="mini-label">Pendentes</span><strong>${pend}</strong><p>Trabalhos ainda por arrancar ou fechar.</p></div><div class="alert-card"><span class="mini-label">Em andamento</span><strong>${andam}</strong><p>Serviços que precisam de acompanhamento.</p></div><div class="alert-card"><span class="mini-label">Sem data fim</span><strong>${semFim}</strong><p>Registos que convém completar.</p></div>`;
 }
 function trabalhoActions(t){
-  const invoice = isAdminLike() ? `<button class="small-btn" onclick="generateInvoice('${t.id}')">Fatura PDF</button>` : '';
+  const showInvoice = (t.invoiceType || 'Com Fatura') === 'Com Fatura';
+  return `
+    <div class="row-actions">
+      ${showInvoice ? `<button class="btn-action primary" onclick="generateInvoice('${t.id}')">Fatura</button>` : ''}
+      <button class="btn-action" onclick="editTrabalho('${t.id}')">Editar</button>
+      <button class="btn-action success" onclick="markAsPaid('${t.id}')">Pago ✔</button>
+      <button class="btn-action danger icon" onclick="deleteTrabalho('${t.id}')">🗑</button>
+    </div>
+  `;
+}')">Fatura PDF</button>` : '';
   const pdf=`<button class="small-btn" onclick="pdfTrabalho('${t.id}')">PDF</button>`;
   return !isAdminLike() ? pdf : `${invoice}${pdf}<button class="small-btn" onclick="editTrabalho('${t.id}')">Editar</button><button class="small-btn danger" onclick="deleteTrabalho('${t.id}')">Apagar</button>`;
 }
@@ -465,3 +474,30 @@ $('exportMonthlyPdfBtn').addEventListener('click', ()=>{ const html=$('resumoMen
 loadLocal();
 autoBackupInvisible();
 initFirebaseSync();
+
+
+function markAsPaid(id){
+  const t = trabalhos.find(x => x.id === id);
+  if(!t) return;
+
+  if(!confirm('Marcar este trabalho como pago?')) return;
+
+  t.estado = 'Pago';
+  if(!t.dataFim){
+    t.dataFim = new Date().toISOString().split('T')[0];
+  }
+
+  pagamentos.push({
+    id: 'pay_' + Date.now(),
+    cliente: t.cliente || '',
+    referencia: t.tipoTrabalho || '',
+    valor: Number(t.valor || 0),
+    data: new Date().toISOString().split('T')[0],
+    metodo: 'Manual',
+    invoiceType: t.invoiceType || 'Com Fatura',
+    notas: 'Gerado ao marcar como pago'
+  });
+
+  saveLocal();
+  renderAll();
+}

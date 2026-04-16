@@ -54,3 +54,10 @@ Correção inputs 5.1.2:
 - removido código que estava a interferir com escrita nos campos
 - mantida a base estável com login funcional
 - versão segura para voltar a trabalhar sem bloqueios
+
+
+Versão 5.1.7:
+- botões dos trabalhos simplificados
+- Fatura só aparece em trabalhos 'Com Fatura'
+- botão Pago funcional
+- apagar com ícone discreto
