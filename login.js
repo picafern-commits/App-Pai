@@ -1,7 +1,7 @@
 const USERS = [
-  { username: 'Ricardo', password: '2297', role: 'master_admin' },
-  { username: 'admin', password: 'admin123', role: 'admin' },
-  { username: 'user', password: 'user123', role: 'user' }
+  { username: 'Ricardo', password: '2297', role: 'Administrador' },
+  { username: 'Jorge', password: 'jfernandes', role: 'Jorge' },
+  { username: 'Fatima', password: 'mfatima', role: 'Fatima' }
 ];
 
 let currentRole = null;
