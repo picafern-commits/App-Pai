@@ -1267,7 +1267,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 
 </style>
 </head>
-<body><a class="env-switch-btn" href="../Gestao/">Ir para PRODUÇÃO</a><div class="env-badge test">TESTE</div>
+<body><a class="env-switch-btn" href="../Gestao-Teste/">Ir para TESTE</a><div class="env-badge prod">PRODUÇÃO</div>
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
 
@@ -1307,7 +1307,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
         <img class="sidebar-logo" src="logo-icon-dark.png" alt="Logo Jorge Torneiro" />
         <div>
           <h1>Jorge Torneiro</h1>
-          <p>Versão staging</p>
+          <p>App principal</p>
         </div>
       </div>
 
@@ -1581,30 +1581,30 @@ function normalizeUsers(users){
 
 function getUsers(){
   try{
-    const stored = JSON.parse(localStorage.getItem('app_users_teste') || 'null');
+    const stored = JSON.parse(localStorage.getItem('app_users') || 'null');
     if(Array.isArray(stored) && stored.length){
       const fixed = normalizeUsers(stored);
-      localStorage.setItem('app_users_teste', JSON.stringify(fixed));
+      localStorage.setItem('app_users', JSON.stringify(fixed));
       return fixed;
     }
   }catch{}
   const fixedDefaults = normalizeUsers(DEFAULT_USERS);
-  localStorage.setItem('app_users_teste', JSON.stringify(fixedDefaults));
+  localStorage.setItem('app_users', JSON.stringify(fixedDefaults));
   return fixedDefaults;
 }
 
 const loginForm = document.getElementById('loginForm');
 
 function saveSession(role, username){
-  localStorage.setItem('app_session_teste', JSON.stringify({ role, username }));
+  localStorage.setItem('app_session', JSON.stringify({ role, username }));
 }
 
 function readSession(){
-  return JSON.parse(localStorage.getItem('app_session_teste') || 'null');
+  return JSON.parse(localStorage.getItem('app_session') || 'null');
 }
 
 function clearSession(){
-  localStorage.removeItem('app_session_teste');
+  localStorage.removeItem('app_session');
 }
 
 function showApp(){
@@ -1680,7 +1680,7 @@ import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gsta
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const APP_VERSION = '1.0.6';
-const STORAGE_KEYS = { trabalhos:'ge_trabalhos_teste', clientes:'ge_clientes_teste', pagamentos:'ge_pagamentos_teste' };
+const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' };
 
 let currentRole = null, currentUsername = null;
 let trabalhos = [], clientes = [], pagamentos = [];
@@ -1751,10 +1751,10 @@ function normalizeManagedUsers(users){
 
 function getManagedUsers(){
   try{
-    const stored = JSON.parse(localStorage.getItem('app_users_teste') || 'null');
+    const stored = JSON.parse(localStorage.getItem('app_users') || 'null');
     if(Array.isArray(stored) && stored.length){
       const fixed = normalizeManagedUsers(stored);
-      localStorage.setItem('app_users_teste', JSON.stringify(fixed));
+      localStorage.setItem('app_users', JSON.stringify(fixed));
       return fixed;
     }
   }catch{}
@@ -1763,12 +1763,12 @@ function getManagedUsers(){
     { username: 'fatima', password: 'ffernandes', role: 'user' },
     { username: 'ricardo', password: '2297', role: 'master_admin' }
   ]);
-  localStorage.setItem('app_users_teste', JSON.stringify(fixedDefaults));
+  localStorage.setItem('app_users', JSON.stringify(fixedDefaults));
   return fixedDefaults;
 }
 
 function saveManagedUsers(users){
-  localStorage.setItem('app_users_teste', JSON.stringify(users));
+  localStorage.setItem('app_users', JSON.stringify(users));
 }
 
 function renderManagedUsers(){
@@ -1823,7 +1823,7 @@ function autoBackupInvisible(){
     clientes,
     pagamentos
   };
-  localStorage.setItem('ge_invisible_backup_teste', JSON.stringify(payload));
+  localStorage.setItem('ge_invisible_backup', JSON.stringify(payload));
 }
 function setSyncMessage(msg, level='warn'){
   syncMessage = msg;
