@@ -75,3 +75,10 @@ Correção layout + login 1.0.6:
 - páginas voltam a ficar ao lado da sidebar
 - credenciais atualizadas para Jorge / jfernandes e Fátima / ffernandes
 - login separado mantido
+
+
+Correções 1.0.6:
+- removidos listeners para elementos inexistentes que paravam o JS
+- botões do histórico passam a funcionar
+- botão Pago adicionado e funcional
+- guardar cliente já não deve mandar para o login

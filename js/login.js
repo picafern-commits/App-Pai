@@ -74,4 +74,13 @@ function initLogin(){
   });
 }
 
-document.addEventListener('DOMContentLoaded', initLogin);
+document.addEventListener('DOMContentLoaded', () => {
+  initLogin();
+  setTimeout(() => {
+    if(document.getElementById('appRoot')?.classList.contains('hidden') && readSession() && window.startApp){
+      const s = readSession();
+      showApp();
+      window.startApp(s.role, s.username);
+    }
+  }, 50);
+});

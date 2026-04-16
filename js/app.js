@@ -210,9 +210,16 @@ function renderAlerts(){
   $('alertCards').innerHTML = `<div class="alert-card"><span class="mini-label">Pendentes</span><strong>${pend}</strong><p>Trabalhos ainda por arrancar ou fechar.</p></div><div class="alert-card"><span class="mini-label">Em andamento</span><strong>${andam}</strong><p>Serviços que precisam de acompanhamento.</p></div><div class="alert-card"><span class="mini-label">Sem data fim</span><strong>${semFim}</strong><p>Registos que convém completar.</p></div>`;
 }
 function trabalhoActions(t){
-  const invoice = isAdminLike() ? `<button class="small-btn" onclick="generateInvoice('${t.id}')">Fatura PDF</button>` : '';
-  const pdf=`<button class="small-btn" onclick="pdfTrabalho('${t.id}')">PDF</button>`;
-  return !isAdminLike() ? pdf : `${invoice}${pdf}<button class="small-btn" onclick="editTrabalho('${t.id}')">Editar</button><button class="small-btn danger" onclick="deleteTrabalho('${t.id}')">Apagar</button>`;
+  const showInvoice = (t.invoiceType || 'Com Fatura') === 'Com Fatura';
+  const canMarkPaid = (t.estado || '') !== 'Pago';
+  return `
+    <div class="row-actions">
+      ${showInvoice ? `<button class="small-btn" onclick="generateInvoice('${t.id}')">Fatura</button>` : ''}
+      <button class="small-btn" onclick="editTrabalho('${t.id}')">Editar</button>
+      ${canMarkPaid ? `<button class="small-btn" onclick="markAsPaid('${t.id}')">Pago</button>` : ''}
+      <button class="small-btn danger" onclick="deleteTrabalho('${t.id}')">Apagar</button>
+    </div>
+  `;
 }
 function clienteActions(c){
   const history=`<button class="small-btn" onclick="openClientHistory('${c.id}')">Histórico</button>`;
@@ -247,20 +254,14 @@ function renderPagamentos() {
   if (!tbody) return;
 
   tbody.innerHTML = pagamentos.length
-    ? pagamentos
-        .slice()
-        .reverse()
-        .map(
-          (p) => `
-            <tr>
-              <td>${escapeHtml(p.cliente || '-')}</td>
-              <td>${escapeHtml(p.referencia || '-')}</td>
-              <td>${fmtDate(p.workDate || p.data || '')}</td>
-              <td>${euro(p.valor || 0)}</td>
-            </tr>
-          `
-        )
-        .join('')
+    ? pagamentos.slice().reverse().map((p) => `
+      <tr>
+        <td>${escapeHtml(p.cliente || '-')}</td>
+        <td>${escapeHtml(p.referencia || '-')}</td>
+        <td>${fmtDate(p.workDate || p.data || '')}</td>
+        <td>${euro(p.valor || 0)}</td>
+      </tr>
+    `).join('')
     : '<tr><td colspan="4">Sem pagamentos registados.</td></tr>';
 }
 function renderRelatorios() {
@@ -313,18 +314,26 @@ function renderRelatorios() {
         .join('')
     : '<div class="report-card">Sem dados para relatório.</div>';
 }
-function renderAll(){ if(!currentRole) return; setRoleUI(); renderDashboard(); renderAlerts(); renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios(); }
+function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); renderDashboard(); renderAlerts(); renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios(); }
 
-$('searchTrabalhos').addEventListener('input', renderTrabalhos);
-$('filterEstado').addEventListener('change', renderTrabalhos);
-$('searchClientes').addEventListener('input', renderClientes);
-$('globalSearch').addEventListener('input', ()=>{ renderTrabalhos(); renderClientes(); renderPagamentos(); });
+$('searchTrabalhos')?.addEventListener('input', renderTrabalhos);
+$('filterEstado')?.addEventListener('change', renderTrabalhos);
+$('searchClientes')?.addEventListener('input', renderClientes);
+$('globalSearch')?.addEventListener('input', ()=>{ renderTrabalhos(); renderClientes(); renderPagamentos(); });
 
-$('clearTrabalhoBtn').addEventListener('click', ()=>{$('trabalhoForm').reset();$('trabalhoId').value='';});
-$('clearClienteBtn').addEventListener('click', ()=>{$('clienteForm').reset();$('clienteId').value='';});
-$('clearPagamentoBtn').addEventListener('click', ()=>{$('pagamentoForm').reset();$('pagamentoId').value='';});
+$('clearTrabalhoBtn')?.addEventListener('click', ()=>{
+  $('trabalhoForm')?.reset();
+  if($('trabalhoId')) $('trabalhoId').value='';
+  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
+  if($('cliente')) $('cliente').value='';
+});
+$('clearClienteBtn')?.addEventListener('click', ()=>{
+  $('clienteForm')?.reset();
+  if($('clienteId')) $('clienteId').value='';
+});
+$('pagamentoId').value='';});
 
-$('trabalhoForm').addEventListener('submit', async (e)=>{
+$('trabalhoForm')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!adminGuard()) return;
   const item={
@@ -336,18 +345,22 @@ $('trabalhoForm').addEventListener('submit', async (e)=>{
     dataInicio:$('dataInicio').value,
     dataFim:$('dataFim').value,
     estado:$('estado').value,
+    invoiceType:$('trabalhoInvoiceType') ? $('trabalhoInvoiceType').value : 'Com Fatura',
     descricao:$('descricao').value.trim()
   };
-  if(!item.cliente||!item.tipoTrabalho){alert('Preenche cliente e tipo de trabalho.');return;}
+  if(!item.cliente || !item.tipoTrabalho){ alert('Preenche cliente e tipo de trabalho.'); return; }
   const i=trabalhos.findIndex(x=>x.id===item.id);
   if(i>=0) trabalhos[i]=item; else trabalhos.push(item);
   saveLocal();
   renderAll();
   try{ await upsertRemote('trabalhos', item); }catch(err){ console.error(err); setSyncMessage('Erro a gravar no Firebase', 'bad'); }
-  $('trabalhoForm').reset(); $('trabalhoId').value='';
+  $('trabalhoForm').reset();
+  $('trabalhoId').value='';
+  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
+  if($('cliente')) $('cliente').value='';
 });
 
-$('clienteForm').addEventListener('submit', async (e)=>{
+$('clienteForm')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!adminGuard()) return;
   const item={
@@ -358,13 +371,15 @@ $('clienteForm').addEventListener('submit', async (e)=>{
     nif:$('clienteNif').value.trim(),
     morada:$('clienteMorada').value.trim()
   };
-  if(!item.nome){alert('Preenche o nome do cliente.');return;}
+  if(!item.nome){ alert('Preenche o nome do cliente.'); return; }
   const i=clientes.findIndex(x=>x.id===item.id);
   if(i>=0) clientes[i]=item; else clientes.push(item);
   saveLocal();
   renderAll();
   try{ await upsertRemote('clientes', item); }catch(err){ console.error(err); setSyncMessage('Erro a gravar no Firebase', 'bad'); }
-  $('clienteForm').reset(); $('clienteId').value='';
+  $('clienteForm').reset();
+  $('clienteId').value='';
+  switchTab('clientes');
 });
 
 $('pagamentoForm').addEventListener('submit', async (e)=>{
@@ -390,9 +405,18 @@ $('pagamentoForm').addEventListener('submit', async (e)=>{
 
 window.editTrabalho = function(id){
   if(!adminGuard()) return;
-  const t=trabalhos.find(x=>x.id===id); if(!t) return;
-  $('trabalhoId').value=t.id; $('cliente').value=t.cliente||''; $('contacto').value=t.contacto||''; $('tipoTrabalho').value=t.tipoTrabalho||'';
-  $('valor').value=t.valor||''; $('dataInicio').value=t.dataInicio||''; $('dataFim').value=t.dataFim||''; $('estado').value=t.estado||'Pendente'; $('descricao').value=t.descricao||'';
+  const t=trabalhos.find(x=>x.id===id);
+  if(!t) return;
+  $('trabalhoId').value=t.id;
+  populateClientOptions(t.cliente || '');
+  $('contacto').value=t.contacto||'';
+  $('tipoTrabalho').value=t.tipoTrabalho||'';
+  $('valor').value=t.valor||'';
+  $('dataInicio').value=t.dataInicio||'';
+  $('dataFim').value=t.dataFim||'';
+  $('estado').value=t.estado||'Pendente';
+  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value=t.invoiceType||'Com Fatura';
+  $('descricao').value=t.descricao||'';
   switchTab('adicionar');
 };
 window.deleteTrabalho = async function(id){
@@ -526,3 +550,30 @@ window.startApp = function(role, username){
   setRoleUI();
   renderAll();
 };
+
+
+function markAsPaid(id){
+  const t = trabalhos.find(x => x.id === id);
+  if(!t) return;
+  if(!confirm('Marcar este trabalho como pago?')) return;
+
+  t.estado = 'Pago';
+  if(!t.dataFim){
+    t.dataFim = new Date().toISOString().split('T')[0];
+  }
+
+  pagamentos.push({
+    id: genId('pay'),
+    cliente: t.cliente || '',
+    referencia: t.tipoTrabalho || '',
+    valor: Number(t.valor || 0),
+    data: new Date().toISOString().split('T')[0],
+    workDate: t.dataInicio || t.dataFim || '',
+    metodo: 'Manual',
+    invoiceType: t.invoiceType || 'Com Fatura',
+    notas: 'Gerado ao marcar como pago'
+  });
+
+  saveLocal();
+  renderAll();
+}
