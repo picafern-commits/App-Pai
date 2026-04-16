@@ -129,3 +129,10 @@ Melhorias 1.0.6:
 - botão Descrição no histórico quando existe descrição
 - contacto do cliente preenchido automaticamente ao escolher cliente
 - escolha de método de pagamento em modal mais bonito
+
+
+Sistema de utilizadores 1.0.6:
+- criar utilizadores dentro da app
+- editar/apagar utilizadores na configuração
+- login usa localStorage app_users com fallback para defaults
+- gestão disponível para master admin

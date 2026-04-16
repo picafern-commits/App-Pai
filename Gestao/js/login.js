@@ -1,9 +1,17 @@
 
-const USERS = [
-  { username: 'Ricardo', password: '2297', role: 'admin_master' },
-  { username: 'Jorge', password: 'jfernandes', role: 'admin' },
-  { username: 'Fatima', password: 'ffernandes', role: 'user' }
+const DEFAULT_USERS = [
+  { username: 'jorge', password: 'jfernandes', role: 'admin' },
+  { username: 'fatima', password: 'ffernandes', role: 'user' },
+  { username: 'ricardo', password: '2297', role: 'master_admin' }
 ];
+
+function getUsers(){
+  try{
+    const stored = JSON.parse(localStorage.getItem('app_users') || 'null');
+    if(Array.isArray(stored) && stored.length) return stored;
+  }catch{}
+  return DEFAULT_USERS;
+}
 
 const loginForm = document.getElementById('loginForm');
 
@@ -44,7 +52,7 @@ loginForm?.addEventListener('submit', (e) => {
   const username = document.getElementById('loginUsername').value.trim().toLowerCase();
   const password = document.getElementById('loginPassword').value;
 
-  const found = USERS.find(
+  const found = getUsers().find(
     u => u.username.toLowerCase() === username && u.password === password
   );
 

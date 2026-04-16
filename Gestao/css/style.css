@@ -572,3 +572,5 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
     grid-template-columns:1fr;
   }
 }
+
+.users-master-panel table{width:100%;}

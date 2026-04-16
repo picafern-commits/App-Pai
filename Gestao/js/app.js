@@ -64,6 +64,64 @@ function fillClientContactFromSelection(){
   contacto.value = c ? (c.telefone || '') : '';
 }
 
+
+function getManagedUsers(){
+  try{
+    const stored = JSON.parse(localStorage.getItem('app_users') || 'null');
+    if(Array.isArray(stored) && stored.length) return stored;
+  }catch{}
+  return [
+    { username: 'jorge', password: 'jfernandes', role: 'admin' },
+    { username: 'fatima', password: 'ffernandes', role: 'user' },
+    { username: 'ricardo', password: '2297', role: 'master_admin' }
+  ];
+}
+
+function saveManagedUsers(users){
+  localStorage.setItem('app_users', JSON.stringify(users));
+}
+
+function renderManagedUsers(){
+  const tbody = $('managedUsersTableBody');
+  if(!tbody) return;
+  const users = getManagedUsers();
+  tbody.innerHTML = users.length ? users.map((u, idx) => `
+    <tr>
+      <td>${escapeHtml(u.username || '-')}</td>
+      <td>${escapeHtml(u.role || 'user')}</td>
+      <td>
+        <div class="row-actions">
+          <button class="small-btn" onclick="window.editManagedUser(${idx})">Editar</button>
+          <button class="small-btn danger" onclick="window.deleteManagedUser(${idx})">Apagar</button>
+        </div>
+      </td>
+    </tr>
+  `).join('') : '<tr><td colspan="3">Sem utilizadores.</td></tr>';
+}
+
+window.editManagedUser = function(index){
+  if(!isMasterAdmin()) return;
+  const users = getManagedUsers();
+  const u = users[index];
+  if(!u) return;
+  $('managedUserIndex').value = String(index);
+  $('managedUsername').value = u.username || '';
+  $('managedPassword').value = u.password || '';
+  $('managedRole').value = u.role || 'user';
+  switchTab('configuracoes');
+};
+
+window.deleteManagedUser = function(index){
+  if(!isMasterAdmin()) return;
+  const users = getManagedUsers();
+  const u = users[index];
+  if(!u) return;
+  if(!confirm(`Apagar o utilizador ${u.username}?`)) return;
+  users.splice(index, 1);
+  saveManagedUsers(users);
+  renderManagedUsers();
+};
+
 function autoBackupInvisible(){
   const payload = {
     exportadoEm: new Date().toISOString(),
@@ -377,7 +435,8 @@ function renderRelatorios() {
         .join('')
     : '<div class="report-card">Sem dados para relatório.</div>';
 }
-function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios(); }
+function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios();
+  renderManagedUsers(); }
 
 $('searchTrabalhos')?.addEventListener('input', renderTrabalhos);
 $('filterEstado')?.addEventListener('change', renderTrabalhos);
@@ -667,3 +726,45 @@ document.querySelectorAll('.pay-method-btn').forEach(btn=>{
 });
 
 $('cliente')?.addEventListener('change', fillClientContactFromSelection);
+
+
+$('userManagerForm')?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if(!isMasterAdmin()) return;
+
+  const indexRaw = $('managedUserIndex').value;
+  const username = $('managedUsername').value.trim();
+  const password = $('managedPassword').value.trim();
+  const role = $('managedRole').value;
+
+  if(!username || !password){
+    alert('Preenche nome e palavra-passe.');
+    return;
+  }
+
+  const users = getManagedUsers();
+  const item = { username, password, role };
+
+  if(indexRaw !== ''){
+    users[Number(indexRaw)] = item;
+  }else{
+    const exists = users.some(u => (u.username || '').toLowerCase() === username.toLowerCase());
+    if(exists){
+      alert('Esse utilizador já existe.');
+      return;
+    }
+    users.push(item);
+  }
+
+  saveManagedUsers(users);
+  $('userManagerForm').reset();
+  $('managedUserIndex').value = '';
+  $('managedRole').value = 'user';
+  renderManagedUsers();
+});
+
+$('clearManagedUserBtn')?.addEventListener('click', ()=>{
+  $('userManagerForm')?.reset();
+  $('managedUserIndex').value = '';
+  $('managedRole').value = 'user';
+});

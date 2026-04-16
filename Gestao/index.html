@@ -257,6 +257,35 @@
 
           <div id="usersSection" class="panel users-master-panel">
             <div class="panel-head"><h3>Gestão de utilizadores</h3></div>
+            <div class="content-grid single-panel-grid">
+              <section class="panel admin-only form-panel">
+                <div class="panel-head"><h3>Novo utilizador</h3></div>
+                <form id="userManagerForm" class="form-grid">
+                  <input type="hidden" id="managedUserIndex" />
+                  <div class="field"><label>Nome</label><input id="managedUsername" type="text" required /></div>
+                  <div class="field"><label>Palavra-passe</label><input id="managedPassword" type="text" required /></div>
+                  <div class="field"><label>Tipo</label><select id="managedRole"><option value="user">User</option><option value="admin">Admin</option><option value="master_admin">Master Admin</option></select></div>
+                  <div class="field field-span-2">
+                    <div class="inline-actions">
+                      <button type="submit" class="btn btn-primary">Guardar utilizador</button>
+                      <button type="button" class="btn btn-secondary" id="clearManagedUserBtn">Limpar</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+              <section class="panel wide-panel history-panel">
+                <div class="panel-head"><h3>Lista de utilizadores</h3></div>
+                <div class="table-wrap">
+                  <table>
+                    <thead><tr><th>Nome</th><th>Tipo</th><th>Ações</th></tr></thead>
+                    <tbody id="managedUsersTableBody"></tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+
+            <div class="panel-head" style="margin-top:18px;"><h3>Informação</h3></div>
+            <div class="panel-head"><h3>Gestão de utilizadores</h3></div>
             <div class="settings-grid clean-settings-grid">
               <div class="setting-card"><span class="mini-label">Admin Mestre</span><strong>Ricardo</strong><p>Só o Ricardo consegue ver esta área.</p></div>
               <div class="setting-card"><span class="mini-label">Credenciais</span><strong>Internas</strong><p>Sem dependência de Google.</p></div>
