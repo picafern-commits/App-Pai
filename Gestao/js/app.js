@@ -95,27 +95,16 @@ function setRoleUI(){
   setSyncMessage(syncReady ? 'Firebase Sync' : syncMessage, syncReady ? 'ok' : 'warn');
 }
 function switchTab(tab){
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
-  document.querySelectorAll('.bottom-btn').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
-  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id===`${tab}-page`));
+  navButtons.forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
+  bottomButtons.forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
+  pages.forEach(p => p.classList.toggle('active', p.id===`${tab}-page`));
   const btn=document.querySelector(`.nav-btn[data-tab="${tab}"]`);
-  const title = $('pageTitle');
-  if(title) title.textContent = btn ? btn.textContent.trim() : 'Dashboard';
+  $('pageTitle').textContent = btn ? btn.textContent.trim() : 'Dashboard';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-window.switchTab = switchTab;
-
-function bindNavigation(){
-  document.querySelectorAll('.nav-btn').forEach(b => {
-    b.onclick = () => switchTab(b.dataset.tab);
-  });
-  document.querySelectorAll('.bottom-btn').forEach(b => {
-    b.onclick = () => switchTab(b.dataset.tab);
-  });
-  document.querySelectorAll('[data-go]').forEach(b => {
-    b.onclick = () => switchTab(b.dataset.go);
-  });
-}
+navButtons.forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
+bottomButtons.forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
+document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.go)));
 
 async function initFirebaseSync(){
   try{
@@ -483,7 +472,7 @@ window.deleteCliente = async function(id){
 };
 
 const clientModal = $('clientModal');
-$('closeClientModal')?.addEventListener('click', ()=> clientModal.classList.add('hidden'));
+$('closeClientModal').addEventListener('click', ()=> clientModal.classList.add('hidden'));
 clientModal.addEventListener('click', (e)=>{ if(e.target === clientModal) clientModal.classList.add('hidden'); });
 
 window.openClientHistory = function(id){
@@ -564,8 +553,8 @@ window.pdfCliente = function(id){ const c=clientes.find(x=>x.id===id); if(!c) re
 window.pdfPagamento = function(id){ const p=pagamentos.find(x=>x.id===id); if(!p) return; printHtml(`Pagamento ${p.cliente}`, `<h1>Comprovativo de Pagamento</h1><div class='meta'>${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Referência:</strong> ${escapeHtml(p.referencia||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(p.valor||0)}</div><div class='card'><strong>Data:</strong> ${fmtDate(p.data)}</div><div class='card'><strong>Método:</strong> ${escapeHtml(p.metodo||'-')}</div><div class='card'><strong>Notas:</strong><br>${escapeHtml(p.notas||'-')}</div>`); };
 
 function exportBackup(){ const payload={ exportadoEm:new Date().toISOString(), appVersion:APP_VERSION, currentUsername, currentRole, trabalhos, clientes, pagamentos }; const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='gestao-empresa-backup.json'; a.click(); URL.revokeObjectURL(a.href); }
-$('exportBackupBtn')?.addEventListener('click', exportBackup);
-$('exportMonthlyPdfBtn')?.addEventListener('click', ()=>{ const html=$('resumoMensal')?.innerHTML || ''; printHtml('Relatório mensal', `<h1>Relatório Mensal</h1><div style="display:grid;gap:14px">${html}</div>`); });
+$('exportBackupBtn').addEventListener('click', exportBackup);
+$('exportMonthlyPdfBtn').addEventListener('click', ()=>{ const html=$('resumoMensal').innerHTML; printHtml('Relatório mensal', `<h1>Relatório Mensal</h1><div style="display:grid;gap:14px">${html}</div>`); });
 
 loadLocal();
 autoBackupInvisible();
@@ -576,10 +565,8 @@ window.startApp = function(role, username){
   currentRole = role;
   currentUsername = username;
   loadLocal();
-  bindNavigation();
   setRoleUI();
   renderAll();
-  switchTab('dashboard');
   initFirebaseSync().catch(err => console.error(err));
 };
 
@@ -588,11 +575,7 @@ window.markAsPaid = function(id){
   const t = trabalhos.find(x => x.id === id);
   if(!t) return;
 
-  const metodoRaw = prompt('Método de pagamento:
-1 - Dinheiro
-2 - MB Way
-3 - Transferência
-4 - Multibanco', '1');
+  const metodoRaw = prompt('Método de pagamento:\n1 - Dinheiro\n2 - MB Way\n3 - Transferência\n4 - Multibanco', '1');
   if(metodoRaw === null) return;
 
   const map = { '1':'Dinheiro', '2':'MB Way', '3':'Transferência', '4':'Multibanco' };

@@ -115,7 +115,5 @@ Firebase religado 1.0.6:
 - se continuar em modo local, ativa Anonymous Auth no Firebase
 
 
-Sidebar fix 1.0.6:
-- navegação lateral ligada novamente
-- switchTab global e bindNavigation robusto
-- listeners tornados seguros para não parar o JS
+Firebase fix 1.0.6:
+- corrigido erro de sintaxe no prompt do método de pagamento que bloqueava o app.js e o Firebase.
