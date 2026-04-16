@@ -54,3 +54,10 @@ Correção inputs 5.1.2:
 - removido código que estava a interferir com escrita nos campos
 - mantida a base estável com login funcional
 - versão segura para voltar a trabalhar sem bloqueios
+
+
+Pago + Fatura 5.1.4:
+- botão Pago nos trabalhos
+- confirmação antes de marcar como pago
+- escolha do método de pagamento
+- opção Com Fatura / Sem Fatura
