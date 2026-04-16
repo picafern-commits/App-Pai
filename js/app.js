@@ -6,11 +6,6 @@ import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'ht
 
 const APP_VERSION = '1.0.6';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' };
-const USERS = [
-  { username: 'Ricardo', password: '2297', role: 'master_admin', permissions: ['all','users','billing','clients_history'] },
-  { username: 'admin', password: 'admin123', role: 'admin', permissions: ['manage','billing','clients_history'] },
-  { username: 'user', password: 'user123', role: 'user', permissions: ['read'] }
-];
 
 let currentRole = null, currentUsername = null;
 let trabalhos = [], clientes = [], pagamentos = [];
@@ -248,55 +243,15 @@ function renderClientes(){
   $('clientesTableBody').innerHTML = rows.length ? rows.slice().reverse().map(c=>`<tr><td>${escapeHtml(c.nome||'-')}</td><td>${escapeHtml(c.telefone||'-')}</td><td>${escapeHtml(c.email||'-')}</td><td>${escapeHtml(c.nif||'-')}</td><td><div class="row-actions">${clienteActions(c)}</div></td></tr>`).join('') : '<tr><td colspan="5">Sem clientes registados.</td></tr>';
 }
 function renderPagamentos(){
-  const tbody = $('pagamentosTableBody');
-  if(!tbody) return;
-
-  tbody.innerHTML = pagamentos.length
-    ? pagamentos.slice().reverse().map(p=>`
-      <tr>
-        <td>${escapeHtml(p.cliente||'-')}</td>
-        <td>${escapeHtml(p.referencia||'-')}</td>
-        <td>${fmtDate(p.workDate || p.data || '')}</td>
-        <td>${euro(p.valor||0)}</td>
-      </tr>
-    `).join('')
-    : '<tr><td colspan="4">Sem pagamentos registados.</td></tr>';
-});
+  const globalTerm=($('globalSearch')?.value||'').trim().toLowerCase();
+  const rows=pagamentos.filter(p=>{
+    const hay=[p.cliente,p.referencia,p.metodo,p.notas].join(' ').toLowerCase();
+    return !globalTerm || hay.includes(globalTerm)
+  });
   $('pagamentosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(p=>`<tr><td>${escapeHtml(p.cliente||'-')}</td><td>${escapeHtml(p.referencia||'-')}</td><td>${euro(p.valor||0)}</td><td>${fmtDate(p.data)}</td><td>${escapeHtml(p.metodo||'-')}</td><td><div class="row-actions">${pagamentoActions(p)}</div></td></tr>`).join('') : '<tr><td colspan="6">Sem pagamentos registados.</td></tr>';
 }
 function renderRelatorios(){
-  const reportMap = {};
-  trabalhos.forEach(t=>{
-    const src = t.dataInicio || t.dataFim;
-    if(!src) return;
-    const d = new Date(src);
-    if(isNaN(d)) return;
-    const month = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    const client = (t.cliente || 'Sem Cliente');
-    const key = `${client}__${month}`;
-    reportMap[key] = reportMap[key] || { client, month, jobs:0, total:0 };
-    reportMap[key].jobs += 1;
-    reportMap[key].total += Number(t.valor || 0);
-  });
-
-  const entries = Object.values(reportMap).sort((a,b)=>{
-    if(a.month === b.month) return a.client.localeCompare(b.client);
-    return b.month.localeCompare(a.month);
-  });
-
-  const wrap = $('resumoMensal');
-  if(!wrap) return;
-  wrap.innerHTML = entries.length
-    ? entries.map(r=>`
-      <div class="report-card">
-        <div class="mini-label">${r.month}</div>
-        <div>${escapeHtml(r.client)}</div>
-        <strong>${euro(r.total)}</strong>
-        <div class="recent-meta">Trabalhos: ${r.jobs}</div>
-      </div>
-    `).join('')
-    : '<div class="report-card">Sem dados para relatório.</div>';
-};
+  const monthMap={};
   trabalhos.forEach(t=>{const source=t.dataInicio||t.dataFim; if(!source) return; const d=new Date(source); if(isNaN(d)) return; const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; monthMap[key]=monthMap[key]||{trabalhos:0,faturado:0}; monthMap[key].trabalhos+=1; monthMap[key].faturado+=Number(t.valor||0);});
   const entries=Object.entries(monthMap).sort((a,b)=>b[0].localeCompare(a[0]));
   $('resumoMensal').innerHTML = entries.length ? entries.map(([m,d])=>`<div class="report-card"><div class="mini-label">${m}</div><div>Trabalhos</div><strong>${d.trabalhos}</strong><div class="recent-meta">Faturado: ${euro(d.faturado)}</div></div>`).join('') : '<div class="report-card">Sem dados para relatório.</div>';
@@ -381,7 +336,7 @@ window.editTrabalho = function(id){
   const t=trabalhos.find(x=>x.id===id); if(!t) return;
   $('trabalhoId').value=t.id; $('cliente').value=t.cliente||''; $('contacto').value=t.contacto||''; $('tipoTrabalho').value=t.tipoTrabalho||'';
   $('valor').value=t.valor||''; $('dataInicio').value=t.dataInicio||''; $('dataFim').value=t.dataFim||''; $('estado').value=t.estado||'Pendente'; $('descricao').value=t.descricao||'';
-  switchTab('adicionar');
+  switchTab('trabalhos');
 };
 window.deleteTrabalho = async function(id){
   if(!adminGuard()) return;
@@ -505,3 +460,12 @@ $('exportMonthlyPdfBtn').addEventListener('click', ()=>{ const html=$('resumoMen
 loadLocal();
 autoBackupInvisible();
 initFirebaseSync();
+
+
+window.startApp = function(role, username){
+  currentRole = role;
+  currentUsername = username;
+  loadLocal();
+  setRoleUI();
+  renderAll();
+};

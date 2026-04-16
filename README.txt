@@ -56,9 +56,8 @@ Correção inputs 5.1.2:
 - versão segura para voltar a trabalhar sem bloqueios
 
 
-Reorganização 5.2.0:
-- nova página Adicionar Trabalho
-- Trabalhos passa a ser Histórico
-- Pagamentos mostra só registo dos pagamentos dos trabalhos feitos
-- Relatórios por cliente e mês
-- cliente criado na ficha de cliente fica disponível no formulário de trabalho
+Login automático 5.5.0:
+- login separado em js/login.js
+- sessão guardada no browser
+- auto-login ao abrir a app
+- logout limpa a sessão
