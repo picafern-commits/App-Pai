@@ -574,3 +574,256 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 }
 
 .users-master-panel table{width:100%;}
+
+
+/* ===== MOBILE ANDROID + IPHONE 1.0.6 ===== */
+@media (max-width: 900px){
+  html, body{
+    overflow-x:hidden;
+  }
+
+  .bg-orb{
+    opacity:.28;
+    filter:blur(90px);
+  }
+
+  #loginScreen{
+    min-height:100dvh;
+    padding:14px;
+    align-items:flex-start;
+  }
+
+  .login-card{
+    width:100%;
+    max-width:100%;
+    grid-template-columns:1fr !important;
+    gap:14px;
+    padding:14px;
+    border-radius:24px;
+  }
+
+  .login-brand{
+    padding:18px 16px;
+    min-height:auto;
+  }
+
+  .company-logo-large{
+    max-width:180px;
+    max-height:180px;
+    margin:0 auto 8px;
+  }
+
+  .clean-brand-copy h1,
+  .login-only-title h1{
+    font-size:40px !important;
+    line-height:1.02;
+  }
+
+  .login-panel{
+    padding:16px;
+  }
+
+  .app-shell{
+    display:block !important;
+    min-height:100dvh;
+  }
+
+  .sidebar{
+    display:none !important;
+  }
+
+  .main{
+    width:100%;
+    min-width:0;
+    padding:14px 14px 92px !important;
+  }
+
+  .topbar{
+    display:grid !important;
+    grid-template-columns:1fr;
+    gap:10px;
+    align-items:stretch;
+    margin-bottom:14px;
+  }
+
+  .topbar-left{
+    gap:6px;
+  }
+
+  #pageTitle{
+    font-size:24px !important;
+    line-height:1.1;
+  }
+
+  .subline{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    font-size:12px;
+  }
+
+  .global-search{
+    min-width:0 !important;
+    max-width:none !important;
+    width:100%;
+  }
+
+  .hero-panel,
+  .panel,
+  .form-panel,
+  .history-panel,
+  .payments-panel{
+    border-radius:22px !important;
+    padding:16px !important;
+  }
+
+  .hero-copy h3{
+    font-size:26px !important;
+    line-height:1.08;
+  }
+
+  .hero-copy p{
+    font-size:14px;
+  }
+
+  .hero-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    width:100%;
+  }
+
+  .hero-actions .btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .stats-grid,
+  .content-grid,
+  .dashboard-grid,
+  .settings-grid,
+  .alert-grid,
+  .client-summary-grid,
+  .clientes-grid,
+  .form-grid{
+    grid-template-columns:1fr !important;
+    gap:12px;
+  }
+
+  .field-span-2{
+    grid-column:span 1 !important;
+  }
+
+  .field input,
+  .field select,
+  .field textarea,
+  input, select, textarea{
+    min-height:48px;
+    font-size:16px;
+  }
+
+  textarea{
+    min-height:110px;
+  }
+
+  .table-wrap{
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+    border-radius:18px;
+  }
+
+  table{
+    min-width:720px;
+  }
+
+  .row-actions{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    padding-bottom:4px;
+  }
+
+  .small-btn, .btn-action{
+    white-space:nowrap;
+  }
+
+  .bottom-nav{
+    display:flex !important;
+    gap:8px;
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    z-index:60;
+    overflow-x:auto;
+    padding:10px;
+    border-radius:22px;
+    background:rgba(9,13,24,.92);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 18px 40px rgba(0,0,0,.32);
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .bottom-btn{
+    flex:0 0 auto;
+    min-width:110px;
+    border:none;
+    color:#fff;
+    background:transparent;
+    border-radius:16px;
+    padding:12px 10px;
+    cursor:pointer;
+    font-size:14px;
+  }
+
+  .bottom-btn.active{
+    background:linear-gradient(135deg,rgba(111,92,255,.22),rgba(36,200,255,.16));
+  }
+
+  .mini-card,
+  .sidebar-footer{
+    display:none !important;
+  }
+
+  .modal{
+    padding:14px;
+  }
+
+  .modal-card{
+    width:100%;
+    max-width:100%;
+    border-radius:22px;
+  }
+}
+
+@media (max-width: 520px){
+  .main{
+    padding:12px 12px 88px !important;
+  }
+
+  .clean-brand-copy h1,
+  .login-only-title h1{
+    font-size:34px !important;
+  }
+
+  #pageTitle{
+    font-size:22px !important;
+  }
+
+  .hero-copy h3{
+    font-size:23px !important;
+  }
+
+  .hero-actions{
+    grid-template-columns:1fr;
+  }
+
+  .bottom-btn{
+    min-width:96px;
+    font-size:13px;
+    padding:11px 9px;
+  }
+
+  .brand-card{
+    border-radius:18px;
+  }
+}

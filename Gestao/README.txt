@@ -141,3 +141,10 @@ Sistema de utilizadores 1.0.6:
 Fix Ricardo master 1.0.6:
 - força o utilizador ricardo a master_admin mesmo que o app_users antigo diga user
 - atualiza automaticamente o localStorage app_users
+
+
+Adaptação mobile 1.0.6:
+- Android e iPhone com layout otimizado
+- sidebar escondida em mobile
+- navegação inferior com todas as páginas
+- formulários e tabelas ajustados ao ecrã
