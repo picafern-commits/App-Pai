@@ -2335,10 +2335,12 @@ $('clearTrabalhoBtn')?.addEventListener('click', ()=>{
   if($('contacto')) $('contacto').value='';
   if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
 });
+
 $('clearClienteBtn')?.addEventListener('click', ()=>{
   $('clienteForm')?.reset();
-  if($('clienteId')) $('clienteId').value='';
+  if($('clienteId')) $('clienteId').value = '';
 });
+
 
 
 $('trabalhoForm')?.addEventListener('submit', async (e)=>{
@@ -2392,27 +2394,44 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   switchTab('trabalhos');
 });
 
+
 $('clienteForm')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!adminGuard()) return;
-  const item={
-    id:$('clienteId').value || genId('cli'),
-    nome:$('clienteNome').value.trim(),
-    telefone:$('clienteTelefone').value.trim(),
-    email:$('clienteEmail').value.trim(),
-    nif:$('clienteNif').value.trim(),
-    morada:$('clienteMorada').value.trim()
+
+  const item = {
+    id: $('clienteId')?.value || genId('cli'),
+    nome: $('clienteNome')?.value.trim() || '',
+    telefone: $('clienteTelefone')?.value.trim() || '',
+    email: $('clienteEmail')?.value.trim() || '',
+    nif: $('clienteNif')?.value.trim() || '',
+    morada: $('clienteMorada')?.value.trim() || '',
+    notas: $('clienteNotas')?.value.trim() || ''
   };
-  if(!item.nome){ alert('Preenche o nome do cliente.'); return; }
-  const i=clientes.findIndex(x=>x.id===item.id);
-  if(i>=0) clientes[i]=item; else clientes.push(item);
+
+  if(!item.nome){
+    alert('Preenche o nome do cliente.');
+    return;
+  }
+
+  const i = clientes.findIndex(x => x.id === item.id);
+  if(i >= 0) clientes[i] = item;
+  else clientes.push(item);
+
   saveLocal();
-  try{ await upsertRemote('clientes', item); }catch(err){ console.error(err); setSyncMessage('Erro a gravar no Firebase', 'bad'); }
-  $('clienteForm').reset();
-  $('clienteId').value='';
+  try{
+    await upsertRemote('clientes', item);
+  }catch(err){
+    console.error(err);
+    setSyncMessage('Erro a gravar cliente no Firebase', 'bad');
+  }
+
+  $('clienteForm')?.reset();
+  if($('clienteId')) $('clienteId').value = '';
   renderAll();
   switchTab('clientes');
 });
+
 
 
 window.editTrabalho = function(id){
@@ -2439,12 +2458,21 @@ window.deleteTrabalho = async function(id){
   saveLocal(); renderAll();
   try{ await removeRemote('trabalhos', id); }catch(err){ console.error(err); setSyncMessage('Erro a apagar no Firebase', 'bad'); }
 };
+
 window.editCliente = function(id){
   if(!adminGuard()) return;
-  const c=clientes.find(x=>x.id===id); if(!c) return;
-  $('clienteId').value=c.id; $('clienteNome').value=c.nome||''; $('clienteTelefone').value=c.telefone||''; $('clienteEmail').value=c.email||''; $('clienteNif').value=c.nif||''; $('clienteMorada').value=c.morada||'';
+  const c = clientes.find(x => x.id === id);
+  if(!c) return;
+  if($('clienteId')) $('clienteId').value = c.id || '';
+  if($('clienteNome')) $('clienteNome').value = c.nome || '';
+  if($('clienteTelefone')) $('clienteTelefone').value = c.telefone || '';
+  if($('clienteEmail')) $('clienteEmail').value = c.email || '';
+  if($('clienteNif')) $('clienteNif').value = c.nif || '';
+  if($('clienteMorada')) $('clienteMorada').value = c.morada || '';
+  if($('clienteNotas')) $('clienteNotas').value = c.notas || '';
   switchTab('clientes');
 };
+
 window.deleteCliente = async function(id){
   if(!adminGuard()) return;
   if(!confirm('Apagar este cliente?')) return;
