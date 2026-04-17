@@ -2274,6 +2274,12 @@ function setRoleUI(){
   $('roleLine').textContent = `Role: ${roleLabel}`;
   $('versionBadge').textContent = APP_VERSION;
   $('currentUserName').textContent = currentUsername || 'Utilizador';
+  const configNavButtons = [...document.querySelectorAll('.nav-btn[data-tab="configuracoes"], .bottom-btn[data-tab="configuracoes"], .mobile-side-btn[data-tab="configuracoes"]')];
+  configNavButtons.forEach(btn => btn.style.display = isMasterAdmin() ? '' : 'none');
+  const configPage = $('configuracoes-page');
+  if(configPage) configPage.style.display = isMasterAdmin() ? '' : 'none';
+  const masterModeSwitchPanel = $('masterModeSwitchPanel');
+  if(masterModeSwitchPanel) masterModeSwitchPanel.classList.toggle('hidden', !isMasterAdmin());
   const usersSection = $('usersSection');
   if(usersSection) usersSection.style.display = isMasterAdmin() ? 'block' : 'none';
   const workCodeField = $('workCodeDisplay');
@@ -2286,6 +2292,7 @@ function setRoleUI(){
   setSyncMessage(syncReady ? 'Firebase Sync' : syncMessage, syncReady ? 'ok' : 'warn');
 }
 function switchTab(tab){
+  if(tab === 'configuracoes' && !isMasterAdmin()) return;
   navButtons.forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
   bottomButtons.forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
   pages.forEach(p => p.classList.toggle('active', p.id===`${tab}-page`));
@@ -2323,6 +2330,7 @@ async function initFirebaseSync(){
         setSyncMessage('Sem sessão Firebase', 'bad');
       }
       if (currentRole) renderAll();
+  if(!isMasterAdmin() && document.querySelector('.page.active')?.id === 'configuracoes-page'){ switchTab('dashboard'); }
     });
   }catch(err){
     console.error('Firebase sync error:', err);
