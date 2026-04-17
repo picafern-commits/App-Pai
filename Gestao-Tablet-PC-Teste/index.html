@@ -1080,6 +1080,59 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   color:#cbd5e1;
 }
 
+
+/* MODE SWITCH PROFESSIONAL */
+.mode-badge{
+  position:fixed;
+  top:14px;
+  right:14px;
+  z-index:240;
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.02em;
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(10px);
+  box-shadow:0 10px 28px rgba(0,0,0,.22);
+}
+.mode-badge.prod{background:rgba(34,197,94,.16);color:#86efac}
+.mode-badge.test{background:rgba(239,68,68,.16);color:#fca5a5}
+.mode-switch-card{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:18px;
+  align-items:center;
+}
+.mode-switch-copy h4{
+  margin:0 0 8px;
+  font-size:22px;
+}
+.mode-switch-copy p{
+  margin:0;
+  color:#cbd5e1;
+  line-height:1.5;
+}
+.mode-switch-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.mode-switch-btn{
+  min-height:54px;
+  border-radius:18px !important;
+  font-weight:800;
+}
+.mode-switch-btn.active{
+  box-shadow:0 0 0 2px rgba(255,255,255,.08) inset;
+  opacity:1;
+}
+@media (max-width: 1100px){
+  .mode-switch-card{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 <body><div class="mode-badge test">MODO TESTE</div><div class="platform-badge">TABLET/PC</div><div class="env-badge prod">PRODUÇÃO</div>
@@ -1328,13 +1381,19 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 
           
 
+
 <div id="tabletModeSwitchPanel" class="panel">
-  <div class="panel-head"><h3>Modo Tablet/PC</h3></div>
-  <div class="mode-switch-grid">
-    <button type="button" class="btn btn-secondary mode-switch-btn" id="goTabletFinalBtn">Abrir versão FINAL</button>
-    <button type="button" class="btn btn-primary mode-switch-btn" id="goTabletTestBtn">Abrir versão TESTE</button>
+  <div class="panel-head"><h3>Ambiente Tablet/PC</h3></div>
+  <div class="mode-switch-card">
+    <div class="mode-switch-copy">
+      <h4>Estás na versão de TESTE</h4>
+      <p>Troca entre a versão FINAL e a versão TESTE do Tablet/PC sem mexer no Android nem no iPhone. Ao trocar de ambiente, a app termina a sessão atual e pede login novamente.</p>
+    </div>
+    <div class="mode-switch-actions">
+      <button type="button" class="btn btn-secondary mode-switch-btn " id="goTabletFinalBtn">Abrir FINAL</button>
+      <button type="button" class="btn btn-primary mode-switch-btn active" id="goTabletTestBtn">Abrir TESTE</button>
+    </div>
   </div>
-  <p class="mode-switch-hint">Ao trocar de versão, a app termina a sessão e pede login novamente.</p>
 </div>
 
 <div id="usersSection" class="panel users-master-panel">
@@ -1492,21 +1551,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
 function forceGoTabletFinal(){
   try{ localStorage.removeItem('app_session'); }catch(e){}
   try{ localStorage.removeItem('app_session_tablet_teste'); }catch(e){}
-  window.location.href = '../Gestao-Tablet-PC/';
+  window.location.href = '/App-Pai/Gestao-Tablet-PC/';
 }
 function forceGoTabletTest(){
   try{ localStorage.removeItem('app_session'); }catch(e){}
   try{ localStorage.removeItem('app_session_tablet_teste'); }catch(e){}
-  window.location.href = './';
+  window.location.href = '/App-Pai/Gestao-Tablet-PC-Teste/';
 }
 function bindTabletModeSwitch(){
   const finalBtn = $('goTabletFinalBtn');
   const testBtn = $('goTabletTestBtn');
-  if(finalBtn) finalBtn.onclick = () => { if(!isMasterAdmin()) return; forceGoTabletFinal(); };
-  if(testBtn) testBtn.onclick = () => { if(!isMasterAdmin()) return; forceGoTabletTest(); };
+  if(finalBtn){
+    finalBtn.onclick = () => {
+      if(!isMasterAdmin()) return;
+      forceGoTabletFinal();
+    };
+  }
+  if(testBtn){
+    testBtn.onclick = () => {
+      if(!isMasterAdmin()) return;
+      forceGoTabletTest();
+    };
+  }
 }
 document.addEventListener('DOMContentLoaded', bindTabletModeSwitch);
 

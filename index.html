@@ -1,26 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jorge Torneiro</title>
-<style>body{margin:0;background:#071225;}</style>
-<script>
-(function () {
-  const ua = navigator.userAgent.toLowerCase();
-  const isIphone = /iphone|ipad|ipod/.test(ua);
-  const isAndroid = /android/.test(ua);
-  setTimeout(() => {
-    if (isIphone) {
-      window.location.replace("Gestao-Iphone/");
-    } else if (isAndroid) {
-      window.location.replace("Gestao-Android/");
-    } else {
-      window.location.replace("Gestao-Tablet-PC/");
-    }
-  }, 100);
-})();
-</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jorge Torneiro</title>
+  <script>
+    window.location.replace("Gestao-Tablet-PC/");
+  </script>
 </head>
 <body></body>
 </html>
