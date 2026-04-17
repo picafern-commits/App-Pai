@@ -1697,6 +1697,10 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
             <form id="trabalhoForm" class="form-grid">
               <input type="hidden" id="trabalhoId" />
               <div class="field">
+                <label>ID do trabalho</label>
+                <input id="workCodeDisplay" type="text" readonly />
+              </div>
+              <div class="field">
                 <label>Cliente</label>
                 <select id="cliente" required></select>
               </div>
@@ -1972,10 +1976,11 @@ import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gsta
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const APP_VERSION = '1.0.6';
-const STORAGE_KEYS = { trabalhos:'ge_trabalhos_mobile_teste', clientes:'ge_clientes_mobile_teste', pagamentos:'ge_pagamentos_mobile_teste' };
+const STORAGE_KEYS = { trabalhos:'ge_trabalhos_mobile_teste', clientes:'ge_clientes_mobile_teste', pagamentos:'ge_pagamentos_mobile_teste' , lastTrabId:'ge_last_trab_id' };
 
 let currentRole = null, currentUsername = null;
 let trabalhos = [], clientes = [], pagamentos = [];
+let lastTrabId = 0;
 
 let firebaseApp = null;
 let firebaseAuth = null;
@@ -1997,6 +2002,18 @@ const isAdminLike = () => currentRole === 'admin' || currentRole === 'master_adm
 
 function genId(prefix='id'){
   if (window.crypto?.randomUUID) return `${prefix}_${window.crypto.randomUUID()}`;
+
+function nextTrabalhoIdPreview(){
+  const nextId = Number(lastTrabId || 0) + 1;
+  return `TRAB-${String(nextId).padStart(4,'0')}`;
+}
+
+function nextTrabalhoId(){
+  lastTrabId = Number(lastTrabId || 0) + 1;
+  localStorage.setItem(STORAGE_KEYS.lastTrabId, String(lastTrabId));
+  return `TRAB-${String(lastTrabId).padStart(4,'0')}`;
+}
+
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
 }
 
@@ -2027,14 +2044,26 @@ function normalizeTrabalhosIds(){
 
 function loadLocal(){
   try{trabalhos=JSON.parse(localStorage.getItem(STORAGE_KEYS.trabalhos))||[]}catch{trabalhos=[]}
-  normalizeTrabalhosIds();
   try{clientes=JSON.parse(localStorage.getItem(STORAGE_KEYS.clientes))||[]}catch{clientes=[]}
   try{pagamentos=JSON.parse(localStorage.getItem(STORAGE_KEYS.pagamentos))||[]}catch{pagamentos=[]}
+  try{ lastTrabId = Number(localStorage.getItem(STORAGE_KEYS.lastTrabId) || 0) || 0 }catch{ lastTrabId = 0 }
+
+  const maxExistingId = trabalhos.reduce((max, t) => {
+    const match = String(t.id || '').match(/^TRAB-(\d+)$/);
+    const n = match ? Number(match[1]) : 0;
+    return Math.max(max, n);
+  }, 0);
+
+  if(maxExistingId > lastTrabId){
+    lastTrabId = maxExistingId;
+    localStorage.setItem(STORAGE_KEYS.lastTrabId, String(lastTrabId));
+  }
 }
 function saveLocal(){
   localStorage.setItem(STORAGE_KEYS.trabalhos, JSON.stringify(trabalhos));
   localStorage.setItem(STORAGE_KEYS.clientes, JSON.stringify(clientes));
   localStorage.setItem(STORAGE_KEYS.pagamentos, JSON.stringify(pagamentos));
+  localStorage.setItem(STORAGE_KEYS.lastTrabId, String(lastTrabId));
   autoBackupInvisible();
 }
 
@@ -2051,7 +2080,8 @@ function populateClientOptions(selected=''){
 function updateWorkCodePreview(){
   if(!$('workCodeDisplay')) return;
   if($('trabalhoId')?.value) return;
-  $('workCodeDisplay').value = generateWorkCode();
+  if($('workCodeDisplay').value) return;
+  $('workCodeDisplay').value = nextTrabalhoIdPreview();
 }
 
 function fillClientContactFromSelection(){
@@ -2135,6 +2165,7 @@ window.deleteManagedUser = function(index){
   saveManagedUsers(users);
   renderManagedUsers();
   updateWorkCodePreview();
+  updateWorkCodePreview();
   renderMobileCards();
 };
 
@@ -2176,6 +2207,11 @@ function setRoleUI(){
   $('currentUserName').textContent = currentUsername || 'Utilizador';
   const usersSection = $('usersSection');
   if(usersSection) usersSection.style.display = isMasterAdmin() ? 'block' : 'none';
+  const workCodeField = $('workCodeDisplay');
+  if(workCodeField){
+    workCodeField.readOnly = !isMasterAdmin();
+    workCodeField.placeholder = isMasterAdmin() ? 'TRAB-0001' : '';
+  }
   setSyncMessage(syncReady ? 'Firebase Sync' : syncMessage, syncReady ? 'ok' : 'warn');
 }
 function switchTab(tab){
@@ -2688,6 +2724,7 @@ function renderRelatorios() {
 function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios();
   renderManagedUsers();
   updateWorkCodePreview();
+  updateWorkCodePreview();
   renderMobileCards(); }
 
 $('searchTrabalhos')?.addEventListener('input', ()=>{ renderTrabalhos(); renderMobileCards(); });
@@ -2698,7 +2735,7 @@ $('globalSearch')?.addEventListener('input', ()=>{ renderTrabalhos(); renderClie
 $('clearTrabalhoBtn')?.addEventListener('click', ()=>{
   $('trabalhoForm')?.reset();
   if($('trabalhoId')) $('trabalhoId').value='';
-  if($('workCodeDisplay')) $('workCodeDisplay').value='';
+  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
 });
@@ -2711,9 +2748,15 @@ $('clearClienteBtn')?.addEventListener('click', ()=>{
 $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!adminGuard()) return;
+  const existingId = $('trabalhoId').value;
+  const manualWorkCode = ($('workCodeDisplay')?.value || '').trim();
+  const safeWorkCode = existingId
+    ? (manualWorkCode || (trabalhos.find(x=>x.id===existingId)?.workCode) || nextTrabalhoIdPreview())
+    : (isMasterAdmin() && manualWorkCode ? manualWorkCode : nextTrabalhoId());
+
   const item={
-    id:$('trabalhoId').value || genId('trab'),
-    workCode: $('workCodeDisplay')?.value || generateWorkCode(),
+    id: existingId || genId('trab'),
+    workCode: safeWorkCode,
     cliente:$('cliente').value.trim(),
     contacto:$('contacto').value.trim(),
     tipoTrabalho:$('tipoTrabalho').value.trim(),
@@ -2731,10 +2774,11 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   try{ await upsertRemote('trabalhos', item); }catch(err){ console.error(err); setSyncMessage('Erro a gravar no Firebase', 'bad'); }
   $('trabalhoForm').reset();
   $('trabalhoId').value='';
-  if($('workCodeDisplay')) $('workCodeDisplay').value='';
+  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
   renderAll();
+  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   switchTab('trabalhos');
 });
 
@@ -3017,6 +3061,7 @@ $('userManagerForm')?.addEventListener('submit', (e) => {
   $('managedUserIndex').value = '';
   $('managedRole').value = 'user';
   renderManagedUsers();
+  updateWorkCodePreview();
   updateWorkCodePreview();
   renderMobileCards();
 });

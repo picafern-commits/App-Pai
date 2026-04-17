@@ -1432,6 +1432,10 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
             <form id="trabalhoForm" class="form-grid">
               <input type="hidden" id="trabalhoId" />
               <div class="field">
+                <label>ID do trabalho</label>
+                <input id="workCodeDisplay" type="text" readonly />
+              </div>
+              <div class="field">
                 <label>Cliente</label>
                 <select id="cliente" required></select>
               </div>
@@ -1734,6 +1738,11 @@ const isAdminLike = () => currentRole === 'admin' || currentRole === 'master_adm
 function genId(prefix='id'){
   if (window.crypto?.randomUUID) return `${prefix}_${window.crypto.randomUUID()}`;
 
+function nextTrabalhoIdPreview(){
+  const nextId = Number(lastTrabId || 0) + 1;
+  return `TRAB-${String(nextId).padStart(4,'0')}`;
+}
+
 function nextTrabalhoId(){
   lastTrabId = Number(lastTrabId || 0) + 1;
   localStorage.setItem(STORAGE_KEYS.lastTrabId, String(lastTrabId));
@@ -1806,7 +1815,8 @@ function populateClientOptions(selected=''){
 function updateWorkCodePreview(){
   if(!$('workCodeDisplay')) return;
   if($('trabalhoId')?.value) return;
-  $('workCodeDisplay').value = generateWorkCode();
+  if($('workCodeDisplay').value) return;
+  $('workCodeDisplay').value = nextTrabalhoIdPreview();
 }
 
 function fillClientContactFromSelection(){
@@ -1890,6 +1900,7 @@ window.deleteManagedUser = function(index){
   saveManagedUsers(users);
   renderManagedUsers();
   updateWorkCodePreview();
+  updateWorkCodePreview();
   renderMobileCards();
 };
 
@@ -1931,6 +1942,11 @@ function setRoleUI(){
   $('currentUserName').textContent = currentUsername || 'Utilizador';
   const usersSection = $('usersSection');
   if(usersSection) usersSection.style.display = isMasterAdmin() ? 'block' : 'none';
+  const workCodeField = $('workCodeDisplay');
+  if(workCodeField){
+    workCodeField.readOnly = !isMasterAdmin();
+    workCodeField.placeholder = isMasterAdmin() ? 'TRAB-0001' : '';
+  }
   setSyncMessage(syncReady ? 'Firebase Sync' : syncMessage, syncReady ? 'ok' : 'warn');
 }
 function switchTab(tab){
@@ -2443,6 +2459,7 @@ function renderRelatorios() {
 function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios();
   renderManagedUsers();
   updateWorkCodePreview();
+  updateWorkCodePreview();
   renderMobileCards(); }
 
 $('searchTrabalhos')?.addEventListener('input', ()=>{ renderTrabalhos(); renderMobileCards(); });
@@ -2453,7 +2470,7 @@ $('globalSearch')?.addEventListener('input', ()=>{ renderTrabalhos(); renderClie
 $('clearTrabalhoBtn')?.addEventListener('click', ()=>{
   $('trabalhoForm')?.reset();
   if($('trabalhoId')) $('trabalhoId').value='';
-  if($('workCodeDisplay')) $('workCodeDisplay').value='';
+  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
 });
@@ -2466,9 +2483,15 @@ $('clearClienteBtn')?.addEventListener('click', ()=>{
 $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!adminGuard()) return;
+  const existingId = $('trabalhoId').value;
+  const manualWorkCode = ($('workCodeDisplay')?.value || '').trim();
+  const safeWorkCode = existingId
+    ? (manualWorkCode || (trabalhos.find(x=>x.id===existingId)?.workCode) || nextTrabalhoIdPreview())
+    : (isMasterAdmin() && manualWorkCode ? manualWorkCode : nextTrabalhoId());
+
   const item={
-    id:$('trabalhoId').value || nextTrabalhoId(),
-    workCode: $('workCodeDisplay')?.value || generateWorkCode(),
+    id: existingId || genId('trab'),
+    workCode: safeWorkCode,
     cliente:$('cliente').value.trim(),
     contacto:$('contacto').value.trim(),
     tipoTrabalho:$('tipoTrabalho').value.trim(),
@@ -2486,10 +2509,11 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   try{ await upsertRemote('trabalhos', item); }catch(err){ console.error(err); setSyncMessage('Erro a gravar no Firebase', 'bad'); }
   $('trabalhoForm').reset();
   $('trabalhoId').value='';
-  if($('workCodeDisplay')) $('workCodeDisplay').value='';
+  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
   renderAll();
+  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   switchTab('trabalhos');
 });
 
@@ -2772,6 +2796,7 @@ $('userManagerForm')?.addEventListener('submit', (e) => {
   $('managedUserIndex').value = '';
   $('managedRole').value = 'user';
   renderManagedUsers();
+  updateWorkCodePreview();
   updateWorkCodePreview();
   renderMobileCards();
 });
