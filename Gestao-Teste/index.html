@@ -1705,6 +1705,7 @@ const firebaseConfig = {
   appId: "1:318015040210:web:e3070e6b8f4d74a8799b0b"
 };
 
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
@@ -1805,12 +1806,19 @@ function populateClientOptions(selected=''){
   const select = $('cliente');
   if(!select) return;
   const current = selected || select.value || '';
-  const sorted = clientes.slice().sort((a,b)=>(a.nome || '').localeCompare(b.nome || ''));
+  const sorted = clientes.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
   select.innerHTML = ['<option value="">Selecionar cliente</option>']
     .concat(sorted.map(c => `<option value="${escapeHtml(c.nome || '')}">${escapeHtml(c.nome || '')}</option>`))
     .join('');
   if(current) select.value = current;
   fillClientContactFromSelection();
+}
+function updateWorkCodePreview(){
+  const field = $('workCodeDisplay');
+  const idField = $('trabalhoId');
+  if(!field) return;
+  if(idField && idField.value) return;
+  field.value = nextTrabalhoIdPreview();
 }
 
 function fillClientContactFromSelection(){
