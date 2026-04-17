@@ -1727,7 +1727,7 @@ const firebaseConfig = {
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDoc, getDocs, query, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const APP_VERSION = '1.0.6';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' , lastTrabId:'ge_last_trab_id', lastWeeklyBackup:'ge_last_weekly_backup', lastWeeklyBackupMeta:'ge_last_weekly_backup_meta' };
@@ -2025,6 +2025,8 @@ function setRoleUI(){
   if(configPage) configPage.style.display = isMasterAdmin() ? '' : 'none';
   const masterModeSwitchPanel = $('masterModeSwitchPanel');
   if(masterModeSwitchPanel) masterModeSwitchPanel.classList.toggle('hidden', !isMasterAdmin());
+  const firebaseBackupRestorePanel = $('firebaseBackupRestorePanel');
+  if(firebaseBackupRestorePanel) firebaseBackupRestorePanel.style.display = isMasterAdmin() ? 'block' : 'none';
   const usersSection = $('usersSection');
   if(usersSection) usersSection.style.display = isMasterAdmin() ? 'block' : 'none';
   const workCodeField = $('workCodeDisplay');
