@@ -1978,26 +1978,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-
-// DEBUG + FORCE LOAD BACKUPS FIX
-document.addEventListener('DOMContentLoaded', ()=>{
-  const btn = document.getElementById('loadFirebaseBackupsBtn');
-  if(btn){
-    btn.onclick = async ()=>{
-      alert('Botão backups clicado!');
-      if(typeof window.loadFirebaseBackups === 'function'){
-        try{
-          await window.loadFirebaseBackups();
-        }catch(e){
-          alert('Erro: ' + e.message);
-        }
-      }else{
-        alert('Função loadFirebaseBackups NÃO existe');
-      }
-    };
-  }
-});
-
 </script>
   <script type="module">
 const firebaseConfig = {
@@ -3049,26 +3029,6 @@ function renderMobileCards(){
     `).join('') : '<div class="mobile-card"><div class="mobile-card-title">Sem clientes registados</div></div>';
   }
 }
-
-
-// DEBUG + FORCE LOAD BACKUPS FIX
-document.addEventListener('DOMContentLoaded', ()=>{
-  const btn = document.getElementById('loadFirebaseBackupsBtn');
-  if(btn){
-    btn.onclick = async ()=>{
-      alert('Botão backups clicado!');
-      if(typeof window.loadFirebaseBackups === 'function'){
-        try{
-          await window.loadFirebaseBackups();
-        }catch(e){
-          alert('Erro: ' + e.message);
-        }
-      }else{
-        alert('Função loadFirebaseBackups NÃO existe');
-      }
-    };
-  }
-});
 
 </script>
 
