@@ -1804,6 +1804,8 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
           </div>
           <div class="config-tools"><div class="setting-card"><span class="mini-label">Estado</span><strong id="inputFixInfo">Inputs corrigidos</strong><p>Esta versão volta à base estável para garantir escrita normal em todos os campos.</p></div></div><div class="config-actions">
             <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
+            <input type="file" id="importDataFile" accept=".json,application/json" style="display:none" />
+            <button class="btn btn-secondary" id="importBackupBtn">Importar backup</button>
             <button class="btn btn-primary" id="runWeeklyBackupBtn">Backup Firebase agora</button>
           </div>
           <div class="config-tools">
