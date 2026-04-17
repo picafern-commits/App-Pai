@@ -1804,6 +1804,14 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
           </div>
           <div class="config-tools"><div class="setting-card"><span class="mini-label">Estado</span><strong id="inputFixInfo">Inputs corrigidos</strong><p>Esta versão volta à base estável para garantir escrita normal em todos os campos.</p></div></div><div class="config-actions">
             <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
+            <button class="btn btn-primary" id="runWeeklyBackupBtn">Backup Firebase agora</button>
+          </div>
+          <div class="config-tools">
+            <div class="setting-card">
+              <span class="mini-label">Backup semanal automático</span>
+              <strong id="weeklyBackupStatus">Sem backup ainda</strong>
+              <p id="weeklyBackupInfo">A app cria uma cópia semanal automática no Firebase quando tiver sessão ativa e sincronização ligada.</p>
+            </div>
           </div>
 
           <div id="usersSection" class="panel users-master-panel">
@@ -1976,7 +1984,7 @@ import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gsta
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const APP_VERSION = '1.0.6';
-const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' , lastTrabId:'ge_last_trab_id' };
+const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' , lastTrabId:'ge_last_trab_id', lastWeeklyBackup:'ge_last_weekly_backup', lastWeeklyBackupMeta:'ge_last_weekly_backup_meta' };
 
 let currentRole = null, currentUsername = null;
 let trabalhos = [], clientes = [], pagamentos = [];
@@ -2067,21 +2075,81 @@ function saveLocal(){
   autoBackupInvisible();
 }
 
+
+function getWeeklyBackupPayload(){
+  return {
+    id: `backup_${new Date().toISOString().replace(/[:.]/g,'-')}`,
+    createdAt: new Date().toISOString(),
+    appVersion: APP_VERSION,
+    currentUsername,
+    currentRole,
+    trabalhos,
+    clientes,
+    pagamentos,
+    lastTrabId: typeof lastTrabId !== 'undefined' ? lastTrabId : 0,
+    counts: {
+      trabalhos: Array.isArray(trabalhos) ? trabalhos.length : 0,
+      clientes: Array.isArray(clientes) ? clientes.length : 0,
+      pagamentos: Array.isArray(pagamentos) ? pagamentos.length : 0
+    }
+  };
+}
+
+function updateWeeklyBackupInfo(){
+  const status = $('weeklyBackupStatus');
+  const info = $('weeklyBackupInfo');
+  if(!status || !info) return;
+
+  let meta = null;
+  try{ meta = JSON.parse(localStorage.getItem(STORAGE_KEYS.lastWeeklyBackupMeta) || 'null'); }catch{}
+  if(meta && meta.createdAt){
+    const when = fmtDate(meta.createdAt);
+    status.textContent = `Último backup: ${when}`;
+    info.textContent = `ID ${meta.id || '-'} • Trabalhos ${meta.counts?.trabalhos ?? 0} • Clientes ${meta.counts?.clientes ?? 0} • Pagamentos ${meta.counts?.pagamentos ?? 0}`;
+  }else{
+    status.textContent = 'Sem backup ainda';
+    info.textContent = 'A app cria uma cópia semanal automática no Firebase quando tiver sessão ativa e sincronização ligada.';
+  }
+}
+
+async function saveWeeklyBackupToFirebase(force=false){
+  if(!syncReady || !firestoreDb) return false;
+
+  const now = Date.now();
+  const last = Number(localStorage.getItem(STORAGE_KEYS.lastWeeklyBackup) || 0) || 0;
+  const oneWeek = 7 * 24 * 60 * 60 * 1000;
+
+  if(!force && last && (now - last) < oneWeek){
+    updateWeeklyBackupInfo();
+    return false;
+  }
+
+  const payload = getWeeklyBackupPayload();
+  await setDoc(doc(firestoreDb, 'backups', payload.id), payload, { merge: true });
+
+  localStorage.setItem(STORAGE_KEYS.lastWeeklyBackup, String(now));
+  localStorage.setItem(STORAGE_KEYS.lastWeeklyBackupMeta, JSON.stringify(payload));
+  updateWeeklyBackupInfo();
+  return true;
+}
+
 function populateClientOptions(selected=''){
   const select = $('cliente');
   if(!select) return;
   const current = selected || select.value || '';
-  const opts = ['<option value="">Selecionar cliente</option>']
-    .concat(clientes.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(c => `<option value="${escapeHtml(c.nome || '')}" data-phone="${escapeHtml(c.telefone || '')}">${escapeHtml(c.nome || '')}</option>`));
-  select.innerHTML = opts.join('');
+  const sorted = clientes.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+  select.innerHTML = ['<option value="">Selecionar cliente</option>']
+    .concat(sorted.map(c => `<option value="${escapeHtml(c.nome || '')}">${escapeHtml(c.nome || '')}</option>`))
+    .join('');
   if(current) select.value = current;
   fillClientContactFromSelection();
 }
 function updateWorkCodePreview(){
-  if(!$('workCodeDisplay')) return;
-  if($('trabalhoId')?.value) return;
-  if($('workCodeDisplay').value) return;
-  $('workCodeDisplay').value = nextTrabalhoIdPreview();
+  const field = $('workCodeDisplay');
+  const idField = $('trabalhoId');
+  if(!field) return;
+  if(idField && idField.value) return;
+  field.value = nextTrabalhoIdPreview();
 }
 
 function fillClientContactFromSelection(){
@@ -2210,7 +2278,9 @@ function setRoleUI(){
   const workCodeField = $('workCodeDisplay');
   if(workCodeField){
     workCodeField.readOnly = !isMasterAdmin();
-    workCodeField.placeholder = isMasterAdmin() ? 'TRAB-0001' : '';
+    if(!workCodeField.value){
+      workCodeField.value = nextTrabalhoIdPreview();
+    }
   }
   setSyncMessage(syncReady ? 'Firebase Sync' : syncMessage, syncReady ? 'ok' : 'warn');
 }
@@ -2246,6 +2316,7 @@ async function initFirebaseSync(){
         setSyncMessage('Firebase Sync', 'ok');
         clearRealtimeListeners();
         attachRealtimeListeners();
+        saveWeeklyBackupToFirebase(false).catch(err => console.error('weekly backup error:', err));
       } else {
         syncReady = false;
         setSyncMessage('Sem sessão Firebase', 'bad');
@@ -2297,251 +2368,20 @@ async function removeRemote(collectionName, id){
 
 
 function adminGuard(){ if(!isAdminLike()){ alert('Só o Admin pode fazer alterações.'); return false; } return true; }
-function printHtml(title, bodyHtml){ const win=window.open('', '_blank'); if(!win) return; win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"/><title>${title}</title><style>body{font-family:Arial,sans-serif;padding:32px;color:#111}h1,h2{margin:0 0 10px}.meta{color:#555;margin-bottom:20px}.card{border:1px solid #ddd;border-radius:12px;padding:18px;margin:12px 0}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border-bottom:1px solid #ddd;padding:10px;text-align:left}
-/* ===== MOBILE PREMIUM OVERRIDES 1.0.6 ===== */
-@media (max-width: 900px){
-  :root{
-    --mobile-gap:12px;
-  }
-  html{
-    -webkit-text-size-adjust:100%;
-  }
-  body{
-    min-height:100dvh;
-    overscroll-behavior-y:contain;
-  }
-  .login-screen{
-    min-height:100dvh;
-    align-items:flex-start;
-    padding:14px 12px calc(14px + env(safe-area-inset-bottom));
-  }
-  .login-card{
-    width:100%;
-    padding:14px;
-    border-radius:24px;
-    gap:14px;
-    box-shadow:0 12px 36px rgba(0,0,0,.24);
-  }
-  .login-brand,
-  .login-panel{
-    border-radius:22px;
-    padding:16px;
-  }
-  .clean-brand-copy h1,
-  .login-only-title h1{
-    font-size:34px!important;
-    line-height:1.02;
-    margin-bottom:8px;
-  }
-  .company-logo-large{
-    max-width:160px!important;
-    max-height:160px!important;
-  }
-  .app-shell{
-    min-height:100dvh;
-    padding-bottom:calc(88px + env(safe-area-inset-bottom));
-  }
-  .main{
-    padding:12px 12px calc(96px + env(safe-area-inset-bottom))!important;
-  }
-  .topbar{
-    position:sticky;
-    top:0;
-    z-index:40;
-    padding:2px 0 10px;
-    margin-bottom:10px;
-    background:linear-gradient(180deg, rgba(6,10,18,.96), rgba(6,10,18,.76));
-    backdrop-filter:blur(12px);
-    border-bottom:1px solid rgba(255,255,255,.04);
-  }
-  .topbar-left{
-    gap:4px;
-  }
-  #pageTitle{
-    font-size:24px!important;
-    line-height:1.08;
-    letter-spacing:-.02em;
-  }
-  .subline{
-    gap:5px;
-    font-size:11px!important;
-    line-height:1.3;
-  }
-  .global-search{
-    min-height:48px!important;
-    border-radius:16px!important;
-  }
-  .hero-panel,
-  .panel,
-  .form-panel,
-  .history-panel,
-  .payments-panel,
-  .setting-card,
-  .alert-card,
-  .stat-card,
-  .report-card,
-  .mobile-card{
-    border-radius:22px!important;
-    box-shadow:0 10px 28px rgba(0,0,0,.16);
-  }
-  .hero-panel{
-    padding:16px!important;
-  }
-  .hero-copy h3{
-    font-size:24px!important;
-    line-height:1.06;
-    margin-bottom:8px!important;
-  }
-  .hero-copy p{
-    font-size:14px!important;
-    line-height:1.5;
-  }
-  .hero-actions{
-    position:sticky;
-    bottom:calc(84px + env(safe-area-inset-bottom));
-    z-index:45;
-    display:grid!important;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    padding-top:8px;
-  }
-  .btn,
-  .small-btn,
-  .bottom-btn{
-    min-height:48px!important;
-  }
-  .btn{
-    border-radius:16px!important;
-    justify-content:center;
-    width:100%;
-  }
-  .content-grid,
-  .dashboard-grid,
-  .stats-grid,
-  .clientes-grid,
-  .settings-grid,
-  .alert-grid,
-  .client-summary-grid,
-  .form-grid{
-    gap:12px!important;
-  }
-  .field{
-    gap:6px;
-  }
-  .field label{
-    font-size:12px!important;
-    font-weight:600;
-    color:#b8c4e0;
-  }
-  input,select,textarea{
-    font-size:16px!important;
-    min-height:50px!important;
-    border-radius:16px!important;
-    padding:14px 14px!important;
-  }
-  textarea{
-    min-height:120px!important;
-  }
-  .mobile-cards-wrap{
-    gap:12px!important;
-  }
-  .mobile-card{
-    padding:14px!important;
-  }
-  .mobile-card-title{
-    font-size:17px!important;
-  }
-  .mobile-card-sub{
-    font-size:13px!important;
-  }
-  .mobile-card-item{
-    border-radius:14px!important;
-    padding:10px 12px!important;
-  }
-  .row-actions{
-    grid-template-columns:1fr 1fr!important;
-    gap:10px!important;
-  }
-  .row-actions .small-btn{
-    width:100%;
-    border-radius:14px!important;
-    padding:11px 12px!important;
-    font-weight:700;
-  }
-  .badge,
-  .invoice-badge{
-    font-size:12px!important;
-    padding:7px 10px!important;
-  }
-  .modal{
-    align-items:end!important;
-    padding:10px!important;
-  }
-  .modal-card{
-    width:100%!important;
-    max-width:100%!important;
-    border-radius:24px 24px 18px 18px!important;
-    max-height:min(82dvh, 760px);
-    overflow:auto;
-  }
-  .payment-method-grid{
-    grid-template-columns:1fr 1fr!important;
-    gap:10px!important;
-  }
-  .pay-method-btn{
-    min-height:62px!important;
-    border-radius:18px!important;
-  }
-  .bottom-nav{
-    left:10px!important;
-    right:10px!important;
-    bottom:calc(10px + env(safe-area-inset-bottom))!important;
-    padding:10px!important;
-    gap:8px!important;
-    border-radius:24px!important;
-    box-shadow:0 14px 36px rgba(0,0,0,.28)!important;
-  }
-  .bottom-btn{
-    min-width:96px!important;
-    font-size:13px!important;
-    padding:11px 10px!important;
-    border-radius:16px!important;
-  }
-  .env-switch-btn{
-    right:12px!important;
-    bottom:calc(158px + env(safe-area-inset-bottom))!important;
-    top:auto!important;
-  }
-  .env-badge{
-    right:12px!important;
-    bottom:calc(116px + env(safe-area-inset-bottom))!important;
-    top:auto!important;
-  }
+function printHtml(title, bodyHtml){
+  const win = window.open('', '_blank');
+  if(!win) return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"/><title>${title}</title><style>
+    body{font-family:Arial,sans-serif;padding:32px;color:#111}
+    h1,h2{margin:0 0 10px}
+    .meta{color:#555;margin-bottom:20px}
+    .card{border:1px solid #ddd;border-radius:12px;padding:18px;margin:12px 0}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{border-bottom:1px solid #ddd;padding:10px;text-align:left}
+  </style></head><body>${bodyHtml}</body></html>`);
+  win.document.close();
+  setTimeout(()=>{ win.focus(); win.print(); }, 300);
 }
-@media (max-width: 520px){
-  .main{
-    padding:10px 10px calc(96px + env(safe-area-inset-bottom))!important;
-  }
-  .hero-actions{
-    grid-template-columns:1fr!important;
-  }
-  .row-actions{
-    grid-template-columns:1fr!important;
-  }
-  .payment-method-grid{
-    grid-template-columns:1fr!important;
-  }
-  .mobile-card-grid{
-    grid-template-columns:1fr!important;
-  }
-  .bottom-btn{
-    min-width:88px!important;
-    font-size:12px!important;
-  }
-}
-
-</style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
-
 function renderDashboard(){
   const totalTrabalhos = trabalhos.length;
   const emAndamento = trabalhos.filter(t=>t.estado==='Em andamento'||t.estado==='Pendente').length;
@@ -2725,7 +2565,8 @@ function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOption
   renderManagedUsers();
   updateWorkCodePreview();
   updateWorkCodePreview();
-  renderMobileCards(); }
+  renderMobileCards();
+  updateWeeklyBackupInfo(); }
 
 $('searchTrabalhos')?.addEventListener('input', ()=>{ renderTrabalhos(); renderMobileCards(); });
 $('filterEstado')?.addEventListener('change', ()=>{ renderTrabalhos(); renderMobileCards(); });
@@ -2735,9 +2576,10 @@ $('globalSearch')?.addEventListener('input', ()=>{ renderTrabalhos(); renderClie
 $('clearTrabalhoBtn')?.addEventListener('click', ()=>{
   $('trabalhoForm')?.reset();
   if($('trabalhoId')) $('trabalhoId').value='';
-  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
+  if($('contacto')) $('contacto').value='';
+  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
 });
 $('clearClienteBtn')?.addEventListener('click', ()=>{
   $('clienteForm')?.reset();
@@ -2748,15 +2590,21 @@ $('clearClienteBtn')?.addEventListener('click', ()=>{
 $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!adminGuard()) return;
+
   const existingId = $('trabalhoId').value;
   const manualWorkCode = ($('workCodeDisplay')?.value || '').trim();
-  const safeWorkCode = existingId
-    ? (manualWorkCode || (trabalhos.find(x=>x.id===existingId)?.workCode) || nextTrabalhoIdPreview())
-    : (isMasterAdmin() && manualWorkCode ? manualWorkCode : nextTrabalhoId());
+  const original = existingId ? trabalhos.find(x => x.id === existingId) : null;
+
+  let finalWorkCode = '';
+  if(existingId){
+    finalWorkCode = (isMasterAdmin() && manualWorkCode) ? manualWorkCode : (original?.workCode || manualWorkCode || nextTrabalhoIdPreview());
+  }else{
+    finalWorkCode = (isMasterAdmin() && manualWorkCode) ? manualWorkCode : nextTrabalhoId();
+  }
 
   const item={
     id: existingId || genId('trab'),
-    workCode: safeWorkCode,
+    workCode: finalWorkCode,
     cliente:$('cliente').value.trim(),
     contacto:$('contacto').value.trim(),
     tipoTrabalho:$('tipoTrabalho').value.trim(),
@@ -2767,18 +2615,26 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
     invoiceType:$('trabalhoInvoiceType') ? $('trabalhoInvoiceType').value : 'Com Fatura',
     descricao:$('descricao').value.trim()
   };
-  if(!item.cliente || !item.tipoTrabalho){ alert('Preenche cliente e tipo de trabalho.'); return; }
+
+  if(!item.cliente || !item.tipoTrabalho){
+    alert('Preenche cliente e tipo de trabalho.');
+    return;
+  }
+
   const i=trabalhos.findIndex(x=>x.id===item.id);
   if(i>=0) trabalhos[i]=item; else trabalhos.push(item);
+
   saveLocal();
   try{ await upsertRemote('trabalhos', item); }catch(err){ console.error(err); setSyncMessage('Erro a gravar no Firebase', 'bad'); }
+
   $('trabalhoForm').reset();
   $('trabalhoId').value='';
-  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
-  renderAll();
+  if($('contacto')) $('contacto').value='';
   if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
+
+  renderAll();
   switchTab('trabalhos');
 });
 
@@ -2812,7 +2668,7 @@ window.editTrabalho = function(id){
   $('trabalhoId').value=t.id;
   if($('workCodeDisplay')) $('workCodeDisplay').value = t.workCode || '';
   populateClientOptions(t.cliente || '');
-  $('contacto').value=t.contacto||'';
+  if($('contacto')) $('contacto').value=t.contacto||'';
   $('tipoTrabalho').value=t.tipoTrabalho||'';
   $('valor').value=t.valor||'';
   $('dataInicio').value=t.dataInicio||'';
@@ -2924,8 +2780,15 @@ window.pdfTrabalho = function(id){ const t=trabalhos.find(x=>x.id===id); if(!t) 
 window.pdfCliente = function(id){ const c=clientes.find(x=>x.id===id); if(!c) return; const trabalhosCliente=trabalhos.filter(t=>(t.cliente||'').trim().toLowerCase()===(c.nome||'').trim().toLowerCase()); const linhas=trabalhosCliente.map(t=>`<tr><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${fmtDate(t.dataInicio)}</td><td>${euro(t.valor||0)}</td></tr>`).join(''); printHtml(`Cliente ${c.nome}`, `<h1>Ficha de Cliente</h1><div class='meta'>${escapeHtml(c.nome||'-')}</div><div class='card'><strong>Telefone:</strong> ${escapeHtml(c.telefone||'-')}</div><div class='card'><strong>Email:</strong> ${escapeHtml(c.email||'-')}</div><div class='card'><strong>NIF:</strong> ${escapeHtml(c.nif||'-')}</div><div class='card'><strong>Morada:</strong><br>${escapeHtml(c.morada||'-')}</div><h2>Trabalhos associados</h2><table><thead><tr><th>Tipo</th><th>Data</th><th>Valor</th></tr></thead><tbody>${linhas || '<tr><td colspan="3">Sem trabalhos associados</td></tr>'}</tbody></table>`); };
 window.pdfPagamento = function(id){ const p=pagamentos.find(x=>x.id===id); if(!p) return; printHtml(`Pagamento ${p.cliente}`, `<h1>Comprovativo de Pagamento</h1><div class='meta'>${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Referência:</strong> ${escapeHtml(p.referencia||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(p.valor||0)}</div><div class='card'><strong>Data:</strong> ${fmtDate(p.data)}</div><div class='card'><strong>Método:</strong> ${escapeHtml(p.metodo||'-')}</div><div class='card'><strong>Notas:</strong><br>${escapeHtml(p.notas||'-')}</div>`); };
 
-function exportBackup(){ const payload={ exportadoEm:new Date().toISOString(), appVersion:APP_VERSION, currentUsername, currentRole, trabalhos, clientes, pagamentos }; const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='gestao-empresa-backup.json'; a.click(); URL.revokeObjectURL(a.href); }
-$('exportBackupBtn').addEventListener('click', exportBackup);
+function exportBackup(){ const payload={ exportadoEm:new Date().toISOString(), appVersion:APP_VERSION, currentUsername, currentRole, trabalhos, clientes, pagamentos, lastTrabId: typeof lastTrabId !== 'undefined' ? lastTrabId : 0 }; const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='gestao-empresa-backup.json'; a.click(); URL.revokeObjectURL(a.href); }
+$('exportBackupBtn')?.addEventListener('click', exportBackup);
+$('runWeeklyBackupBtn')?.addEventListener('click', async ()=>{
+  try{
+    if(!syncReady){ alert('A app ainda não está ligada ao Firebase.'); return; }
+    await saveWeeklyBackupToFirebase(true);
+    alert('Backup Firebase criado com sucesso.');
+  }catch(err){ console.error(err); alert('Erro ao criar backup no Firebase.'); }
+});
 $('exportMonthlyPdfBtn').addEventListener('click', ()=>{ const html=$('resumoMensal').innerHTML; printHtml('Relatório mensal', `<h1>Relatório Mensal</h1><div style="display:grid;gap:14px">${html}</div>`); });
 
 loadLocal();
