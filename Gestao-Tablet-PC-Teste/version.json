@@ -1,5 +1,6 @@
 {
   "version": "1.0.6",
   "platform": "tablet_pc",
-  "mode": "test"
+  "mode": "test",
+  "enterprise_patch": true
 }
