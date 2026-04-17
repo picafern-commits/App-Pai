@@ -1387,11 +1387,11 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   <div class="mode-switch-card">
     <div class="mode-switch-copy">
       <h4>Estás na versão de TESTE</h4>
-      <p>Troca entre a versão FINAL e a versão TESTE do Tablet/PC sem mexer no Android nem no iPhone. Ao trocar de ambiente, a app termina a sessão atual e pede login novamente.</p>
+      <p>Troca entre a versão FINAL e a versão TESTE do Tablet/PC sem mexer no Android nem no iPhone. Ao trocar de ambiente, a app termina a sessão atual e pede login novamente.</p><p class="mode-switch-hint">O botão troca imediatamente para a outra pasta do GitHub Pages.</p>
     </div>
     <div class="mode-switch-actions">
-      <button type="button" class="btn btn-secondary mode-switch-btn " id="goTabletFinalBtn">Abrir FINAL</button>
-      <button type="button" class="btn btn-primary mode-switch-btn active" id="goTabletTestBtn">Abrir TESTE</button>
+      <button type="button" class="btn btn-secondary mode-switch-btn " id="goTabletFinalBtn" onclick="if(window.forceGoTabletFinal) window.forceGoTabletFinal()">Abrir FINAL</button>
+      <button type="button" class="btn btn-primary mode-switch-btn active" id="goTabletTestBtn" onclick="if(window.forceGoTabletTest) window.forceGoTabletTest()">Abrir TESTE</button>
     </div>
   </div>
 </div>
@@ -1552,34 +1552,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-function forceGoTabletFinal(){
+window.forceGoTabletFinal = function(){
   try{ localStorage.removeItem('app_session'); }catch(e){}
   try{ localStorage.removeItem('app_session_tablet_teste'); }catch(e){}
   window.location.href = '/App-Pai/Gestao-Tablet-PC/';
 }
-function forceGoTabletTest(){
+window.forceGoTabletTest = function(){
   try{ localStorage.removeItem('app_session'); }catch(e){}
   try{ localStorage.removeItem('app_session_tablet_teste'); }catch(e){}
   window.location.href = '/App-Pai/Gestao-Tablet-PC-Teste/';
 }
-function bindTabletModeSwitch(){
-  const finalBtn = $('goTabletFinalBtn');
-  const testBtn = $('goTabletTestBtn');
-  if(finalBtn){
-    finalBtn.onclick = () => {
-      if(!isMasterAdmin()) return;
-      forceGoTabletFinal();
-    };
-  }
-  if(testBtn){
-    testBtn.onclick = () => {
-      if(!isMasterAdmin()) return;
-      forceGoTabletTest();
-    };
-  }
-}
-document.addEventListener('DOMContentLoaded', bindTabletModeSwitch);
-
 </script>
   <script type="module">
 const firebaseConfig = {
