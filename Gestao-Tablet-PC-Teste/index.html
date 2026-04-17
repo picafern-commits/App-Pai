@@ -1134,34 +1134,22 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 }
 
 
-/* MODE BADGE CLEAN RECOVERY */
-.mode-badge{
-  position:fixed !important;
-  top:18px !important;
-  right:18px !important;
-  z-index:240 !important;
-  padding:8px 14px !important;
-  min-height:40px !important;
-  display:flex !important;
-  align-items:center !important;
-  border-radius:999px !important;
-  font-size:12px !important;
-  font-weight:800 !important;
-  letter-spacing:.02em !important;
-  border:1px solid rgba(255,255,255,.08) !important;
-  backdrop-filter:blur(10px) !important;
-  box-shadow:0 10px 28px rgba(0,0,0,.22) !important;
-}
-@media (max-width: 1400px){
-  .mode-badge{
-    top:72px !important;
-    right:16px !important;
-  }
+.mode-test-sidebar{
+  background: linear-gradient(135deg, rgba(239,68,68,.18), rgba(239,68,68,.05));
+  border: 1px solid rgba(239,68,68,.3);
+  color: #fca5a5;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: .05em;
+  margin-bottom: 12px;
 }
 
 </style>
 </head>
-<body><div class="mode-badge test">MODO TESTE</div><div class="platform-badge">TABLET/PC</div><div class="env-badge prod">PRODUÇÃO</div>
+<body><div class="platform-badge">TABLET/PC</div><div class="env-badge prod">PRODUÇÃO</div>
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
 
@@ -1864,7 +1852,21 @@ async function removeRemote(collectionName, id){
 
 
 function adminGuard(){ if(!isAdminLike()){ alert('Só o Admin pode fazer alterações.'); return false; } return true; }
-function printHtml(title, bodyHtml){ const win=window.open('', '_blank'); if(!win) return; win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"/><title>${title}</title><style>body{font-family:Arial,sans-serif;padding:32px;color:#111}h1,h2{margin:0 0 10px}.meta{color:#555;margin-bottom:20px}.card{border:1px solid #ddd;border-radius:12px;padding:18px;margin:12px 0}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border-bottom:1px solid #ddd;padding:10px;text-align:left}</style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
+function printHtml(title, bodyHtml){ const win=window.open('', '_blank'); if(!win) return; win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"/><title>${title}</title><style>body{font-family:Arial,sans-serif;padding:32px;color:#111}h1,h2{margin:0 0 10px}.meta{color:#555;margin-bottom:20px}.card{border:1px solid #ddd;border-radius:12px;padding:18px;margin:12px 0}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border-bottom:1px solid #ddd;padding:10px;text-align:left}
+.mode-test-sidebar{
+  background: linear-gradient(135deg, rgba(239,68,68,.18), rgba(239,68,68,.05));
+  border: 1px solid rgba(239,68,68,.3);
+  color: #fca5a5;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: .05em;
+  margin-bottom: 12px;
+}
+
+</style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 function renderDashboard(){
   const totalTrabalhos = trabalhos.length;
