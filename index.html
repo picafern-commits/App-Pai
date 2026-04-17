@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Braga - Seleção</title>
+<style>
+body{
+  font-family: Arial;
+  background:#0b1220;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+}
+.container{
+  text-align:center;
+}
+h1{margin-bottom:30px;}
+.btn{
+  display:block;
+  margin:10px auto;
+  padding:15px 25px;
+  border-radius:10px;
+  border:none;
+  font-size:16px;
+  cursor:pointer;
+  width:250px;
+}
+.prod{background:#4facfe;}
+.mobile{background:#00f2fe;}
+.test{background:#f093fb;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>App Braga</h1>
+
+<button class="btn prod" onclick="go('AppPrincipal/Gestao/')">Produção PC/Tablet</button>
+<button class="btn mobile" onclick="go('AppPrincipal/Gestao-Mobile/')">Produção Mobile</button>
+
+<button class="btn test" onclick="go('AppTestes/Gestao-Teste/')">Teste PC/Tablet</button>
+<button class="btn test" onclick="go('AppTestes/Gestao-Mobile-Teste/')">Teste Mobile</button>
+
+</div>
+
+<script>
+function go(path){
+  window.location.href = path;
+}
+</script>
+
+</body>
+</html>
