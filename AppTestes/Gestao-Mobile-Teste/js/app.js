@@ -1,3 +1,8 @@
+function nextTrabalhoIdPreview(){
+  const nextId = Number((typeof lastTrabId !== 'undefined' ? lastTrabId : 0) || 0) + 1;
+  return `TRAB-${String(nextId).padStart(4,'0')}`;
+}
+
 const DEFAULT_USERS = [
   { username: 'jorge', password: 'jfernandes', role: 'admin' },
   { username: 'fatima', password: 'ffernandes', role: 'user' },
