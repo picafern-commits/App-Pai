@@ -1292,6 +1292,271 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   color:#93c5fd;
 }
 
+
+/* ===== GESTAO-MOBILE PREMIUM 1.0.6 ===== */
+@media (max-width: 980px){
+  html{
+    -webkit-text-size-adjust:100%;
+  }
+
+  body{
+    min-height:100dvh;
+    overscroll-behavior-y:contain;
+  }
+
+  .sidebar{
+    display:none !important;
+  }
+
+  .app-shell{
+    display:block !important;
+    min-height:100dvh;
+  }
+
+  .main{
+    width:100% !important;
+    min-width:0 !important;
+    padding:12px 12px calc(96px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:45;
+    display:grid !important;
+    grid-template-columns:1fr;
+    gap:10px;
+    align-items:stretch;
+    padding:4px 0 10px;
+    margin-bottom:10px;
+    background:linear-gradient(180deg, rgba(6,10,18,.96), rgba(6,10,18,.78));
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(255,255,255,.04);
+  }
+
+  .topbar-left{
+    display:grid !important;
+    gap:4px;
+  }
+
+  #pageTitle{
+    font-size:24px !important;
+    line-height:1.06;
+    letter-spacing:-.02em;
+  }
+
+  .subline{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    font-size:11px !important;
+  }
+
+  .global-search{
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    min-height:48px !important;
+    border-radius:16px !important;
+    font-size:16px !important;
+  }
+
+  .hero-panel,
+  .panel,
+  .form-panel,
+  .history-panel,
+  .payments-panel,
+  .setting-card,
+  .alert-card,
+  .stat-card,
+  .report-card{
+    border-radius:22px !important;
+    padding:16px !important;
+    box-shadow:0 12px 30px rgba(0,0,0,.18);
+  }
+
+  .hero-copy h3{
+    font-size:24px !important;
+    line-height:1.06;
+    margin-bottom:8px !important;
+  }
+
+  .hero-copy p{
+    font-size:14px !important;
+    line-height:1.5;
+  }
+
+  .hero-actions{
+    display:grid !important;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    width:100%;
+    margin-top:10px;
+  }
+
+  .hero-actions .btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .content-grid,
+  .dashboard-grid,
+  .stats-grid,
+  .clientes-grid,
+  .settings-grid,
+  .alert-grid,
+  .client-summary-grid,
+  .form-grid,
+  .single-panel-grid{
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+  }
+
+  .field-span-2{
+    grid-column:span 1 !important;
+  }
+
+  .field label{
+    font-size:12px !important;
+    font-weight:600;
+    color:#b7c4df;
+  }
+
+  input,select,textarea{
+    min-height:50px !important;
+    font-size:16px !important;
+    border-radius:16px !important;
+    padding:14px !important;
+  }
+
+  textarea{
+    min-height:120px !important;
+  }
+
+  .toolbar{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:10px;
+  }
+
+  .table-wrap{
+    overflow:auto;
+    border-radius:18px;
+  }
+
+  table{
+    min-width:720px;
+  }
+
+  .row-actions{
+    display:grid !important;
+    grid-template-columns:1fr 1fr;
+    gap:10px !important;
+  }
+
+  .row-actions .small-btn,
+  .row-actions .btn-action{
+    width:100%;
+    min-height:46px;
+    border-radius:14px !important;
+    white-space:nowrap;
+  }
+
+  .modal{
+    align-items:end !important;
+    padding:10px !important;
+  }
+
+  .modal-card{
+    width:100% !important;
+    max-width:100% !important;
+    border-radius:24px 24px 18px 18px !important;
+    max-height:min(82dvh, 760px);
+    overflow:auto;
+  }
+
+  .payment-method-grid{
+    grid-template-columns:1fr 1fr !important;
+    gap:10px !important;
+  }
+
+  .pay-method-btn{
+    min-height:62px !important;
+    border-radius:18px !important;
+    font-size:15px !important;
+  }
+
+  .bottom-nav{
+    display:flex !important;
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:calc(10px + env(safe-area-inset-bottom));
+    z-index:70;
+    gap:8px;
+    overflow-x:auto;
+    padding:10px;
+    border-radius:24px;
+    background:rgba(10,14,24,.94);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 16px 38px rgba(0,0,0,.28);
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .bottom-btn{
+    flex:0 0 auto;
+    min-width:102px;
+    min-height:46px;
+    border-radius:16px !important;
+    font-size:13px !important;
+    font-weight:700;
+    padding:10px 12px !important;
+  }
+
+  .env-badge{
+    top:auto !important;
+    bottom:calc(118px + env(safe-area-inset-bottom));
+    right:12px !important;
+  }
+
+  .env-switch-btn{
+    top:auto !important;
+    bottom:calc(160px + env(safe-area-inset-bottom));
+    right:12px !important;
+  }
+}
+
+@media (max-width: 520px){
+  .main{
+    padding:10px 10px calc(96px + env(safe-area-inset-bottom)) !important;
+  }
+
+  #pageTitle{
+    font-size:22px !important;
+  }
+
+  .hero-copy h3{
+    font-size:22px !important;
+  }
+
+  .hero-actions{
+    grid-template-columns:1fr !important;
+  }
+
+  .row-actions{
+    grid-template-columns:1fr !important;
+  }
+
+  .payment-method-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  .bottom-btn{
+    min-width:92px;
+    font-size:12px !important;
+  }
+}
+
 </style>
 </head>
 <body><a class="env-switch-btn" href="../Gestao-Teste/">Ir para TESTE</a><div class="env-badge prod">PRODUÇÃO</div>
@@ -1334,7 +1599,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
         <img class="sidebar-logo" src="logo-icon-dark.png" alt="Logo Jorge Torneiro" />
         <div>
           <h1>Jorge Torneiro</h1>
-          <p>App mobile</p>
+          <p>App mobile premium</p>
         </div>
       </div>
 
