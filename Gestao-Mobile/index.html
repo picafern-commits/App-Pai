@@ -1719,7 +1719,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
           <section class="panel wide-panel">
             <div class="panel-head"><h3>Histórico de trabalhos</h3></div>
             <div class="toolbar">
-              <input id="searchTrabalhos" type="text" placeholder="Pesquisar cliente ou tipo de trabalho" />
+              <input id="searchTrabalhos" type="text" placeholder="Pesquisar por cliente, ID ou tipo de trabalho" />
               <select id="filterEstado">
                 <option value="">Todos os estados</option>
                 <option>Pendente</option>
@@ -1730,7 +1730,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
             </div>
             <div id="trabalhosCardsWrap" class="mobile-cards-wrap"></div><div class="table-wrap">
               <table>
-                <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Início</th><th>Fim</th><th>Estado</th><th>Faturação</th><th>Ações</th></tr></thead>
+                <thead><tr><th>ID</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Início</th><th>Fim</th><th>Estado</th><th>Faturação</th><th>Ações</th></tr></thead>
                 <tbody id="trabalhosTableBody"></tbody>
               </table>
             </div>
@@ -1972,10 +1972,11 @@ import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gsta
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const APP_VERSION = '1.0.6';
-const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' };
+const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' , lastTrabId:'ge_last_trab_id' };
 
 let currentRole = null, currentUsername = null;
 let trabalhos = [], clientes = [], pagamentos = [];
+let lastTrabId = 0;
 
 let firebaseApp = null;
 let firebaseAuth = null;
@@ -1997,18 +1998,63 @@ const isAdminLike = () => currentRole === 'admin' || currentRole === 'master_adm
 
 function genId(prefix='id'){
   if (window.crypto?.randomUUID) return `${prefix}_${window.crypto.randomUUID()}`;
+
+function nextTrabalhoId(){
+  lastTrabId = Number(lastTrabId || 0) + 1;
+  localStorage.setItem(STORAGE_KEYS.lastTrabId, String(lastTrabId));
+  return `TRAB-${String(lastTrabId).padStart(4,'0')}`;
+}
+
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
 }
+
+
+function getWorkCodeNumber(value){
+  const m = String(value || '').match(/(\d+)/);
+  return m ? Number(m[1]) : 0;
+}
+
+function generateWorkCode(existingId=''){
+  if(existingId) return existingId;
+  const maxExisting = trabalhos.reduce((max, t) => Math.max(max, getWorkCodeNumber(t.workCode || t.ordemId || '')), 0);
+  return `TRAB-${String(maxExisting + 1).padStart(4,'0')}`;
+}
+
+function normalizeTrabalhosIds(){
+  let changed = false;
+  let maxExisting = trabalhos.reduce((max, t) => Math.max(max, getWorkCodeNumber(t.workCode || t.ordemId || '')), 0);
+  trabalhos = trabalhos.map(t => {
+    if(t.workCode || t.ordemId) return { ...t, workCode: t.workCode || t.ordemId };
+    changed = true;
+    maxExisting += 1;
+    return { ...t, workCode: `TRAB-${String(maxExisting).padStart(4,'0')}` };
+  });
+  if(changed) saveLocal();
+}
+
 
 function loadLocal(){
   try{trabalhos=JSON.parse(localStorage.getItem(STORAGE_KEYS.trabalhos))||[]}catch{trabalhos=[]}
   try{clientes=JSON.parse(localStorage.getItem(STORAGE_KEYS.clientes))||[]}catch{clientes=[]}
   try{pagamentos=JSON.parse(localStorage.getItem(STORAGE_KEYS.pagamentos))||[]}catch{pagamentos=[]}
+  try{ lastTrabId = Number(localStorage.getItem(STORAGE_KEYS.lastTrabId) || 0) || 0 }catch{ lastTrabId = 0 }
+
+  const maxExistingId = trabalhos.reduce((max, t) => {
+    const match = String(t.id || '').match(/^TRAB-(\d+)$/);
+    const n = match ? Number(match[1]) : 0;
+    return Math.max(max, n);
+  }, 0);
+
+  if(maxExistingId > lastTrabId){
+    lastTrabId = maxExistingId;
+    localStorage.setItem(STORAGE_KEYS.lastTrabId, String(lastTrabId));
+  }
 }
 function saveLocal(){
   localStorage.setItem(STORAGE_KEYS.trabalhos, JSON.stringify(trabalhos));
   localStorage.setItem(STORAGE_KEYS.clientes, JSON.stringify(clientes));
   localStorage.setItem(STORAGE_KEYS.pagamentos, JSON.stringify(pagamentos));
+  localStorage.setItem(STORAGE_KEYS.lastTrabId, String(lastTrabId));
   autoBackupInvisible();
 }
 
@@ -2022,6 +2068,12 @@ function populateClientOptions(selected=''){
   if(current) select.value = current;
   fillClientContactFromSelection();
 }
+function updateWorkCodePreview(){
+  if(!$('workCodeDisplay')) return;
+  if($('trabalhoId')?.value) return;
+  $('workCodeDisplay').value = generateWorkCode();
+}
+
 function fillClientContactFromSelection(){
   const select = $('cliente');
   const contacto = $('contacto');
@@ -2102,6 +2154,7 @@ window.deleteManagedUser = function(index){
   users.splice(index, 1);
   saveManagedUsers(users);
   renderManagedUsers();
+  updateWorkCodePreview();
   renderMobileCards();
 };
 
@@ -2211,7 +2264,7 @@ function attachRealtimeListeners(){
     });
     unsubs.push(unsub);
   };
-  bind('trabalhos', rows => { trabalhos = rows; });
+  bind('trabalhos', rows => { trabalhos = rows.map(r => ({ ...r, workCode: r.workCode || r.ordemId || '' })); normalizeTrabalhosIds(); });
   bind('clientes', rows => { clientes = rows; });
   bind('pagamentos', rows => { pagamentos = rows; });
 }
@@ -2564,23 +2617,14 @@ function renderTrabalhos(){
   const globalTerm=($('globalSearch')?.value||'').trim().toLowerCase();
   const estado=$('filterEstado').value;
   const rows=trabalhos.filter(t=>{
-    const hay=[t.cliente,t.tipoTrabalho,t.contacto,t.descricao,t.estado,t.invoiceType].join(' ').toLowerCase();
-    return (!term||hay.includes(term))&&(!globalTerm||hay.includes(globalTerm))&&(!estado||t.estado===estado)
-  });
-  $('trabalhosTableBody').innerHTML = rows.length ? rows.slice().reverse().map(t=>{
+    const hay=[t.workCode,t.cliente,t.tipoTrabalho,t.contacto,t.descricao,t.estado,t.invoiceType].join(' ').toLowerCase();
+    return (!term||hay.includes(term))&&(!globalTerm||hay.includes(globalTerm))&&(!estado||t.estado===estado);
+  }).sort((a,b)=>getWorkCodeNumber(b.workCode)-getWorkCodeNumber(a.workCode));
+  $('trabalhosTableBody').innerHTML = rows.length ? rows.map(t=>{
     const invoiceType = t.invoiceType || 'Com Fatura';
     const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
-    return `<tr>
-      <td>${escapeHtml(t.cliente||'-')}</td>
-      <td>${escapeHtml(t.tipoTrabalho||'-')}</td>
-      <td>${euro(t.valor||0)}</td>
-      <td>${fmtDate(t.dataInicio)}</td>
-      <td>${fmtDate(t.dataFim)}</td>
-      <td><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></td>
-      <td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td>
-      <td><div class="row-actions">${trabalhoActions(t)}</div></td>
-    </tr>`;
-  }).join('') : '<tr><td colspan="8">Sem resultados.</td></tr>';
+    return `<tr><td><strong>${escapeHtml(t.workCode||'-')}</strong></td><td>${escapeHtml(t.cliente||'-')}</td><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valor||0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></td><td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td><td><div class="row-actions">${trabalhoActions(t)}</div></td></tr>`;
+  }).join('') : '<tr><td colspan="9">Sem resultados.</td></tr>';
 }
 function renderClientes(){
   const term=$('searchClientes').value.trim().toLowerCase();
@@ -2663,6 +2707,7 @@ function renderRelatorios() {
 }
 function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios();
   renderManagedUsers();
+  updateWorkCodePreview();
   renderMobileCards(); }
 
 $('searchTrabalhos')?.addEventListener('input', ()=>{ renderTrabalhos(); renderMobileCards(); });
@@ -2673,6 +2718,7 @@ $('globalSearch')?.addEventListener('input', ()=>{ renderTrabalhos(); renderClie
 $('clearTrabalhoBtn')?.addEventListener('click', ()=>{
   $('trabalhoForm')?.reset();
   if($('trabalhoId')) $('trabalhoId').value='';
+  if($('workCodeDisplay')) $('workCodeDisplay').value='';
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
 });
@@ -2686,7 +2732,8 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!adminGuard()) return;
   const item={
-    id:$('trabalhoId').value || genId('trab'),
+    id:$('trabalhoId').value || nextTrabalhoId(),
+    workCode: $('workCodeDisplay')?.value || generateWorkCode(),
     cliente:$('cliente').value.trim(),
     contacto:$('contacto').value.trim(),
     tipoTrabalho:$('tipoTrabalho').value.trim(),
@@ -2704,6 +2751,7 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   try{ await upsertRemote('trabalhos', item); }catch(err){ console.error(err); setSyncMessage('Erro a gravar no Firebase', 'bad'); }
   $('trabalhoForm').reset();
   $('trabalhoId').value='';
+  if($('workCodeDisplay')) $('workCodeDisplay').value='';
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
   renderAll();
@@ -2738,6 +2786,7 @@ window.editTrabalho = function(id){
   const t=trabalhos.find(x=>x.id===id);
   if(!t) return;
   $('trabalhoId').value=t.id;
+  if($('workCodeDisplay')) $('workCodeDisplay').value = t.workCode || '';
   populateClientOptions(t.cliente || '');
   $('contacto').value=t.contacto||'';
   $('tipoTrabalho').value=t.tipoTrabalho||'';
@@ -2988,6 +3037,7 @@ $('userManagerForm')?.addEventListener('submit', (e) => {
   $('managedUserIndex').value = '';
   $('managedRole').value = 'user';
   renderManagedUsers();
+  updateWorkCodePreview();
   renderMobileCards();
 });
 
@@ -3005,21 +3055,21 @@ function renderMobileCards(){
     const globalTerm = ($('globalSearch')?.value || '').trim().toLowerCase();
     const estado = $('filterEstado') ? $('filterEstado').value : '';
     const rows = trabalhos.filter(t=>{
-      const hay=[t.cliente,t.tipoTrabalho,t.contacto,t.descricao,t.estado,t.invoiceType].join(' ').toLowerCase();
+      const hay=[t.workCode,t.cliente,t.tipoTrabalho,t.contacto,t.descricao,t.estado,t.invoiceType].join(' ').toLowerCase();
       return (!term||hay.includes(term))&&(!globalTerm||hay.includes(globalTerm))&&(!estado||t.estado===estado);
-    }).slice().reverse();
+    }).sort((a,b)=>getWorkCodeNumber(b.workCode)-getWorkCodeNumber(a.workCode));
     trabWrap.innerHTML = rows.length ? rows.map(t=>{
       const invoiceType = t.invoiceType || 'Com Fatura';
       const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
       return `<article class="mobile-card">
         <div>
           <div class="mobile-card-title">${escapeHtml(t.cliente || '-')}</div>
-          <div class="mobile-card-sub">${escapeHtml(t.tipoTrabalho || '-')}</div>
+          <div class="mobile-card-sub">${escapeHtml(t.tipoTrabalho || '-')} • <strong>${escapeHtml(t.workCode || '-')}</strong></div>
         </div>
         <div class="mobile-card-grid">
+          <div class="mobile-card-item"><span>ID</span><strong>${escapeHtml(t.workCode || '-')}</strong></div>
           <div class="mobile-card-item"><span>Valor</span><strong>${euro(t.valor||0)}</strong></div>
           <div class="mobile-card-item"><span>Estado</span><strong><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></strong></div>
-          <div class="mobile-card-item"><span>Início</span><strong>${fmtDate(t.dataInicio)}</strong></div>
           <div class="mobile-card-item"><span>Faturação</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
         </div>
         <div class="row-actions">${trabalhoActions(t)}</div>
