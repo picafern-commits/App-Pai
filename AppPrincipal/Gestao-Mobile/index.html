@@ -1815,7 +1815,17 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
             </div>
           </div>
 
-          <div id="usersSection" class="panel users-master-panel">
+          
+<div id="firebaseBackupRestorePanel" class="panel">
+  <div class="panel-head"><h3>Restaurar backup Firebase</h3></div>
+  <div class="inline-actions" style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button" class="btn btn-secondary" id="loadFirebaseBackupsBtn">Ver backups Firebase</button>
+  </div>
+  <div id="firebaseBackupsList" style="display:grid;gap:10px;margin-top:12px;"></div>
+  <p class="muted" style="margin-top:10px;">Só o Admin Mestre consegue ver e restaurar backups guardados na Firebase.</p>
+</div>
+
+<div id="usersSection" class="panel users-master-panel">
             <div class="panel-head"><h3>Gestão de utilizadores</h3></div>
             <div class="content-grid single-panel-grid">
               <section class="panel admin-only form-panel">
