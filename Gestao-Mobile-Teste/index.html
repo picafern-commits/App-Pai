@@ -2078,10 +2078,11 @@ function populateClientOptions(selected=''){
   fillClientContactFromSelection();
 }
 function updateWorkCodePreview(){
-  if(!$('workCodeDisplay')) return;
-  if($('trabalhoId')?.value) return;
-  if($('workCodeDisplay').value) return;
-  $('workCodeDisplay').value = nextTrabalhoIdPreview();
+  const field = $('workCodeDisplay');
+  const idField = $('trabalhoId');
+  if(!field) return;
+  if(idField && idField.value) return;
+  field.value = nextTrabalhoIdPreview();
 }
 
 function fillClientContactFromSelection(){
@@ -2210,7 +2211,9 @@ function setRoleUI(){
   const workCodeField = $('workCodeDisplay');
   if(workCodeField){
     workCodeField.readOnly = !isMasterAdmin();
-    workCodeField.placeholder = isMasterAdmin() ? 'TRAB-0001' : '';
+    if(!workCodeField.value){
+      workCodeField.value = nextTrabalhoIdPreview();
+    }
   }
   setSyncMessage(syncReady ? 'Firebase Sync' : syncMessage, syncReady ? 'ok' : 'warn');
 }
@@ -2735,9 +2738,10 @@ $('globalSearch')?.addEventListener('input', ()=>{ renderTrabalhos(); renderClie
 $('clearTrabalhoBtn')?.addEventListener('click', ()=>{
   $('trabalhoForm')?.reset();
   if($('trabalhoId')) $('trabalhoId').value='';
-  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
+  if($('contacto')) $('contacto').value='';
+  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
 });
 $('clearClienteBtn')?.addEventListener('click', ()=>{
   $('clienteForm')?.reset();
@@ -2748,15 +2752,21 @@ $('clearClienteBtn')?.addEventListener('click', ()=>{
 $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!adminGuard()) return;
+
   const existingId = $('trabalhoId').value;
   const manualWorkCode = ($('workCodeDisplay')?.value || '').trim();
-  const safeWorkCode = existingId
-    ? (manualWorkCode || (trabalhos.find(x=>x.id===existingId)?.workCode) || nextTrabalhoIdPreview())
-    : (isMasterAdmin() && manualWorkCode ? manualWorkCode : nextTrabalhoId());
+  const original = existingId ? trabalhos.find(x => x.id === existingId) : null;
+
+  let finalWorkCode = '';
+  if(existingId){
+    finalWorkCode = (isMasterAdmin() && manualWorkCode) ? manualWorkCode : (original?.workCode || manualWorkCode || nextTrabalhoIdPreview());
+  }else{
+    finalWorkCode = (isMasterAdmin() && manualWorkCode) ? manualWorkCode : nextTrabalhoId();
+  }
 
   const item={
     id: existingId || genId('trab'),
-    workCode: safeWorkCode,
+    workCode: finalWorkCode,
     cliente:$('cliente').value.trim(),
     contacto:$('contacto').value.trim(),
     tipoTrabalho:$('tipoTrabalho').value.trim(),
@@ -2767,18 +2777,26 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
     invoiceType:$('trabalhoInvoiceType') ? $('trabalhoInvoiceType').value : 'Com Fatura',
     descricao:$('descricao').value.trim()
   };
-  if(!item.cliente || !item.tipoTrabalho){ alert('Preenche cliente e tipo de trabalho.'); return; }
+
+  if(!item.cliente || !item.tipoTrabalho){
+    alert('Preenche cliente e tipo de trabalho.');
+    return;
+  }
+
   const i=trabalhos.findIndex(x=>x.id===item.id);
   if(i>=0) trabalhos[i]=item; else trabalhos.push(item);
+
   saveLocal();
   try{ await upsertRemote('trabalhos', item); }catch(err){ console.error(err); setSyncMessage('Erro a gravar no Firebase', 'bad'); }
+
   $('trabalhoForm').reset();
   $('trabalhoId').value='';
-  if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
   if($('cliente')) $('cliente').value='';
-  renderAll();
+  if($('contacto')) $('contacto').value='';
   if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
+
+  renderAll();
   switchTab('trabalhos');
 });
 
@@ -2812,7 +2830,7 @@ window.editTrabalho = function(id){
   $('trabalhoId').value=t.id;
   if($('workCodeDisplay')) $('workCodeDisplay').value = t.workCode || '';
   populateClientOptions(t.cliente || '');
-  $('contacto').value=t.contacto||'';
+  if($('contacto')) $('contacto').value=t.contacto||'';
   $('tipoTrabalho').value=t.tipoTrabalho||'';
   $('valor').value=t.valor||'';
   $('dataInicio').value=t.dataInicio||'';
