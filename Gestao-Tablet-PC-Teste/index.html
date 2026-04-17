@@ -1,36 +1,3 @@
-
-function parseWorkCodeNumber(code){
-  const m = String(code || '').trim().match(/^TRAB-(\d+)$/i);
-  return m ? Number(m[1]) : 0;
-}
-
-function normalizeWorkCode(code){
-  const raw = String(code || '').trim().toUpperCase();
-  const m = raw.match(/^TRAB-(\d+)$/);
-  if(!m) return raw;
-  return `TRAB-${String(Number(m[1] || 0)).padStart(4,'0')}`;
-}
-
-function validateWorkCodeUniqueness(workCode, currentId){
-  const normalized = normalizeWorkCode(workCode);
-  if(!/^TRAB-\d{4,}$/.test(normalized)){
-    return { ok:false, message:'O ID do trabalho tem de estar no formato TRAB-0001.' };
-  }
-  const duplicated = trabalhos.find(t => normalizeWorkCode(t.workCode || '') === normalized && t.id !== currentId);
-  if(duplicated){
-    return { ok:false, message:`O ID ${normalized} já existe noutro trabalho.` };
-  }
-  return { ok:true, normalized };
-}
-
-function syncLastTrabIdWithWorkCode(workCode){
-  const n = parseWorkCodeNumber(workCode);
-  if(n > Number(lastTrabId || 0)){
-    lastTrabId = n;
-    try{ localStorage.setItem(STORAGE_KEYS.lastTrabId, String(lastTrabId)); }catch(e){}
-  }
-}
-
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
@@ -1167,49 +1134,29 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 }
 
 
-/* TABLET/PC ENTERPRISE PATCH */
+/* MODE BADGE CLEAN RECOVERY */
 .mode-badge{
-  top: 20px !important;
-  right: 24px !important;
-  z-index: 260 !important;
-  min-height: 42px;
-  display:flex;
-  align-items:center;
+  position:fixed !important;
+  top:18px !important;
+  right:18px !important;
+  z-index:240 !important;
+  padding:8px 14px !important;
+  min-height:40px !important;
+  display:flex !important;
+  align-items:center !important;
+  border-radius:999px !important;
+  font-size:12px !important;
+  font-weight:800 !important;
+  letter-spacing:.02em !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  backdrop-filter:blur(10px) !important;
+  box-shadow:0 10px 28px rgba(0,0,0,.22) !important;
 }
 @media (max-width: 1400px){
   .mode-badge{
-    top: 76px !important;
-    right: 18px !important;
+    top:72px !important;
+    right:16px !important;
   }
-}
-@media (max-width: 1100px){
-  .mode-badge{
-    top: 82px !important;
-    right: 14px !important;
-    transform: scale(.94);
-    transform-origin: top right;
-  }
-}
-.btn, .small-btn, .nav-btn, .bottom-btn{
-  transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease, background .16s ease;
-}
-.btn:hover, .small-btn:hover, .nav-btn:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(0,0,0,.18);
-}
-.btn:active, .small-btn:active, .nav-btn:active{
-  transform: translateY(0);
-}
-.panel, .hero-panel, .form-panel, .history-panel, .payments-panel, .setting-card, .stat-card{
-  transition: box-shadow .18s ease, transform .18s ease;
-}
-.panel:hover, .hero-panel:hover, .form-panel:hover, .history-panel:hover, .payments-panel:hover, .setting-card:hover, .stat-card:hover{
-  box-shadow: 0 16px 36px rgba(0,0,0,.18);
-}
-.loading-ui{
-  pointer-events:none;
-  opacity:.72;
-  filter:saturate(.92);
 }
 
 </style>
@@ -1451,7 +1398,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
           <div class="panel-head"><h3>Configurações</h3></div>
           <div class="settings-grid clean-settings-grid">
             <div class="setting-card"><span class="mini-label">Login</span><strong>Interno</strong><p>Acesso simples e estável.</p></div>
-            <div class="setting-card"><span class="mini-label">Sincronização</span><strong>Firebase</strong><p>Ligação de teste ativa. Backups Firebase desativados nesta versão.</p></div>
+            <div class="setting-card"><span class="mini-label">Sincronização</span><strong>Firebase</strong><p>Ligação entre dispositivos ativa.</p></div>
             <div class="setting-card"><span class="mini-label">Backup</span><strong>Manual</strong><p>Exportação JSON disponível aqui.</p></div>
           </div>
           <div class="config-tools"><div class="setting-card"><span class="mini-label">Estado</span><strong id="inputFixInfo">Inputs corrigidos</strong><p>Esta versão volta à base estável para garantir escrita normal em todos os campos.</p></div></div><div class="config-actions">
@@ -1466,7 +1413,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   <div class="mode-switch-card">
     <div class="mode-switch-copy">
       <h4>Estás na versão de TESTE</h4>
-      <p>Troca entre a versão FINAL e a versão TESTE do Tablet/PC sem mexer no Android nem no iPhone. Ao trocar de ambiente, a app termina a sessão atual, abre a outra versão e pede login novamente.</p>
+      <p>Troca entre a versão FINAL e a versão TESTE do Tablet/PC sem mexer no Android nem no iPhone. Ao trocar de ambiente, a app termina a sessão atual e pede login novamente.</p><p class="mode-switch-hint">O botão troca imediatamente para a outra pasta do GitHub Pages.</p>
     </div>
     <div class="mode-switch-actions">
       <button type="button" class="btn btn-secondary mode-switch-btn " id="goTabletFinalBtn" onclick="if(window.forceGoTabletFinal) window.forceGoTabletFinal()">Abrir FINAL</button>
@@ -1641,35 +1588,6 @@ window.forceGoTabletTest = function(){
   try{ localStorage.removeItem('app_session_tablet_teste'); }catch(e){}
   window.location.href = '/App-Pai/Gestao-Tablet-PC-Teste/';
 }
-
-document.addEventListener('DOMContentLoaded', ()=>{
-  const runBtn = $('runWeeklyBackupBtn');
-  const loadBtn = $('loadFirebaseBackupsBtn');
-  const backupCardTitle = document.querySelector('#tabletModeSwitchPanel') ? null : null;
-  if(runBtn){
-    runBtn.style.display = 'none';
-  }
-  if(loadBtn){
-    loadBtn.style.display = 'none';
-  }
-  const backupPanels = [...document.querySelectorAll('.setting-card, .panel')];
-  backupPanels.forEach(el => {
-    if(/Backup Firebase|backup semanal|backups Firebase/i.test(el.textContent || '')){
-      el.style.opacity = '.72';
-    }
-  });
-});
-/* TEST MODE BACKUPS ONLY LOCAL */
-
-
-function setModeSwitchLoading(btn){
-  if(!btn) return;
-  btn.dataset.originalText = btn.dataset.originalText || btn.textContent;
-  btn.textContent = 'A abrir...';
-  btn.disabled = true;
-  btn.classList.add('loading-ui');
-}
-
 </script>
   <script type="module">
 const firebaseConfig = {
@@ -2160,66 +2078,29 @@ $('clearClienteBtn')?.addEventListener('click', ()=>{
 $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!adminGuard()) return;
-
-  document.body.classList.add('loading-ui');
-  try{
-    const existingId = $('trabalhoId').value;
-    const manualWorkCode = ($('workCodeDisplay')?.value || '').trim();
-    const original = existingId ? trabalhos.find(x => x.id === existingId) : null;
-
-    let finalWorkCode = '';
-    if(existingId){
-      finalWorkCode = (isMasterAdmin() && manualWorkCode) ? manualWorkCode : (original?.workCode || manualWorkCode || nextTrabalhoIdPreview());
-    }else{
-      finalWorkCode = (isMasterAdmin() && manualWorkCode) ? manualWorkCode : nextTrabalhoId();
-    }
-
-    const validation = validateWorkCodeUniqueness(finalWorkCode, existingId || '');
-    if(!validation.ok){
-      alert(validation.message);
-      return;
-    }
-    finalWorkCode = validation.normalized;
-    syncLastTrabIdWithWorkCode(finalWorkCode);
-
-    const item={
-      id: existingId || genId('trab'),
-      workCode: finalWorkCode,
-      cliente:$('cliente').value.trim(),
-      contacto:$('contacto').value.trim(),
-      tipoTrabalho:$('tipoTrabalho').value.trim(),
-      valor:Number($('valor').value||0),
-      dataInicio:$('dataInicio').value,
-      dataFim:$('dataFim').value,
-      estado:$('estado').value,
-      invoiceType:$('trabalhoInvoiceType') ? $('trabalhoInvoiceType').value : 'Com Fatura',
-      descricao:$('descricao').value.trim()
-    };
-
-    if(!item.cliente || !item.tipoTrabalho){
-      alert('Preenche cliente e tipo de trabalho.');
-      return;
-    }
-
-    const i=trabalhos.findIndex(x=>x.id===item.id);
-    if(i>=0) trabalhos[i]=item; else trabalhos.push(item);
-
-    recomputeLastTrabIdFromData();
-    saveLocal();
-    try{ await upsertRemote('trabalhos', item); }catch(err){ console.error(err); }
-
-    $('trabalhoForm').reset();
-    $('trabalhoId').value='';
-    if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
-    if($('cliente')) $('cliente').value='';
-    if($('contacto')) $('contacto').value='';
-    if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
-
-    renderAll();
-    switchTab('trabalhos');
-  } finally {
-    document.body.classList.remove('loading-ui');
-  }
+  const item={
+    id:$('trabalhoId').value || genId('trab'),
+    cliente:$('cliente').value.trim(),
+    contacto:$('contacto').value.trim(),
+    tipoTrabalho:$('tipoTrabalho').value.trim(),
+    valor:Number($('valor').value||0),
+    dataInicio:$('dataInicio').value,
+    dataFim:$('dataFim').value,
+    estado:$('estado').value,
+    invoiceType:$('trabalhoInvoiceType') ? $('trabalhoInvoiceType').value : 'Com Fatura',
+    descricao:$('descricao').value.trim()
+  };
+  if(!item.cliente || !item.tipoTrabalho){ alert('Preenche cliente e tipo de trabalho.'); return; }
+  const i=trabalhos.findIndex(x=>x.id===item.id);
+  if(i>=0) trabalhos[i]=item; else trabalhos.push(item);
+  saveLocal();
+  try{ await upsertRemote('trabalhos', item); }catch(err){ console.error(err); setSyncMessage('Erro a gravar no Firebase', 'bad'); }
+  $('trabalhoForm').reset();
+  $('trabalhoId').value='';
+  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
+  if($('cliente')) $('cliente').value='';
+  renderAll();
+  switchTab('trabalhos');
 });
 
 $('clienteForm')?.addEventListener('submit', async (e)=>{
