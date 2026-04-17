@@ -2071,23 +2071,12 @@ function populateClientOptions(selected=''){
   const select = $('cliente');
   if(!select) return;
   const current = selected || select.value || '';
-  const sorted = clientes.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+  const sorted = clientes.slice().sort((a,b)=>(a.nome || '').localeCompare(b.nome || ''));
   select.innerHTML = ['<option value="">Selecionar cliente</option>']
     .concat(sorted.map(c => `<option value="${escapeHtml(c.nome || '')}">${escapeHtml(c.nome || '')}</option>`))
     .join('');
   if(current) select.value = current;
   fillClientContactFromSelection();
-}" data-phone="${escapeHtml(c.telefone || '')}">${escapeHtml(c.nome || '')}</option>`));
-  select.innerHTML = opts.join('');
-  if(current) select.value = current;
-  fillClientContactFromSelection();
-}
-function updateWorkCodePreview(){
-  const field = $('workCodeDisplay');
-  const idField = $('trabalhoId');
-  if(!field) return;
-  if(idField && idField.value) return;
-  field.value = nextTrabalhoIdPreview();
 }
 
 function fillClientContactFromSelection(){
