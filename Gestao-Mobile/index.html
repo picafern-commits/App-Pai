@@ -2270,7 +2270,7 @@ td.acoes-col, .acoes-col{
               </div>
               <div class="field"><label>Contacto do cliente</label><input id="contacto" type="text" readonly /></div>
               <div class="field"><label>Tipo de trabalho</label><input id="tipoTrabalho" type="text" required /></div>
-              <div class="field"><label>Valor (€)</label><input id="valor" type="number" min="0" step="0.01" required /></div>
+              <div class="field"><label>Valor (€)</label><input id="valor" type="number" min="0" step="0.01" /></div>
               <div class="field"><label>Data de início</label><input id="dataInicio" type="date" /></div>
               <div class="field"><label>Data de fim</label><input id="dataFim" type="date" /></div>
               <div class="field"><label>Estado</label><select id="estado"><option>Pendente</option><option>Em curso</option><option>Concluído</option><option>Entregue</option><option>Cancelado</option></select></div>
@@ -2501,6 +2501,39 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+
+function marcarComoPagoComValor(id){
+  const t = (window.trabalhos || []).find(x => String(x.id) === String(id));
+  if(!t) return;
+
+  const hoje = new Date().toISOString().split('T')[0];
+
+  let valor = prompt("Valor do pagamento:", t.valor || "");
+  if(valor === null) return;
+
+  valor = String(valor).replace(",", ".");
+  if(isNaN(parseFloat(valor))){
+    alert("Valor inválido");
+    return;
+  }
+
+  t.valorPago = parseFloat(valor);
+  t.dataPagamento = hoje;
+  t.paymentStatus = 'Pago';
+  t.estado = 'Pago';
+
+  t.historicoEstados = t.historicoEstados || [];
+  t.historicoEstados.push({
+    estado: "Pago",
+    data: new Date().toISOString()
+  });
+
+  if(typeof saveData === 'function') saveData();
+  else if(typeof saveTrabalhos === 'function') saveTrabalhos();
+
+  if(typeof renderTrabalhos === 'function') renderTrabalhos();
+}
+
 </script>
   <script type="module">
 const firebaseConfig = {
@@ -2677,22 +2710,48 @@ function getNextFlowEstado(value=''){
   return idx >= 0 && idx < ESTADOS_FLUXO.length - 1 ? ESTADOS_FLUXO[idx + 1] : null;
 }
 
+function getTodayLocalDateStr(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 function setWorkEstadoById(id, novoEstado){
-  const t = trabalhos.find(x => x.id === id);
-  if(!t || !novoEstado) return;
-  const finalEstado = normalizeEstado(novoEstado);
-  t.estado = finalEstado;
+  const t = (window.trabalhos || []).find(x => String(x.id) === String(id));
+  if(!t) return;
+
+  const estadoAnterior = getFlowEstado(t.estado || 'Pendente');
+  const estadoFinal = getFlowEstado(novoEstado || estadoAnterior);
+  const hoje = getTodayLocalDateStr();
+
+  if(estadoAnterior === 'Pendente' && estadoFinal === 'Em curso' && !String(t.dataInicio || '').trim()){
+    t.dataInicio = hoje;
+  }
+
+  if(estadoFinal === 'Concluído'){
+    t.dataFim = hoje;
+  }
+
+  t.estado = estadoFinal;
   t.dataEstado = new Date().toISOString();
   t.historicoEstados = Array.isArray(t.historicoEstados) ? t.historicoEstados : [];
-  const last = t.historicoEstados[t.historicoEstados.length - 1];
-  if(!last || normalizeEstado(last.estado) !== finalEstado){
-    t.historicoEstados.push({ estado: finalEstado, data: t.dataEstado });
-  } else {
-    last.data = t.dataEstado;
+  t.historicoEstados.push({
+    estado: estadoFinal,
+    data: new Date().toISOString()
+  });
+
+  if(typeof saveData === 'function') saveData();
+  else if(typeof saveTrabalhos === 'function') saveTrabalhos();
+
+  if(typeof renderTrabalhos === 'function') renderTrabalhos();
+  if(typeof renderDashboard === 'function') {
+    try { renderDashboard(); } catch(e) {}
   }
-  saveLocal();
-  renderAll();
-  upsertRemote('trabalhos', t).catch(err => console.error(err));
+  if(typeof renderPagamentos === 'function') {
+    try { renderPagamentos(); } catch(e) {}
+  }
 }
 
 
@@ -2707,7 +2766,7 @@ function buildFlowButtons(t){
   }
 
   if(atual === 'Entregue' || !nextEstado){
-    return `<button class="stage-step stage-control-btn pay" onclick="window.openPaymentMethodModal('${t.id}')">Pago</button>`;
+    return `<button class="stage-step stage-control-btn pay" onclick="window.marcarComoPagoComValor('${t.id}')">Pago</button>`;
   }
 
   return `<button class="stage-step stage-control-btn next" onclick="window.setWorkEstadoById('${t.id}','${nextEstado}')">${escapeHtml(nextEstado)}</button>`;
@@ -4236,7 +4295,7 @@ $('descModal')?.addEventListener('click', (e)=>{ if(e.target.id === 'descModal')
 
 let pendingPaymentWorkId = null;
 
-window.openPaymentMethodModal = function(id){
+window.marcarComoPagoComValor = function(id){
   const t = trabalhos.find(x => x.id === id);
   if(!t) return;
   pendingPaymentWorkId = id;
@@ -4386,6 +4445,39 @@ function renderMobileCards(){
       </article>
     `).join('') : '<div class="mobile-card"><div class="mobile-card-title">Sem clientes registados</div></div>';
   }
+}
+
+
+function marcarComoPagoComValor(id){
+  const t = (window.trabalhos || []).find(x => String(x.id) === String(id));
+  if(!t) return;
+
+  const hoje = new Date().toISOString().split('T')[0];
+
+  let valor = prompt("Valor do pagamento:", t.valor || "");
+  if(valor === null) return;
+
+  valor = String(valor).replace(",", ".");
+  if(isNaN(parseFloat(valor))){
+    alert("Valor inválido");
+    return;
+  }
+
+  t.valorPago = parseFloat(valor);
+  t.dataPagamento = hoje;
+  t.paymentStatus = 'Pago';
+  t.estado = 'Pago';
+
+  t.historicoEstados = t.historicoEstados || [];
+  t.historicoEstados.push({
+    estado: "Pago",
+    data: new Date().toISOString()
+  });
+
+  if(typeof saveData === 'function') saveData();
+  else if(typeof saveTrabalhos === 'function') saveTrabalhos();
+
+  if(typeof renderTrabalhos === 'function') renderTrabalhos();
 }
 
 </script>
