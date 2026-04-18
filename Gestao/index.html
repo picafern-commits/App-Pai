@@ -244,6 +244,19 @@ body.ui-auto{
   --ui-card-padding:14px;
   --ui-table-font:14px;
 }
+body.ui-laptop{
+  --ui-font:12px;
+  --ui-font-small:10px;
+  --ui-font-title:24px;
+  --ui-space:8px;
+  --ui-space-sm:4px;
+  --ui-space-lg:10px;
+  --ui-btn-height:30px;
+  --ui-input-height:34px;
+  --ui-radius:10px;
+  --ui-card-padding:8px;
+  --ui-table-font:11px;
+}
 body.ui-compact{
   --ui-font:13px;
   --ui-font-small:11px;
@@ -296,6 +309,11 @@ input,select,textarea{min-height:var(--ui-input-height,48px);font-size:var(--ui-
 textarea{min-height:120px}
 .table-wrap table,table{font-size:var(--ui-table-font,14px)}
 .table-wrap th,.table-wrap td,table th,table td{padding:8px 10px}
+body.ui-laptop .table-wrap th,body.ui-laptop .table-wrap td,body.ui-laptop table th,body.ui-laptop table td{padding:4px 6px}
+body.ui-laptop .panel,body.ui-laptop .mini-card,body.ui-laptop .brand-card,body.ui-laptop .login-brand,body.ui-laptop .login-panel,body.ui-laptop .modal-card,body.ui-laptop .mobile-card,body.ui-laptop .stats-card,body.ui-laptop .setting-card,body.ui-laptop .settings-card{padding:8px;border-radius:10px}
+body.ui-laptop .topbar h2{font-size:24px}
+body.ui-laptop .nav-btn{padding:8px 10px}
+body.ui-laptop .main{padding:12px}
 .main{padding:calc(var(--ui-space-lg,20px) + 2px);min-width:0;overflow-x:hidden}
 .sidebar{padding:var(--ui-space,14px)}
 .nav-btn{padding:12px 14px}
@@ -1658,6 +1676,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
                 <label for="uiScaleSelect">Tamanho da interface</label>
                 <select id="uiScaleSelect">
                   <option value="auto">Auto</option>
+                  <option value="laptop">Portátil (1366x768)</option>
                   <option value="compact">Compacto</option>
                   <option value="normal">Normal</option>
                   <option value="large">Grande</option>
@@ -1844,8 +1863,8 @@ const pages = document.querySelectorAll('.page');
 
 
 function applyUiScale(scale){
-  document.body.classList.remove('ui-auto','ui-compact','ui-normal','ui-large');
-  const validScales = ['auto','compact','normal','large'];
+  document.body.classList.remove('ui-auto','ui-laptop','ui-compact','ui-normal','ui-large');
+  const validScales = ['auto','laptop','compact','normal','large'];
   const finalScale = validScales.includes(scale) ? scale : 'compact';
   document.body.classList.add(`ui-${finalScale}`);
   localStorage.setItem('uiScale', finalScale);
@@ -1856,7 +1875,7 @@ function applyUiScale(scale){
 function bindUiScaleSelector(){
   const select = document.getElementById('uiScaleSelect');
   if(!select) return;
-  const savedScale = localStorage.getItem('uiScale') || 'compact';
+  const savedScale = localStorage.getItem('uiScale') || detectDefaultScale();
   select.value = savedScale;
   if(select.dataset.bound === '1') return;
   select.dataset.bound = '1';
@@ -1865,8 +1884,16 @@ function bindUiScaleSelector(){
   });
 }
 
+function detectDefaultScale(){
+  const w = window.innerWidth || 0;
+  const h = window.innerHeight || 0;
+  if(w <= 1366 && h <= 768) return 'laptop';
+  if(w <= 1400) return 'compact';
+  return 'auto';
+}
+
 function initUiScale(){
-  const savedScale = localStorage.getItem('uiScale') || 'compact';
+  const savedScale = localStorage.getItem('uiScale') || detectDefaultScale();
   applyUiScale(savedScale);
   bindUiScaleSelector();
 }
