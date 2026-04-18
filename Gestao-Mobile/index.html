@@ -2587,7 +2587,7 @@ function trabalhoActions(t){
   const canMarkPaid = (t.estado || '') !== 'Pago';
   const canEdit = isAdminLike();
   const canDelete = isAdminLike();
-  const hasDesc = (t.descricao || '').trim().length > 0;
+  const hasDesc = getTrabalhoDescricaoText(t).length > 0;
   return `
     <div class="row-actions">
       ${hasDesc ? `<button class="small-btn info" onclick="window.showDesc('${t.id}')">Descrição</button>` : ''}
@@ -2598,6 +2598,21 @@ function trabalhoActions(t){
     </div>
   `;
 }
+
+function getTrabalhoDescricaoText(t){
+  if(!t) return '';
+  const candidates = [
+    t.descricao,
+    t.descricaoTrabalho,
+    t.description,
+    t.desc,
+    t.notas,
+    t.notes
+  ];
+  const found = candidates.find(v => String(v || '').trim().length > 0);
+  return String(found || '').trim();
+}
+
 function clienteActions(c){
   const history=`<button class="small-btn" onclick="openClientHistory('${c.id}')">Histórico</button>`;
   const pdf=`<button class="small-btn" onclick="pdfCliente('${c.id}')">PDF</button>`;
@@ -2630,22 +2645,50 @@ function renderClientes(){
   });
   $('clientesTableBody').innerHTML = rows.length ? rows.slice().reverse().map(c=>`<tr><td>${escapeHtml(c.nome||'-')}</td><td>${escapeHtml(c.telefone||'-')}</td><td>${escapeHtml(c.email||'-')}</td><td>${escapeHtml(c.nif||'-')}</td><td><div class="row-actions">${clienteActions(c)}</div></td></tr>`).join('') : '<tr><td colspan="5">Sem clientes registados.</td></tr>';
 }
+function getPagamentosView(){
+  const reais = pagamentos.map(p => ({ ...p, _virtual:false }));
+  const paymentKeys = new Set(
+    pagamentos.map(p => String(p.sourceWorkId || p.workCode || `${p.cliente||''}__${p.referencia||''}__${p.workDate||p.data||''}`).trim().toLowerCase())
+  );
+  const virtuais = trabalhos
+    .filter(t => String(t.estado || '').toLowerCase() === 'pago')
+    .filter(t => {
+      const key = String(t.id || t.workCode || `${t.cliente||''}__${t.tipoTrabalho||''}__${t.dataInicio||t.dataFim||''}`).trim().toLowerCase();
+      return !paymentKeys.has(key);
+    })
+    .map(t => ({
+      id: `virtual_${t.id || t.workCode || genId('pay')}`,
+      sourceWorkId: t.id || '',
+      workCode: t.workCode || t.ordemId || '',
+      cliente: t.cliente || '',
+      referencia: t.tipoTrabalho || t.workCode || 'Trabalho pago',
+      valor: Number(t.valor || 0),
+      data: t.dataFim || t.dataInicio || '',
+      workDate: t.dataInicio || t.dataFim || '',
+      metodo: t.metodoPagamento || 'Pago no trabalho',
+      invoiceType: t.invoiceType || 'Com Fatura',
+      notas: 'Gerado automaticamente a partir de um trabalho com estado Pago.',
+      _virtual:true
+    }));
+  return [...reais, ...virtuais].sort((a,b) => String(b.data || b.workDate || '').localeCompare(String(a.data || a.workDate || '')));
+}
 function renderPagamentos() {
   const tbody = $('pagamentosTableBody');
   if (!tbody) return;
-  tbody.innerHTML = pagamentos.length
-    ? pagamentos.slice().reverse().map((p) => {
+  const pagamentosView = getPagamentosView();
+  tbody.innerHTML = pagamentosView.length
+    ? pagamentosView.map((p) => {
       const invoiceType = p.invoiceType || 'Com Fatura';
       const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
       return `
       <tr>
         <td>${escapeHtml(p.cliente || '-')}</td>
-        <td>${escapeHtml(p.referencia || '-')}</td>
+        <td>${escapeHtml(p.referencia || p.workCode || '-')}</td>
         <td>${fmtDate(p.workDate || p.data || '')}</td>
         <td>${euro(p.valor || 0)}</td>
-        <td>${escapeHtml(p.metodo || 'Manual')}</td>
+        <td>${escapeHtml(p.metodo || 'Manual')}${p._virtual ? ' <span class="mini-label">Auto</span>' : ''}</td>
         <td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td>
-        <td><div class="row-actions">${isAdminLike() ? `<button class="small-btn danger" onclick="deletePagamento('${p.id}')">Apagar</button>` : ''}</div></td>
+        <td><div class="row-actions">${!p._virtual && isAdminLike() ? `<button class="small-btn danger" onclick="deletePagamento('${p.id}')">Apagar</button>` : ''}</div></td>
       </tr>`;
     }).join('')
     : '<tr><td colspan="7">Sem pagamentos registados.</td></tr>';
@@ -2814,7 +2857,7 @@ window.editTrabalho = function(id){
   $('dataFim').value=t.dataFim||'';
   $('estado').value=t.estado||'Pendente';
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value=t.invoiceType||'Com Fatura';
-  $('descricao').value=t.descricao||'';
+  $('descricao').value=getTrabalhoDescricaoText(t)||'';
   switchTab('adicionar');
 };
 window.deleteTrabalho = async function(id){
@@ -2846,7 +2889,7 @@ window.openClientHistory = function(id){
   const c = clientes.find(x=>x.id===id);
   if(!c) return;
   const relatedTrabalhos = trabalhos.filter(t => (t.cliente||'').trim().toLowerCase() === (c.nome||'').trim().toLowerCase());
-  const relatedPagamentos = pagamentos.filter(p => (p.cliente||'').trim().toLowerCase() === (c.nome||'').trim().toLowerCase());
+  const relatedPagamentos = getPagamentosView().filter(p => (p.cliente||'').trim().toLowerCase() === (c.nome||'').trim().toLowerCase());
   const totalTrabalhos = relatedTrabalhos.reduce((s,t)=>s+Number(t.valor||0),0);
   const totalPagamentos = relatedPagamentos.reduce((s,p)=>s+Number(p.valor||0),0);
 
@@ -2910,14 +2953,14 @@ window.generateInvoice = function(id){
     <div class="card"><strong>Contacto:</strong> ${escapeHtml(t.contacto||'-')}</div>
     <div class="card"><strong>Data de início:</strong> ${fmtDate(t.dataInicio)}<br><strong>Data de fim:</strong> ${fmtDate(t.dataFim)}</div>
     <div class="card"><strong>Estado:</strong> ${escapeHtml(t.estado||'-')}</div>
-    <div class="card"><strong>Descrição:</strong><br>${escapeHtml(t.descricao||'-')}</div>
+    <div class="card"><strong>Descrição:</strong><br>${escapeHtml(getTrabalhoDescricaoText(t)||'-')}</div>
     <div class="card"><strong>Total:</strong> ${euro(t.valor||0)}</div>
   `);
 };
 
-window.pdfTrabalho = function(id){ const t=trabalhos.find(x=>x.id===id); if(!t) return; printHtml(`Trabalho ${t.cliente}`, `<h1>Ficha de Trabalho</h1><div class='meta'>${escapeHtml(t.cliente||'-')} • ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(t.cliente||'-')}</div><div class='card'><strong>Contacto:</strong> ${escapeHtml(t.contacto||'-')}</div><div class='card'><strong>Tipo de trabalho:</strong> ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(t.valor||0)}</div><div class='card'><strong>Início:</strong> ${fmtDate(t.dataInicio)}<br><strong>Fim:</strong> ${fmtDate(t.dataFim)}</div><div class='card'><strong>Estado:</strong> ${escapeHtml(t.estado||'-')}</div><div class='card'><strong>Descrição:</strong><br>${escapeHtml(t.descricao||'-')}</div>`); };
+window.pdfTrabalho = function(id){ const t=trabalhos.find(x=>x.id===id); if(!t) return; printHtml(`Trabalho ${t.cliente}`, `<h1>Ficha de Trabalho</h1><div class='meta'>${escapeHtml(t.cliente||'-')} • ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(t.cliente||'-')}</div><div class='card'><strong>Contacto:</strong> ${escapeHtml(t.contacto||'-')}</div><div class='card'><strong>Tipo de trabalho:</strong> ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(t.valor||0)}</div><div class='card'><strong>Início:</strong> ${fmtDate(t.dataInicio)}<br><strong>Fim:</strong> ${fmtDate(t.dataFim)}</div><div class='card'><strong>Estado:</strong> ${escapeHtml(t.estado||'-')}</div><div class='card'><strong>Descrição:</strong><br>${escapeHtml(getTrabalhoDescricaoText(t)||'-')}</div>`); };
 window.pdfCliente = function(id){ const c=clientes.find(x=>x.id===id); if(!c) return; const trabalhosCliente=trabalhos.filter(t=>(t.cliente||'').trim().toLowerCase()===(c.nome||'').trim().toLowerCase()); const linhas=trabalhosCliente.map(t=>`<tr><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${fmtDate(t.dataInicio)}</td><td>${euro(t.valor||0)}</td></tr>`).join(''); printHtml(`Cliente ${c.nome}`, `<h1>Ficha de Cliente</h1><div class='meta'>${escapeHtml(c.nome||'-')}</div><div class='card'><strong>Telefone:</strong> ${escapeHtml(c.telefone||'-')}</div><div class='card'><strong>Email:</strong> ${escapeHtml(c.email||'-')}</div><div class='card'><strong>NIF:</strong> ${escapeHtml(c.nif||'-')}</div><div class='card'><strong>Morada:</strong><br>${escapeHtml(c.morada||'-')}</div><h2>Trabalhos associados</h2><table><thead><tr><th>Tipo</th><th>Data</th><th>Valor</th></tr></thead><tbody>${linhas || '<tr><td colspan="3">Sem trabalhos associados</td></tr>'}</tbody></table>`); };
-window.pdfPagamento = function(id){ const p=pagamentos.find(x=>x.id===id); if(!p) return; printHtml(`Pagamento ${p.cliente}`, `<h1>Comprovativo de Pagamento</h1><div class='meta'>${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Referência:</strong> ${escapeHtml(p.referencia||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(p.valor||0)}</div><div class='card'><strong>Data:</strong> ${fmtDate(p.data)}</div><div class='card'><strong>Método:</strong> ${escapeHtml(p.metodo||'-')}</div><div class='card'><strong>Notas:</strong><br>${escapeHtml(p.notas||'-')}</div>`); };
+window.pdfPagamento = function(id){ const p=getPagamentosView().find(x=>x.id===id); if(!p) return; printHtml(`Pagamento ${p.cliente}`, `<h1>Comprovativo de Pagamento</h1><div class='meta'>${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Referência:</strong> ${escapeHtml(p.referencia||p.workCode||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(p.valor||0)}</div><div class='card'><strong>Data:</strong> ${fmtDate(p.data||p.workDate)}</div><div class='card'><strong>Método:</strong> ${escapeHtml(p.metodo||'-')}</div><div class='card'><strong>Notas:</strong><br>${escapeHtml(p.notas||'-')}</div>`); };
 
 function exportBackup(){ const payload={ exportadoEm:new Date().toISOString(), appVersion:APP_VERSION, currentUsername, currentRole, trabalhos, clientes, pagamentos }; const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='gestao-empresa-backup.json'; a.click(); URL.revokeObjectURL(a.href); }
 $('exportBackupBtn').addEventListener('click', exportBackup);
@@ -2949,8 +2992,10 @@ window.markAsPaid = function(id, metodo='Manual'){
 
   const pagamento = {
     id: genId('pay'),
+    sourceWorkId: t.id || '',
+    workCode: t.workCode || t.ordemId || '',
     cliente: t.cliente || '',
-    referencia: t.tipoTrabalho || '',
+    referencia: t.tipoTrabalho || t.workCode || '',
     valor: Number(t.valor || 0),
     data: new Date().toISOString().split('T')[0],
     workDate: t.dataInicio || t.dataFim || '',
@@ -2982,7 +3027,7 @@ window.showDesc = function(id){
   const t = trabalhos.find(x => x.id === id);
   if(!t) return;
   $('descModalTitle').textContent = `${t.cliente || '-'} • ${t.tipoTrabalho || '-'}`;
-  $('descModalText').textContent = t.descricao || 'Sem descrição.';
+  $('descModalText').textContent = getTrabalhoDescricaoText(t) || 'Sem descrição.';
   $('descModal').classList.remove('hidden');
 };
 
@@ -3162,7 +3207,7 @@ function renderMobileCards(){
       </div>
       <div class="setting-card">
         <span class="mini-label" id="descModalTitle">Trabalho</span>
-        <p id="descModalText" style="margin-top:10px; line-height:1.6;"></p>
+        <p id="descModalText" style="margin-top:10px; line-height:1.6; white-space:pre-wrap;"></p>
       </div>
     </div>
   </div>
