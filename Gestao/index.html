@@ -2293,7 +2293,7 @@ function renderDashboard(){
 
   const chip = document.querySelector('.hero-chip strong');
   if(chip){
-    chip.textContent = totalTrabalhos ? 'Empresa Ativa' : 'Online';
+    chip.textContent = totalTrabalhos ? 'Online' : 'Online';
     chip.className = totalTrabalhos ? 'status-ok' : 'status-warn';
   }
 }
