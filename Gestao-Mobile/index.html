@@ -2935,21 +2935,22 @@ window.startApp = function(role, username){
 };
 
 
-window.markAsPaid = function(id, metodo='Manual'){
+window.markAsPaid = function(id, metodo='Manual', paymentDate=''){
   const t = trabalhos.find(x => x.id === id);
   if(!t) return;
 
+  const finalPaymentDate = paymentDate || new Date().toISOString().split('T')[0];
+
   t.estado = 'Pago';
-  if(!t.dataFim){
-    t.dataFim = new Date().toISOString().split('T')[0];
-  }
+  t.dataPagamento = finalPaymentDate;
+  t.dataFim = finalPaymentDate;
 
   const pagamento = {
     id: genId('pay'),
     cliente: t.cliente || '',
     referencia: t.tipoTrabalho || '',
     valor: Number(t.valor || 0),
-    data: new Date().toISOString().split('T')[0],
+    data: finalPaymentDate,
     workDate: t.dataInicio || t.dataFim || '',
     metodo,
     invoiceType: t.invoiceType || 'Com Fatura',
@@ -2994,6 +2995,10 @@ window.openPaymentMethodModal = function(id){
   pendingPaymentWorkId = id;
   $('paymentJobName').textContent = t.tipoTrabalho || 'Trabalho';
   $('paymentJobClient').textContent = `${t.cliente || '-'} • ${euro(t.valor || 0)}`;
+  const paymentDateInput = $('paymentDateInput');
+  if(paymentDateInput){
+    paymentDateInput.value = t.dataPagamento || t.dataFim || new Date().toISOString().split('T')[0];
+  }
   $('paymentMethodModal').classList.remove('hidden');
 };
 
@@ -3011,7 +3016,8 @@ document.querySelectorAll('.pay-method-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     if(!pendingPaymentWorkId) return;
     const method = btn.dataset.method || 'Manual';
-    window.markAsPaid(pendingPaymentWorkId, method);
+    const paymentDate = $('paymentDateInput')?.value || new Date().toISOString().split('T')[0];
+    window.markAsPaid(pendingPaymentWorkId, method, paymentDate);
     pendingPaymentWorkId = null;
     $('paymentMethodModal').classList.add('hidden');
   });
@@ -3175,6 +3181,11 @@ function renderMobileCards(){
           <span class="mini-label">Trabalho</span>
           <strong id="paymentJobName">-</strong>
           <p id="paymentJobClient" style="margin-top:6px;"></p>
+        </div>
+        <div class="setting-card">
+          <span class="mini-label">Data de pagamento</span>
+          <input type="date" id="paymentDateInput">
+          <p style="margin-top:8px;font-size:12px;opacity:.75;">É preenchida automaticamente com a data de hoje, mas podes alterar antes de confirmar.</p>
         </div>
         <div class="payment-method-grid">
           <button class="pay-method-btn" data-method="Dinheiro">Dinheiro</button>
