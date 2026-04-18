@@ -229,6 +229,8 @@ textarea{resize:vertical}
   flex-wrap:wrap;
   align-items:center;
 }
+.mobile-menu-btn{display:none;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:14px;padding:10px 12px;min-height:44px;cursor:pointer;align-self:flex-start}
+.mobile-sidebar-backdrop{display:none}
 
 
 body.ui-auto{
@@ -1747,6 +1749,180 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   }
 }
 
+
+.stage-flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 0}
+.stage-chip{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#cbd5e1;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;line-height:1;cursor:pointer;transition:.18s ease}
+.stage-chip.completed{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.34);color:#86efac}
+.stage-chip.current{background:rgba(59,130,246,.14);border-color:rgba(59,130,246,.34);color:#93c5fd}
+.stage-chip.next{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.28);color:#fcd34d}
+.stage-chip.locked{opacity:.42;cursor:not-allowed}
+.stage-chip:hover:not(.locked){transform:translateY(-1px)}
+.payment-badge-inline{background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.32);color:#86efac;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px}
+.stage-step.stage-paid{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.32);color:#86efac}
+button.stage-step.stage-paid{cursor:pointer}
+button.stage-step.stage-paid:hover{filter:brightness(1.08)}
+.row-actions .action-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row-actions .action-bottom{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.payment-date-box input{min-height:40px}
+
+
+/* enterprise actions strip */
+.actions-cell{min-width:520px}
+.enterprise-actions{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;padding-bottom:2px;max-width:100%}
+.enterprise-actions::-webkit-scrollbar{height:6px}
+.enterprise-actions::-webkit-scrollbar-thumb{background:rgba(148,163,184,.35);border-radius:999px}
+.enterprise-actions .small-btn,
+.enterprise-actions .stage-chip,
+.enterprise-actions .payment-badge-inline,
+.enterprise-actions .invoice-badge{flex:0 0 auto;white-space:nowrap}
+.enterprise-actions .small-btn{padding:7px 10px;font-size:12px;border-radius:12px}
+.enterprise-actions .stage-chip{padding:6px 10px;font-size:11px}
+.enterprise-actions .payment-badge-inline{padding:6px 10px}
+@media (max-width: 900px){
+  .actions-cell{min-width:unset}
+  .enterprise-actions{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap}
+}
+
+
+/* PIPELINE ESTADOS + ACOES NUMA LINHA */
+.actions-cell{min-width:760px}
+.status-cell-inline{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+.status-cell-inline .badge{flex:0 0 auto}
+.enterprise-actions{
+  display:flex !important;
+  align-items:center;
+  gap:8px;
+  flex-wrap:nowrap !important;
+  overflow-x:auto;
+  overflow-y:hidden;
+  white-space:nowrap;
+  max-width:100%;
+  padding-bottom:2px;
+  scrollbar-width:thin;
+}
+.enterprise-actions::-webkit-scrollbar{height:6px}
+.enterprise-actions::-webkit-scrollbar-thumb{background:rgba(148,163,184,.35);border-radius:999px}
+.enterprise-actions > *{flex:0 0 auto;white-space:nowrap}
+.payment-badge-inline{
+  background:rgba(34,197,94,.16);
+  border:1px solid rgba(34,197,94,.32);
+  color:#86efac;
+  border-radius:999px;
+  padding:7px 12px;
+  font-size:12px;
+  font-weight:800;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.stage-pipeline{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:nowrap;
+  white-space:nowrap;
+  padding:4px 2px;
+}
+.stage-step{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:34px;
+  border-radius:999px;
+  padding:8px 14px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.01em;
+  line-height:1;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  color:#cbd5e1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+button.stage-step{cursor:pointer;transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease}
+button.stage-step:hover{transform:translateY(-1px)}
+.stage-step.done{background:linear-gradient(180deg, rgba(22,163,74,.24), rgba(21,128,61,.20));border-color:rgba(74,222,128,.42);color:#dcfce7;box-shadow:0 0 0 1px rgba(34,197,94,.10) inset}
+.stage-step.done::before{content:'✓';font-size:11px;font-weight:900;margin-right:6px;color:#bbf7d0}
+.stage-step.current{background:linear-gradient(180deg, rgba(37,99,235,.26), rgba(29,78,216,.18));border-color:rgba(96,165,250,.42);color:#dbeafe;box-shadow:0 0 0 1px rgba(59,130,246,.12) inset, 0 6px 14px rgba(37,99,235,.14)}
+.stage-step.current::after{content:'';position:absolute;inset:-2px;border-radius:999px;border:1px solid rgba(147,197,253,.22);pointer-events:none}
+button.stage-step.next{background:linear-gradient(180deg, rgba(245,158,11,.22), rgba(217,119,6,.16));border-color:rgba(252,211,77,.38);color:#fef3c7;box-shadow:0 0 0 1px rgba(245,158,11,.08) inset}
+button.stage-step.next::before{content:'→';font-size:11px;font-weight:900;margin-right:6px;color:#fde68a}
+.stage-step.locked{opacity:.45;filter:saturate(.72)}
+.stage-arrow{color:rgba(148,163,184,.52);font-size:12px;font-weight:900;transform:translateY(-1px)}
+@media (max-width: 900px){
+  .actions-cell{min-width:unset}
+  .enterprise-actions{gap:6px}
+  .stage-step,.payment-badge-inline,.enterprise-actions .small-btn{padding:6px 10px;font-size:11px}
+}
+
+
+/* MOBILE SIDEBAR + SCROLL FIX */
+@media (max-width: 980px){
+  html,body{
+    height:auto !important;
+    min-height:100%;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:auto !important;
+  }
+  body{
+    min-height:100dvh;
+  }
+  .mobile-menu-btn{display:inline-flex;align-items:center;justify-content:center}
+  .mobile-sidebar-backdrop{
+    display:block;
+    position:fixed;
+    inset:0;
+    background:rgba(2,6,15,.55);
+    opacity:0;
+    pointer-events:none;
+    transition:.22s ease;
+    z-index:88;
+  }
+  .sidebar{
+    display:flex !important;
+    position:fixed !important;
+    top:0;
+    left:0;
+    bottom:0;
+    width:min(86vw,320px);
+    height:100dvh !important;
+    transform:translateX(-105%);
+    transition:transform .22s ease;
+    z-index:99;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:calc(20px + env(safe-area-inset-bottom));
+    box-shadow:0 20px 60px rgba(0,0,0,.45);
+  }
+  body.mobile-sidebar-open .sidebar{
+    transform:translateX(0);
+  }
+  body.mobile-sidebar-open .mobile-sidebar-backdrop{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .main{
+    width:100% !important;
+    min-width:0 !important;
+    overflow:visible !important;
+    padding:12px 12px 20px !important;
+  }
+  .topbar{
+    display:grid !important;
+    grid-template-columns:1fr;
+  }
+  .topbar-left{
+    display:grid !important;
+    grid-template-columns:auto 1fr;
+    align-items:start;
+    gap:10px;
+  }
+  .bottom-nav{display:none !important;}
+}
+
 </style>
 </head>
 <body>
@@ -1781,6 +1957,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   </div>
 
   <div id="appRoot" class="app-shell hidden">
+    <div id="mobileSidebarBackdrop" class="mobile-sidebar-backdrop"></div>
     <aside class="sidebar">
       <div class="brand-card">
         <img class="sidebar-logo" src="logo-icon-dark.png" alt="Logo Jorge Torneiro" />
@@ -1816,6 +1993,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
+          <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Abrir menu">☰</button>
           <div>
             <h2 id="pageTitle">Dashboard</h2>
             <div class="subline">
@@ -1897,7 +2075,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
               <div class="field"><label>Valor (€)</label><input id="valor" type="number" min="0" step="0.01" required /></div>
               <div class="field"><label>Data de início</label><input id="dataInicio" type="date" /></div>
               <div class="field"><label>Data de fim</label><input id="dataFim" type="date" /></div>
-              <div class="field"><label>Estado</label><select id="estado"><option>Pendente</option><option>Agendado</option><option>Em curso</option><option>Aguardar peça</option><option>Concluído</option><option>Pago</option><option>Entregue</option><option>Cancelado</option></select></div>
+              <div class="field"><label>Estado</label><select id="estado"><option>Pendente</option><option>Em curso</option><option>Concluído</option><option>Entregue</option><option>Cancelado</option></select></div>
               <div class="field"><label>Faturação</label><select id="trabalhoInvoiceType"><option>Com Fatura</option><option>Sem Fatura</option></select></div>
               <div class="field field-span-2"><label>Descrição</label><textarea id="descricao" rows="5"></textarea></div>
               <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar trabalho</button><button type="button" class="btn btn-secondary" id="clearTrabalhoBtn">Limpar</button></div></div>
@@ -2024,18 +2202,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
             </div>
           </div>
       </section>
-
-  <nav class="bottom-nav">
-    <button class="bottom-btn active" data-tab="dashboard">Dashboard</button>
-    <button class="bottom-btn" data-tab="adicionar">Adicionar</button>
-    <button class="bottom-btn" data-tab="trabalhos">Histórico</button>
-    <button class="bottom-btn" data-tab="clientes">Clientes</button>
-    <button class="bottom-btn" data-tab="pagamentos">Pagamentos</button>
-    <button class="bottom-btn" data-tab="relatorios">Relatórios</button>
-    <button class="bottom-btn" data-tab="configuracoes">Configurações</button>
-  </nav>
-
-  <script>
+<script>
 
 const DEFAULT_USERS = [
   { username: 'jorge', password: 'jfernandes', role: 'admin' },
@@ -2171,6 +2338,16 @@ initUiScale();
 const navButtons = document.querySelectorAll('.nav-btn');
 const bottomButtons = document.querySelectorAll('.bottom-btn');
 const pages = document.querySelectorAll('.page');
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileSidebarBackdrop = document.getElementById('mobileSidebarBackdrop');
+
+function openMobileSidebar(){ document.body.classList.add('mobile-sidebar-open'); }
+function closeMobileSidebar(){ document.body.classList.remove('mobile-sidebar-open'); }
+function isMobileViewport(){ return window.innerWidth <= 980; }
+
+if(mobileMenuBtn){ mobileMenuBtn.addEventListener('click', openMobileSidebar); }
+if(mobileSidebarBackdrop){ mobileSidebarBackdrop.addEventListener('click', closeMobileSidebar); }
+window.addEventListener('resize', ()=>{ if(!isMobileViewport()) closeMobileSidebar(); });
 
 
 function applyUiScale(scale){
@@ -2284,6 +2461,68 @@ function buildStateHistoryHtml(t){
     </div>
   `).join('');
 }
+
+
+const ESTADOS_FLUXO = ['Pendente','Em curso','Concluído','Entregue'];
+
+function getFlowEstado(value=''){
+  const estado = normalizeEstado(value);
+  if(estado === 'Agendado') return 'Pendente';
+  if(estado === 'Aguardar peça') return 'Em curso';
+  if(estado === 'Pago') return 'Entregue';
+  return ESTADOS_FLUXO.includes(estado) ? estado : 'Pendente';
+}
+
+function getNextFlowEstado(value=''){
+  const atual = getFlowEstado(value);
+  const idx = ESTADOS_FLUXO.indexOf(atual);
+  return idx >= 0 && idx < ESTADOS_FLUXO.length - 1 ? ESTADOS_FLUXO[idx + 1] : null;
+}
+
+function setWorkEstadoById(id, novoEstado){
+  const t = trabalhos.find(x => x.id === id);
+  if(!t || !novoEstado) return;
+  const finalEstado = normalizeEstado(novoEstado);
+  t.estado = finalEstado;
+  t.dataEstado = new Date().toISOString();
+  t.historicoEstados = Array.isArray(t.historicoEstados) ? t.historicoEstados : [];
+  const last = t.historicoEstados[t.historicoEstados.length - 1];
+  if(!last || normalizeEstado(last.estado) !== finalEstado){
+    t.historicoEstados.push({ estado: finalEstado, data: t.dataEstado });
+  } else {
+    last.data = t.dataEstado;
+  }
+  saveLocal();
+  renderAll();
+  upsertRemote('trabalhos', t).catch(err => console.error(err));
+}
+
+
+function buildFlowButtons(t){
+  if(!isAdminLike()) return '';
+  const atual = getFlowEstado(t.estado || 'Pendente');
+  const currentIndex = ESTADOS_FLUXO.indexOf(atual);
+  return `<div class="stage-pipeline">` + ESTADOS_FLUXO.map((estado, index) => {
+    const stateClass = index < currentIndex ? 'done' : index === currentIndex ? 'current' : index === currentIndex + 1 ? 'next' : 'locked';
+    const part = index === currentIndex + 1
+      ? `<button class="stage-step ${stateClass}" onclick="window.setWorkEstadoById('${t.id}','${estado}')">${estado}</button>`
+      : `<span class="stage-step ${stateClass}">${estado}</span>`;
+    const arrow = index < ESTADOS_FLUXO.length - 1 ? `<span class="stage-arrow">›</span>` : '';
+    return part + arrow;
+  }).join('') + `</div>`;
+}
+
+
+function getPaymentBadgeHtml(t){
+  if(!t) return '';
+  if(t.paymentStatus === 'Pago'){
+    return `<span class="stage-step stage-paid">Pago${t.dataPagamento ? ` • ${escapeHtml(fmtDate(t.dataPagamento))}` : ''}</span>`;
+  }
+  if(normalizeEstado(t.estado || '') === 'Cancelado' || !isAdminLike()) return '';
+  return `<button class="stage-step stage-paid" onclick="window.openPaymentMethodModal('${t.id}')">Pago</button>`;
+}
+
+window.setWorkEstadoById = setWorkEstadoById;
 
 function genId(prefix='id'){
   if (window.crypto?.randomUUID) return `${prefix}_${window.crypto.randomUUID()}`;
@@ -2523,8 +2762,10 @@ function switchTab(tab){
     bindUiScaleSelector();
     renderManagedUsers();
   }
-  window.scrollTo({top:0,behavior:'smooth'});
+  if(isMobileViewport()) closeMobileSidebar();
+  window.scrollTo({top:0,behavior:'auto'});
 }
+
 navButtons.forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
 bottomButtons.forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
 document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.go)));
@@ -2847,6 +3088,91 @@ function printHtml(title, bodyHtml){ const win=window.open('', '_blank'); if(!wi
 
 
 
+
+/* enterprise actions strip */
+.actions-cell{min-width:520px}
+.enterprise-actions{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;padding-bottom:2px;max-width:100%}
+.enterprise-actions::-webkit-scrollbar{height:6px}
+.enterprise-actions::-webkit-scrollbar-thumb{background:rgba(148,163,184,.35);border-radius:999px}
+.enterprise-actions .small-btn,
+.enterprise-actions .stage-chip,
+.enterprise-actions .payment-badge-inline,
+.enterprise-actions .invoice-badge{flex:0 0 auto;white-space:nowrap}
+.enterprise-actions .small-btn{padding:7px 10px;font-size:12px;border-radius:12px}
+.enterprise-actions .stage-chip{padding:6px 10px;font-size:11px}
+.enterprise-actions .payment-badge-inline{padding:6px 10px}
+@media (max-width: 900px){
+  .actions-cell{min-width:unset}
+  .enterprise-actions{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap}
+}
+
+
+/* MOBILE SIDEBAR + SCROLL FIX */
+@media (max-width: 980px){
+  html,body{
+    height:auto !important;
+    min-height:100%;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:auto !important;
+  }
+  body{
+    min-height:100dvh;
+  }
+  .mobile-menu-btn{display:inline-flex;align-items:center;justify-content:center}
+  .mobile-sidebar-backdrop{
+    display:block;
+    position:fixed;
+    inset:0;
+    background:rgba(2,6,15,.55);
+    opacity:0;
+    pointer-events:none;
+    transition:.22s ease;
+    z-index:88;
+  }
+  .sidebar{
+    display:flex !important;
+    position:fixed !important;
+    top:0;
+    left:0;
+    bottom:0;
+    width:min(86vw,320px);
+    height:100dvh !important;
+    transform:translateX(-105%);
+    transition:transform .22s ease;
+    z-index:99;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:calc(20px + env(safe-area-inset-bottom));
+    box-shadow:0 20px 60px rgba(0,0,0,.45);
+  }
+  body.mobile-sidebar-open .sidebar{
+    transform:translateX(0);
+  }
+  body.mobile-sidebar-open .mobile-sidebar-backdrop{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .main{
+    width:100% !important;
+    min-width:0 !important;
+    overflow:visible !important;
+    padding:12px 12px 20px !important;
+  }
+  .topbar{
+    display:grid !important;
+    grid-template-columns:1fr;
+  }
+  .topbar-left{
+    display:grid !important;
+    grid-template-columns:auto 1fr;
+    align-items:start;
+    gap:10px;
+  }
+  .bottom-nav{display:none !important;}
+}
+
 </style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 
@@ -3063,7 +3389,7 @@ function renderDashboardAgenda(){
 function renderAlerts(){
   const pend = trabalhos.filter(t=>['Pendente','Agendado'].includes(normalizeEstado(t.estado))).length;
   const andam = trabalhos.filter(t=>['Em curso','Aguardar peça'].includes(normalizeEstado(t.estado))).length;
-  const pagos = trabalhos.filter(t=>t.estado==='Pago').length;
+  const pagos = trabalhos.filter(t=>t.paymentStatus==='Pago' || t.estado==='Pago').length;
   const totalPago = pagamentos.reduce((s,p)=>s+Number(p.valor||0),0);
   const clientesAtivos = new Set(trabalhos.map(t=>(t.cliente||'').trim()).filter(Boolean)).size;
 
@@ -3077,22 +3403,26 @@ function renderAlerts(){
     <div class="alert-card"><span class="mini-label">Clientes ativos</span><strong>${clientesAtivos}</strong><p>Clientes com trabalhos registados.</p></div>
   `;
 }
+
 function trabalhoActions(t){
   const showInvoice = (t.invoiceType || 'Com Fatura') === 'Com Fatura';
-  const canMarkPaid = !['Pago','Entregue','Cancelado'].includes(normalizeEstado(t.estado || ''));
   const canEdit = isAdminLike();
   const canDelete = isAdminLike();
-  const hasDesc = (t.descricao || '').trim().length > 0;
+  const hasDesc = ((t.descricao || t.descrição || t.description || t.desc || '')).trim().length > 0;
+  const flowButtons = buildFlowButtons(t);
+  const paymentBadge = getPaymentBadgeHtml(t);
   return `
-    <div class="row-actions">
+    <div class="enterprise-actions">
       ${hasDesc ? `<button class="small-btn info" onclick="window.showDesc('${t.id}')">Descrição</button>` : ''}
       ${showInvoice ? `<button class="small-btn primary" onclick="generateInvoice('${t.id}')">Fatura</button>` : ''}
       ${canEdit ? `<button class="small-btn" onclick="editTrabalho('${t.id}')">Editar</button>` : ''}
-      ${canMarkPaid && canEdit ? `<button class="small-btn success" onclick="window.openPaymentMethodModal('${t.id}')">Pago</button>` : ''}
       ${canDelete ? `<button class="small-btn danger" onclick="deleteTrabalho('${t.id}')">Apagar</button>` : ''}
+      <div class="stage-pipeline">${flowButtons.replace(/^<div class=\"stage-pipeline\">|<\/div>$/g,'')} ${paymentBadge}</div>
     </div>
   `;
 }
+
+
 function clienteActions(c){
   const history=`<button class="small-btn" onclick="openClientHistory('${c.id}')">Histórico</button>`;
   const pdf=`<button class="small-btn" onclick="pdfCliente('${c.id}')">PDF</button>`;
@@ -3113,7 +3443,8 @@ function renderTrabalhos(){
   $('trabalhosTableBody').innerHTML = rows.length ? rows.map(t=>{
     const invoiceType = t.invoiceType || 'Com Fatura';
     const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
-    return `<tr><td><strong>${escapeHtml(t.workCode||'-')}</strong></td><td>${escapeHtml(t.cliente||'-')}</td><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valor||0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></td><td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td><td><div class="row-actions">${trabalhoActions(t)}</div></td></tr>`;
+    const effectiveEstado = t.paymentStatus === 'Pago' ? 'Pago' : (t.estado || '-');
+    return `<tr><td><strong>${escapeHtml(t.workCode||'-')}</strong></td><td>${escapeHtml(t.cliente||'-')}</td><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valor||0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><div class="status-cell-inline"><span class="badge" data-state="${escapeHtml(effectiveEstado)}">${escapeHtml(effectiveEstado)}</span></div></td><td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td><td class="actions-cell">${trabalhoActions(t)}</td></tr>`;
   }).join('') : '<tr><td colspan="9">Sem resultados.</td></tr>';
 }
 function renderClientes(){
@@ -3373,7 +3704,7 @@ window.openClientHistory = function(id){
         <table>
           <thead><tr><th>Tipo</th><th>Valor</th><th>Início</th><th>Fim</th><th>Estado</th></tr></thead>
           <tbody>
-            ${relatedTrabalhos.length ? relatedTrabalhos.slice().reverse().map(t=>`<tr><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valor||0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></td></tr>`).join('') : '<tr><td colspan="5">Sem trabalhos registados.</td></tr>'}
+            ${relatedTrabalhos.length ? relatedTrabalhos.slice().reverse().map(t=>`<tr><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valor||0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><div class="status-cell-inline"><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></div></td></tr>`).join('') : '<tr><td colspan="5">Sem trabalhos registados.</td></tr>'}
           </tbody>
         </table>
       </div>
@@ -3404,13 +3735,13 @@ window.generateInvoice = function(id){
     <div class="card"><strong>Tipo de trabalho:</strong> ${escapeHtml(t.tipoTrabalho||'-')}</div>
     <div class="card"><strong>Contacto:</strong> ${escapeHtml(t.contacto||'-')}</div>
     <div class="card"><strong>Data de início:</strong> ${fmtDate(t.dataInicio)}<br><strong>Data de fim:</strong> ${fmtDate(t.dataFim)}</div>
-    <div class="card"><strong>Estado:</strong> ${escapeHtml(t.estado||'-')}</div>
+    <div class="card"><strong>Estado:</strong> ${escapeHtml(t.estado||'-')}<br><strong>Pagamento:</strong> ${escapeHtml(t.paymentStatus || 'Pendente')} ${t.dataPagamento ? '• ' + escapeHtml(fmtDate(t.dataPagamento)) : ''}</div>
     <div class="card"><strong>Descrição:</strong><br>${escapeHtml(t.descricao||'-')}</div>
     <div class="card"><strong>Total:</strong> ${euro(t.valor||0)}</div>
   `);
 };
 
-window.pdfTrabalho = function(id){ const t=trabalhos.find(x=>x.id===id); if(!t) return; const historicoHtml = normalizeHistoricoEstados(t.historicoEstados, t.estado||'Pendente', t.dataEstado || t.dataInicio || '').map(item=>`<li><strong>${escapeHtml(item.estado||'-')}</strong> — ${escapeHtml(formatDateTime(item.data))}</li>`).join(''); printHtml(`Trabalho ${t.cliente}`, `<h1>Ficha de Trabalho</h1><div class='meta'>${escapeHtml(t.cliente||'-')} • ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(t.cliente||'-')}</div><div class='card'><strong>Contacto:</strong> ${escapeHtml(t.contacto||'-')}</div><div class='card'><strong>Tipo de trabalho:</strong> ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(t.valor||0)}</div><div class='card'><strong>Início:</strong> ${fmtDate(t.dataInicio)}<br><strong>Fim:</strong> ${fmtDate(t.dataFim)}</div><div class='card'><strong>Estado:</strong> ${escapeHtml(normalizeEstado(t.estado||'-'))}<br><strong>Última alteração:</strong> ${escapeHtml(formatDateTime(t.dataEstado))}</div><div class='card'><strong>Descrição:</strong><br>${escapeHtml(t.descricao||'-')}</div><div class='card'><strong>Histórico de estados:</strong><ul>${historicoHtml || '<li>Sem histórico.</li>'}</ul></div>`); };
+window.pdfTrabalho = function(id){ const t=trabalhos.find(x=>x.id===id); if(!t) return; const historicoHtml = normalizeHistoricoEstados(t.historicoEstados, t.estado||'Pendente', t.dataEstado || t.dataInicio || '').map(item=>`<li><strong>${escapeHtml(item.estado||'-')}</strong> — ${escapeHtml(formatDateTime(item.data))}</li>`).join(''); printHtml(`Trabalho ${t.cliente}`, `<h1>Ficha de Trabalho</h1><div class='meta'>${escapeHtml(t.cliente||'-')} • ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(t.cliente||'-')}</div><div class='card'><strong>Contacto:</strong> ${escapeHtml(t.contacto||'-')}</div><div class='card'><strong>Tipo de trabalho:</strong> ${escapeHtml(t.tipoTrabalho||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(t.valor||0)}</div><div class='card'><strong>Início:</strong> ${fmtDate(t.dataInicio)}<br><strong>Fim:</strong> ${fmtDate(t.dataFim)}</div><div class='card'><strong>Estado:</strong> ${escapeHtml(normalizeEstado(t.estado||'-'))}<br><strong>Pagamento:</strong> ${escapeHtml(t.paymentStatus || 'Pendente')} ${t.dataPagamento ? '• ' + escapeHtml(fmtDate(t.dataPagamento)) : ''}<br><strong>Última alteração:</strong> ${escapeHtml(formatDateTime(t.dataEstado))}</div><div class='card'><strong>Descrição:</strong><br>${escapeHtml(t.descricao||'-')}</div><div class='card'><strong>Histórico de estados:</strong><ul>${historicoHtml || '<li>Sem histórico.</li>'}</ul></div>`); };
 window.pdfCliente = function(id){ const c=clientes.find(x=>x.id===id); if(!c) return; const trabalhosCliente=trabalhos.filter(t=>(t.cliente||'').trim().toLowerCase()===(c.nome||'').trim().toLowerCase()); const linhas=trabalhosCliente.map(t=>`<tr><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${fmtDate(t.dataInicio)}</td><td>${euro(t.valor||0)}</td></tr>`).join(''); printHtml(`Cliente ${c.nome}`, `<h1>Ficha de Cliente</h1><div class='meta'>${escapeHtml(c.nome||'-')}</div><div class='card'><strong>Telefone:</strong> ${escapeHtml(c.telefone||'-')}</div><div class='card'><strong>Email:</strong> ${escapeHtml(c.email||'-')}</div><div class='card'><strong>NIF:</strong> ${escapeHtml(c.nif||'-')}</div><div class='card'><strong>Morada:</strong><br>${escapeHtml(c.morada||'-')}</div><h2>Trabalhos associados</h2><table><thead><tr><th>Tipo</th><th>Data</th><th>Valor</th></tr></thead><tbody>${linhas || '<tr><td colspan="3">Sem trabalhos associados</td></tr>'}</tbody></table>`); };
 window.pdfPagamento = function(id){ const p=pagamentos.find(x=>x.id===id); if(!p) return; printHtml(`Pagamento ${p.cliente}`, `<h1>Comprovativo de Pagamento</h1><div class='meta'>${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Cliente:</strong> ${escapeHtml(p.cliente||'-')}</div><div class='card'><strong>Referência:</strong> ${escapeHtml(p.referencia||'-')}</div><div class='card'><strong>Valor:</strong> ${euro(p.valor||0)}</div><div class='card'><strong>Data:</strong> ${fmtDate(p.data)}</div><div class='card'><strong>Método:</strong> ${escapeHtml(p.metodo||'-')}</div><div class='card'><strong>Notas:</strong><br>${escapeHtml(p.notas||'-')}</div>`); };
 
@@ -3444,33 +3775,40 @@ function getAgendaSmartDate(t){
 window.markAsPaid = function(id, metodo='Manual', dataPagamento=''){
   const t = trabalhos.find(x => x.id === id);
   if(!t) return;
-
   const finalPaymentDate = dataPagamento || todayLocalDate();
   t.estado = 'Pago';
-  t.dataPagamento = finalPaymentDate;
   t.dataEstado = new Date().toISOString();
-  t.dataFim = finalPaymentDate;
   t.historicoEstados = Array.isArray(t.historicoEstados) ? t.historicoEstados : [];
-  t.historicoEstados.push({ estado:'Pago', data:t.dataEstado });
+  const last = t.historicoEstados[t.historicoEstados.length - 1];
+  if(!last || normalizeEstado(last.estado) !== 'Pago'){
+    t.historicoEstados.push({ estado:'Pago', data:t.dataEstado });
+  }
+  t.paymentStatus = 'Pago';
+  t.dataPagamento = finalPaymentDate;
+  t.metodoPagamento = metodo;
+  t.dataFim = finalPaymentDate;
 
+  const existingPagamento = pagamentos.find(p => (p.sourceWorkId && p.sourceWorkId === t.id) || (p.workCode && t.workCode && p.workCode === t.workCode));
   const pagamento = {
-    id: genId('pay'),
+    id: existingPagamento?.id || genId('pay'),
     cliente: t.cliente || '',
     referencia: t.workCode || t.tipoTrabalho || '',
-    valor: Number(t.valor || 0),
+    workDate: t.dataInicio || '',
     data: finalPaymentDate,
-    workDate: t.dataInicio || t.dataFim || '',
+    valor: Number(t.valor || 0),
     metodo,
     invoiceType: t.invoiceType || 'Com Fatura',
-    notas: 'Gerado ao marcar como pago',
     sourceWorkId: t.id,
     workCode: t.workCode || ''
   };
+  if(existingPagamento){
+    Object.assign(existingPagamento, pagamento);
+  } else {
+    pagamentos.push(pagamento);
+  }
 
-  pagamentos.push(pagamento);
   saveLocal();
   renderAll();
-
   upsertRemote('trabalhos', t).catch(err => console.error(err));
   upsertRemote('pagamentos', pagamento).catch(err => console.error(err));
 }
@@ -3506,7 +3844,7 @@ window.openPaymentMethodModal = function(id){
   pendingPaymentWorkId = id;
   $('paymentJobName').textContent = t.tipoTrabalho || 'Trabalho';
   $('paymentJobClient').textContent = `${t.cliente || '-'} • ${euro(t.valor || 0)}`;
-  if($('paymentDateInput')) $('paymentDateInput').value = todayLocalDate();
+  if($('paymentDateInput')) { $('paymentDateInput').value = todayLocalDate(); $('paymentDateInput').removeAttribute('readonly'); $('paymentDateInput').disabled = false; setTimeout(() => { const el = $('paymentDateInput'); if(el && !el.value) el.value = todayLocalDate(); }, 0); }
   $('paymentMethodModal').classList.remove('hidden');
 };
 
@@ -3600,10 +3938,10 @@ function renderMobileCards(){
         <div class="mobile-card-grid">
           <div class="mobile-card-item"><span>ID</span><strong>${escapeHtml(t.workCode || '-')}</strong></div>
           <div class="mobile-card-item"><span>Valor</span><strong>${euro(t.valor||0)}</strong></div>
-          <div class="mobile-card-item"><span>Estado</span><strong><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></strong></div>
+          <div class="mobile-card-item"><span>Estado</span><strong><div class="status-cell-inline"><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></div></strong></div>
           <div class="mobile-card-item"><span>Faturação</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
         </div>
-        <div class="row-actions">${trabalhoActions(t)}</div>
+        ${trabalhoActions(t)}
       </article>`;
     }).join('') : '<div class="mobile-card"><div class="mobile-card-title">Sem resultados</div></div>';
   }
