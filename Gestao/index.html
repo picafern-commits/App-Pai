@@ -2779,24 +2779,28 @@ window.openPaymentMethodModal = function(id){
   $('paymentMethodModal').classList.remove('hidden');
 };
 
-$('closePaymentMethodModal')?.addEventListener('click', ()=>{
-  pendingPaymentWorkId = null;
-  $('paymentMethodModal').classList.add('hidden');
-});
-$('paymentMethodModal')?.addEventListener('click', (e)=>{
-  if(e.target.id === 'paymentMethodModal'){
+document.addEventListener('click', (e)=>{
+  const closeBtn = e.target.closest('#closePaymentMethodModal');
+  if(closeBtn){
     pendingPaymentWorkId = null;
-    $('paymentMethodModal').classList.add('hidden');
+    $('paymentMethodModal')?.classList.add('hidden');
+    return;
   }
-});
-document.querySelectorAll('.pay-method-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
+
+  const payBtn = e.target.closest('.pay-method-btn');
+  if(payBtn){
     if(!pendingPaymentWorkId) return;
-    const method = btn.dataset.method || 'Manual';
+    const method = payBtn.dataset.method || 'Manual';
     window.markAsPaid(pendingPaymentWorkId, method);
     pendingPaymentWorkId = null;
-    $('paymentMethodModal').classList.add('hidden');
-  });
+    $('paymentMethodModal')?.classList.add('hidden');
+    return;
+  }
+
+  if(e.target?.id === 'paymentMethodModal'){
+    pendingPaymentWorkId = null;
+    $('paymentMethodModal')?.classList.add('hidden');
+  }
 });
 
 $('cliente')?.addEventListener('change', fillClientContactFromSelection);
