@@ -1787,6 +1787,10 @@ td.acoes-col, .acoes-col{
 }
 .stage-flow .stage-arrow{display:none !important;}
 .stage-flow:empty{display:none;}
+
+.payment-value-group{margin-top:10px}
+.payment-value-group input{width:100%}
+#paymentMethodModal.show{display:flex}
 </style>
 </head>
 <body>
@@ -2176,36 +2180,88 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-function marcarComoPagoComValor(id){
-  const t = (window.trabalhos || []).find(x => String(x.id) === String(id));
+
+
+
+function openPaymentMethodModal(id){
+  const trabalhosLista = window.trabalhos || (typeof trabalhos !== 'undefined' ? trabalhos : []);
+  const t = trabalhosLista.find(x => String(x.id) === String(id));
   if(!t) return;
 
-  const hoje = new Date().toISOString().split('T')[0];
+  const modal = document.getElementById('paymentMethodModal');
+  if(!modal) return;
 
-  let valor = prompt("Valor do pagamento:", t.valor || "");
-  if(valor === null) return;
+  const dateInput = document.getElementById('paymentDateInput');
+  const valueInput = document.getElementById('paymentValueInput');
+  const hiddenId = document.getElementById('paymentWorkId');
+  const methodInput = document.getElementById('paymentMethodInput');
 
-  valor = String(valor).replace(",", ".");
-  if(isNaN(parseFloat(valor))){
-    alert("Valor inválido");
+  if(hiddenId) hiddenId.value = id;
+  if(methodInput) methodInput.value = '';
+  if(dateInput) dateInput.value = (t.dataPagamento && String(t.dataPagamento).trim()) ? t.dataPagamento : getTodayLocalDateStr();
+  if(valueInput) valueInput.value = String(t.valor || t.valorPago || '').replace('.', ',');
+
+  modal.style.display = 'flex';
+  modal.classList.add('show');
+}
+
+function closePaymentMethodModal(){
+  const modal = document.getElementById('paymentMethodModal');
+  if(!modal) return;
+  modal.style.display = 'none';
+  modal.classList.remove('show');
+}
+
+function confirmPaymentMethod(method){
+  const trabalhosLista = window.trabalhos || (typeof trabalhos !== 'undefined' ? trabalhos : []);
+  const hiddenId = document.getElementById('paymentWorkId');
+  const dateInput = document.getElementById('paymentDateInput');
+  const valueInput = document.getElementById('paymentValueInput');
+  const methodInput = document.getElementById('paymentMethodInput');
+
+  const id = hiddenId ? hiddenId.value : '';
+  const t = trabalhosLista.find(x => String(x.id) === String(id));
+  if(!t) return;
+
+  const dataPagamento = dateInput && dateInput.value ? dateInput.value : getTodayLocalDateStr();
+  const valorRaw = valueInput ? String(valueInput.value || '').trim().replace(',', '.') : '';
+  if(!valorRaw){
+    alert('Introduz o valor do pagamento.');
+    return;
+  }
+  const valorNum = Number(valorRaw);
+  if(Number.isNaN(valorNum)){
+    alert('Valor inválido.');
     return;
   }
 
-  t.valorPago = parseFloat(valor);
-  t.dataPagamento = hoje;
   t.paymentStatus = 'Pago';
+  t.paymentMethod = method || (methodInput ? methodInput.value : '') || 'Outro';
+  t.dataPagamento = dataPagamento;
+  t.valorPago = valorNum;
   t.estado = 'Pago';
-
-  t.historicoEstados = t.historicoEstados || [];
+  t.dataEstado = new Date().toISOString();
+  t.historicoEstados = Array.isArray(t.historicoEstados) ? t.historicoEstados : [];
   t.historicoEstados.push({
-    estado: "Pago",
+    estado: 'Pago',
     data: new Date().toISOString()
   });
 
-  if(typeof saveData === 'function') saveData();
+  if(typeof window.saveData === 'function') window.saveData();
+  else if(typeof saveData === 'function') saveData();
+  else if(typeof window.saveTrabalhos === 'function') window.saveTrabalhos();
   else if(typeof saveTrabalhos === 'function') saveTrabalhos();
+  else {
+    try { localStorage.setItem('trabalhos', JSON.stringify(trabalhosLista)); } catch(e) {}
+  }
 
-  if(typeof renderTrabalhos === 'function') renderTrabalhos();
+  closePaymentMethodModal();
+
+  if(typeof window.renderTrabalhos === 'function') window.renderTrabalhos();
+  else if(typeof renderTrabalhos === 'function') renderTrabalhos();
+
+  try { if(typeof window.renderPagamentos === 'function') window.renderPagamentos(); else if(typeof renderPagamentos === 'function') renderPagamentos(); } catch(e) {}
+  try { if(typeof window.renderDashboard === 'function') window.renderDashboard(); else if(typeof renderDashboard === 'function') renderDashboard(); } catch(e) {}
 }
 
 </script>
@@ -2383,11 +2439,12 @@ function getTodayLocalDateStr(){
 }
 
 function setWorkEstadoById(id, novoEstado){
-  const t = (window.trabalhos || []).find(x => String(x.id) === String(id));
+  const trabalhosLista = window.trabalhos || (typeof trabalhos !== 'undefined' ? trabalhos : []);
+  const t = trabalhosLista.find(x => String(x.id) === String(id));
   if(!t) return;
 
-  const estadoAnterior = getFlowEstado(t.estado || 'Pendente');
-  const estadoFinal = getFlowEstado(novoEstado || estadoAnterior);
+  const estadoAnterior = typeof getFlowEstado === 'function' ? getFlowEstado(t.estado || 'Pendente') : (t.estado || 'Pendente');
+  const estadoFinal = typeof getFlowEstado === 'function' ? getFlowEstado(novoEstado || estadoAnterior) : (novoEstado || estadoAnterior);
   const hoje = getTodayLocalDateStr();
 
   if(estadoAnterior === 'Pendente' && estadoFinal === 'Em curso' && !String(t.dataInicio || '').trim()){
@@ -2406,16 +2463,19 @@ function setWorkEstadoById(id, novoEstado){
     data: new Date().toISOString()
   });
 
-  if(typeof saveData === 'function') saveData();
+  if(typeof window.saveData === 'function') window.saveData();
+  else if(typeof saveData === 'function') saveData();
+  else if(typeof window.saveTrabalhos === 'function') window.saveTrabalhos();
   else if(typeof saveTrabalhos === 'function') saveTrabalhos();
+  else {
+    try { localStorage.setItem('trabalhos', JSON.stringify(trabalhosLista)); } catch(e) {}
+  }
 
-  if(typeof renderTrabalhos === 'function') renderTrabalhos();
-  if(typeof renderDashboard === 'function') {
-    try { renderDashboard(); } catch(e) {}
-  }
-  if(typeof renderPagamentos === 'function') {
-    try { renderPagamentos(); } catch(e) {}
-  }
+  if(typeof window.renderTrabalhos === 'function') window.renderTrabalhos();
+  else if(typeof renderTrabalhos === 'function') renderTrabalhos();
+
+  try { if(typeof window.renderDashboard === 'function') window.renderDashboard(); else if(typeof renderDashboard === 'function') renderDashboard(); } catch(e) {}
+  try { if(typeof window.renderPagamentos === 'function') window.renderPagamentos(); else if(typeof renderPagamentos === 'function') renderPagamentos(); } catch(e) {}
 }
 
 
@@ -2433,7 +2493,7 @@ function buildFlowButtons(t){
     return `<button class="stage-step stage-control-btn pay" onclick="window.marcarComoPagoComValor('${t.id}')">Pago</button>`;
   }
 
-  return `<button class="stage-step stage-control-btn next" onclick="window.setWorkEstadoById('${t.id}','${nextEstado}')">${escapeHtml(nextEstado)}</button>`;
+  return `<button class="stage-step stage-control-btn next" onclick="setWorkEstadoById('${t.id}','${nextEstado}')">${escapeHtml(nextEstado)}</button>`;
 }
 
 
@@ -3223,6 +3283,10 @@ td.acoes-col, .acoes-col{
 }
 .stage-flow .stage-arrow{display:none !important;}
 .stage-flow:empty{display:none;}
+
+.payment-value-group{margin-top:10px}
+.payment-value-group input{width:100%}
+#paymentMethodModal.show{display:flex}
 </style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 
@@ -4043,36 +4107,88 @@ function renderMobileCards(){
 }
 
 
-function marcarComoPagoComValor(id){
-  const t = (window.trabalhos || []).find(x => String(x.id) === String(id));
+
+
+
+function openPaymentMethodModal(id){
+  const trabalhosLista = window.trabalhos || (typeof trabalhos !== 'undefined' ? trabalhos : []);
+  const t = trabalhosLista.find(x => String(x.id) === String(id));
   if(!t) return;
 
-  const hoje = new Date().toISOString().split('T')[0];
+  const modal = document.getElementById('paymentMethodModal');
+  if(!modal) return;
 
-  let valor = prompt("Valor do pagamento:", t.valor || "");
-  if(valor === null) return;
+  const dateInput = document.getElementById('paymentDateInput');
+  const valueInput = document.getElementById('paymentValueInput');
+  const hiddenId = document.getElementById('paymentWorkId');
+  const methodInput = document.getElementById('paymentMethodInput');
 
-  valor = String(valor).replace(",", ".");
-  if(isNaN(parseFloat(valor))){
-    alert("Valor inválido");
+  if(hiddenId) hiddenId.value = id;
+  if(methodInput) methodInput.value = '';
+  if(dateInput) dateInput.value = (t.dataPagamento && String(t.dataPagamento).trim()) ? t.dataPagamento : getTodayLocalDateStr();
+  if(valueInput) valueInput.value = String(t.valor || t.valorPago || '').replace('.', ',');
+
+  modal.style.display = 'flex';
+  modal.classList.add('show');
+}
+
+function closePaymentMethodModal(){
+  const modal = document.getElementById('paymentMethodModal');
+  if(!modal) return;
+  modal.style.display = 'none';
+  modal.classList.remove('show');
+}
+
+function confirmPaymentMethod(method){
+  const trabalhosLista = window.trabalhos || (typeof trabalhos !== 'undefined' ? trabalhos : []);
+  const hiddenId = document.getElementById('paymentWorkId');
+  const dateInput = document.getElementById('paymentDateInput');
+  const valueInput = document.getElementById('paymentValueInput');
+  const methodInput = document.getElementById('paymentMethodInput');
+
+  const id = hiddenId ? hiddenId.value : '';
+  const t = trabalhosLista.find(x => String(x.id) === String(id));
+  if(!t) return;
+
+  const dataPagamento = dateInput && dateInput.value ? dateInput.value : getTodayLocalDateStr();
+  const valorRaw = valueInput ? String(valueInput.value || '').trim().replace(',', '.') : '';
+  if(!valorRaw){
+    alert('Introduz o valor do pagamento.');
+    return;
+  }
+  const valorNum = Number(valorRaw);
+  if(Number.isNaN(valorNum)){
+    alert('Valor inválido.');
     return;
   }
 
-  t.valorPago = parseFloat(valor);
-  t.dataPagamento = hoje;
   t.paymentStatus = 'Pago';
+  t.paymentMethod = method || (methodInput ? methodInput.value : '') || 'Outro';
+  t.dataPagamento = dataPagamento;
+  t.valorPago = valorNum;
   t.estado = 'Pago';
-
-  t.historicoEstados = t.historicoEstados || [];
+  t.dataEstado = new Date().toISOString();
+  t.historicoEstados = Array.isArray(t.historicoEstados) ? t.historicoEstados : [];
   t.historicoEstados.push({
-    estado: "Pago",
+    estado: 'Pago',
     data: new Date().toISOString()
   });
 
-  if(typeof saveData === 'function') saveData();
+  if(typeof window.saveData === 'function') window.saveData();
+  else if(typeof saveData === 'function') saveData();
+  else if(typeof window.saveTrabalhos === 'function') window.saveTrabalhos();
   else if(typeof saveTrabalhos === 'function') saveTrabalhos();
+  else {
+    try { localStorage.setItem('trabalhos', JSON.stringify(trabalhosLista)); } catch(e) {}
+  }
 
-  if(typeof renderTrabalhos === 'function') renderTrabalhos();
+  closePaymentMethodModal();
+
+  if(typeof window.renderTrabalhos === 'function') window.renderTrabalhos();
+  else if(typeof renderTrabalhos === 'function') renderTrabalhos();
+
+  try { if(typeof window.renderPagamentos === 'function') window.renderPagamentos(); else if(typeof renderPagamentos === 'function') renderPagamentos(); } catch(e) {}
+  try { if(typeof window.renderDashboard === 'function') window.renderDashboard(); else if(typeof renderDashboard === 'function') renderDashboard(); } catch(e) {}
 }
 
 </script>
@@ -4113,7 +4229,10 @@ function marcarComoPagoComValor(id){
           <strong id="paymentJobName">-</strong>
           <p id="paymentJobClient" style="margin-top:6px;"></p>
         </div>
-        <div class="payment-date-box"><label for="paymentDateInput">Data de pagamento</label><input id="paymentDateInput" type="date" /></div>
+        <div class="payment-date-box"><label for="paymentDateInput">Data de pagamento</label><input type="hidden" id="paymentWorkId">
+<input type="hidden" id="paymentMethodInput">
+<input id="paymentDateInput" type="date" />
+<div class="field-group payment-value-group"><label for="paymentValueInput">Valor</label><input type="number" step="0.01" id="paymentValueInput" placeholder="0,00"></div></div>
         <div class="payment-method-grid">
           <button class="pay-method-btn" data-method="Dinheiro">Dinheiro</button>
           <button class="pay-method-btn" data-method="MB Way">MB Way</button>
