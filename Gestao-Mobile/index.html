@@ -2997,7 +2997,7 @@ window.openPaymentMethodModal = function(id){
   $('paymentJobClient').textContent = `${t.cliente || '-'} • ${euro(t.valor || 0)}`;
   const paymentDateInput = $('paymentDateInput');
   if(paymentDateInput){
-    paymentDateInput.value = t.dataPagamento || t.dataFim || new Date().toISOString().split('T')[0];
+    paymentDateInput.value = t.dataPagamento || new Date().toISOString().split('T')[0];
   }
   $('paymentMethodModal').classList.remove('hidden');
 };
