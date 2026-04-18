@@ -1778,6 +1778,15 @@ td.acoes-col, .acoes-col{
   pointer-events:none;
 }
 
+
+.stage-flow{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  min-width:0;
+}
+.stage-flow .stage-arrow{display:none !important;}
+.stage-flow:empty{display:none;}
 </style>
 </head>
 <body>
@@ -2357,17 +2366,15 @@ function buildFlowButtons(t){
   const isPaid = t && t.paymentStatus === 'Pago';
   const nextEstado = getNextFlowEstado(t.estado || 'Pendente');
 
-  const currentBadge = `<span class="stage-step current">${escapeHtml(atual)}</span>`;
-
   if(isPaid || atual === 'Pago'){
-    return currentBadge + `<span class="stage-arrow">›</span><span class="stage-step done final-paid">Pago${t.dataPagamento ? ` • ${escapeHtml(fmtDate(t.dataPagamento))}` : ''}</span>`;
+    return `<span class="stage-step done final-paid">Pago${t.dataPagamento ? ` • ${escapeHtml(fmtDate(t.dataPagamento))}` : ''}</span>`;
   }
 
   if(atual === 'Entregue' || !nextEstado){
-    return currentBadge + `<span class="stage-arrow">›</span><button class="stage-step stage-control-btn pay" onclick="window.openPaymentMethodModal('${t.id}')">Pago</button>`;
+    return `<button class="stage-step stage-control-btn pay" onclick="window.openPaymentMethodModal('${t.id}')">Pago</button>`;
   }
 
-  return currentBadge + `<span class="stage-arrow">›</span><button class="stage-step stage-control-btn next" onclick="window.setWorkEstadoById('${t.id}','${nextEstado}')">${escapeHtml(nextEstado)}</button>`;
+  return `<button class="stage-step stage-control-btn next" onclick="window.setWorkEstadoById('${t.id}','${nextEstado}')">${escapeHtml(nextEstado)}</button>`;
 }
 
 
@@ -3148,6 +3155,15 @@ td.acoes-col, .acoes-col{
   pointer-events:none;
 }
 
+
+.stage-flow{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  min-width:0;
+}
+.stage-flow .stage-arrow{display:none !important;}
+.stage-flow:empty{display:none;}
 </style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 
