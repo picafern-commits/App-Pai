@@ -1704,6 +1704,12 @@ button.desc-status-btn:hover{transform:translateY(-1px)}
   box-shadow:0 0 0 1px rgba(168,85,247,.08) inset;
 }
 
+
+.stage-arrow{
+  opacity:.55;
+  margin:0 4px;
+  font-weight:800;
+}
 </style>
 </head>
 <body>
@@ -2280,25 +2286,20 @@ function setWorkEstadoById(id, novoEstado){
 function buildFlowButtons(t){
   if(!isAdminLike()) return '';
   const atual = getFlowEstado(t.estado || 'Pendente');
-  const currentIndex = ESTADOS_FLUXO.indexOf(atual);
   const isPaid = t && t.paymentStatus === 'Pago';
-  const pipeline = `<div class="stage-pipeline">` + ESTADOS_FLUXO.map((estado, index) => {
-    const stateClass = index < currentIndex ? 'done' : index === currentIndex ? 'current' : 'locked';
-    const extraClass = isPaid && index === ESTADOS_FLUXO.length - 1 ? ' final-paid' : '';
-    const arrow = index < ESTADOS_FLUXO.length - 1 ? `<span class="stage-arrow">›</span>` : '';
-    return `<span class="stage-step ${stateClass}${extraClass}">${estado}</span>` + arrow;
-  }).join('') + `</div>`;
-
-  if(isPaid){
-    return pipeline + `<span class="stage-step done final-paid">Pago${t.dataPagamento ? ` • ${escapeHtml(fmtDate(t.dataPagamento))}` : ''}</span>`;
-  }
-
   const nextEstado = getNextFlowEstado(t.estado || 'Pendente');
-  if(!nextEstado){
-    return pipeline + `<button class="stage-step stage-control-btn pay" onclick="window.openPaymentMethodModal('${t.id}')">Pago</button>`;
+
+  const currentBadge = `<span class="stage-step current">${escapeHtml(atual)}</span>`;
+
+  if(isPaid || atual === 'Pago'){
+    return currentBadge + `<span class="stage-arrow">›</span><span class="stage-step done final-paid">Pago${t.dataPagamento ? ` • ${escapeHtml(fmtDate(t.dataPagamento))}` : ''}</span>`;
   }
 
-  return pipeline + `<button class="stage-step stage-control-btn next" onclick="window.setWorkEstadoById('${t.id}','${nextEstado}')">${nextEstado}</button>`;
+  if(atual === 'Entregue' || !nextEstado){
+    return currentBadge + `<span class="stage-arrow">›</span><button class="stage-step stage-control-btn pay" onclick="window.openPaymentMethodModal('${t.id}')">Pago</button>`;
+  }
+
+  return currentBadge + `<span class="stage-arrow">›</span><button class="stage-step stage-control-btn next" onclick="window.setWorkEstadoById('${t.id}','${nextEstado}')">${escapeHtml(nextEstado)}</button>`;
 }
 
 
@@ -3005,6 +3006,12 @@ button.desc-status-btn:hover{transform:translateY(-1px)}
   box-shadow:0 0 0 1px rgba(168,85,247,.08) inset;
 }
 
+
+.stage-arrow{
+  opacity:.55;
+  margin:0 4px;
+  font-weight:800;
+}
 </style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 
