@@ -1688,8 +1688,6 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
           </section>
         </div>
       </section>
-        </div>
-      </section>
 
       <section class="page" id="pagamentos-page">
         <div class="content-grid single-panel-grid">
@@ -2246,7 +2244,19 @@ function switchTab(tab){
   pages.forEach(p => p.classList.toggle('active', p.id===`${tab}-page`));
   const btn=document.querySelector(`.nav-btn[data-tab="${tab}"]`);
   $('pageTitle').textContent = btn ? btn.textContent.trim() : 'Dashboard';
-  if(tab === 'configuracoes') bindUiScaleSelector();
+  if(tab === 'dashboard'){
+    renderDashboard();
+    renderAlerts();
+    renderDashboardAgenda();
+  }
+  if(tab === 'trabalhos') renderTrabalhos();
+  if(tab === 'clientes') renderClientes();
+  if(tab === 'pagamentos') renderPagamentos();
+  if(tab === 'relatorios') renderRelatorios();
+  if(tab === 'configuracoes'){
+    bindUiScaleSelector();
+    renderManagedUsers();
+  }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 navButtons.forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
@@ -2928,7 +2938,7 @@ function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOption
 $('searchTrabalhos')?.addEventListener('input', ()=>{ renderTrabalhos(); renderMobileCards(); });
 $('filterEstado')?.addEventListener('change', ()=>{ renderTrabalhos(); renderMobileCards(); });
 $('searchClientes')?.addEventListener('input', ()=>{ renderClientes(); renderMobileCards(); });
-$('globalSearch')?.addEventListener('input', ()=>{ renderTrabalhos(); renderClientes(); renderPagamentos(); renderCalendario(); renderMobileCards(); });
+$('globalSearch')?.addEventListener('input', ()=>{ renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios(); renderMobileCards(); });
 
 $('clearTrabalhoBtn')?.addEventListener('click', ()=>{
   $('trabalhoForm')?.reset();
