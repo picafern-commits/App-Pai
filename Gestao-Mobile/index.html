@@ -2044,6 +2044,64 @@ button.desc-status-btn:hover{transform:translateY(-1px)}
   margin:0 4px;
   font-weight:800;
 }
+
+/* AÇÕES ALINHADAS FIXAS */
+td.acoes-col, .acoes-col{
+  min-width: 760px;
+  width: 760px;
+}
+.enterprise-actions{
+  display:grid;
+  grid-template-columns: 124px 92px 86px 86px minmax(240px, 1fr);
+  align-items:center;
+  gap:8px;
+  width:100%;
+}
+.enterprise-actions > *{
+  min-width:0;
+}
+.enterprise-actions .stage-arrow{
+  margin:0 6px;
+}
+.enterprise-actions .desc-status-btn,
+.enterprise-actions .pipeline-like-btn,
+.enterprise-actions .stage-step,
+.enterprise-actions .stage-control-btn{
+  justify-self:start;
+}
+.enterprise-actions .stage-step,
+.enterprise-actions .stage-control-btn{
+  white-space:nowrap;
+}
+.enterprise-actions .stage-flow{
+  display:flex;
+  align-items:center;
+  min-width:0;
+}
+.enterprise-actions .stage-flow .stage-step.current{
+  min-width:92px;
+  justify-content:center;
+}
+.enterprise-actions .stage-flow .stage-control-btn{
+  min-width:118px;
+  justify-content:center;
+}
+.enterprise-actions .stage-flow .stage-step.done.final-paid{
+  min-width:152px;
+  justify-content:center;
+}
+@media (max-width: 1100px){
+  td.acoes-col, .acoes-col{
+    min-width: auto;
+    width:auto;
+  }
+  .enterprise-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3417,6 +3475,64 @@ button.desc-status-btn:hover{transform:translateY(-1px)}
   margin:0 4px;
   font-weight:800;
 }
+
+/* AÇÕES ALINHADAS FIXAS */
+td.acoes-col, .acoes-col{
+  min-width: 760px;
+  width: 760px;
+}
+.enterprise-actions{
+  display:grid;
+  grid-template-columns: 124px 92px 86px 86px minmax(240px, 1fr);
+  align-items:center;
+  gap:8px;
+  width:100%;
+}
+.enterprise-actions > *{
+  min-width:0;
+}
+.enterprise-actions .stage-arrow{
+  margin:0 6px;
+}
+.enterprise-actions .desc-status-btn,
+.enterprise-actions .pipeline-like-btn,
+.enterprise-actions .stage-step,
+.enterprise-actions .stage-control-btn{
+  justify-self:start;
+}
+.enterprise-actions .stage-step,
+.enterprise-actions .stage-control-btn{
+  white-space:nowrap;
+}
+.enterprise-actions .stage-flow{
+  display:flex;
+  align-items:center;
+  min-width:0;
+}
+.enterprise-actions .stage-flow .stage-step.current{
+  min-width:92px;
+  justify-content:center;
+}
+.enterprise-actions .stage-flow .stage-control-btn{
+  min-width:118px;
+  justify-content:center;
+}
+.enterprise-actions .stage-flow .stage-step.done.final-paid{
+  min-width:152px;
+  justify-content:center;
+}
+@media (max-width: 1100px){
+  td.acoes-col, .acoes-col{
+    min-width: auto;
+    width:auto;
+  }
+  .enterprise-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+}
+
 </style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 
@@ -3661,10 +3777,10 @@ function trabalhoActions(t){
   return `
     <div class="enterprise-actions">
       ${descButton}
-      ${showInvoice ? `<button class="pipeline-like-btn fatura-btn" onclick="generateInvoice('${t.id}')">Fatura</button>` : ''}
-      ${canEdit ? `<button class="pipeline-like-btn edit-btn" onclick="editTrabalho('${t.id}')">Editar</button>` : ''}
-      ${canDelete ? `<button class="pipeline-like-btn delete-btn" onclick="deleteTrabalho('${t.id}')">Apagar</button>` : ''}
-      ${flowButtons}
+      ${showInvoice ? `<button class="pipeline-like-btn fatura-btn" onclick="generateInvoice('${t.id}')">Fatura</button>` : '<span></span>'}
+      ${canEdit ? `<button class="pipeline-like-btn edit-btn" onclick="editTrabalho('${t.id}')">Editar</button>` : '<span></span>'}
+      ${canDelete ? `<button class="pipeline-like-btn delete-btn" onclick="deleteTrabalho('${t.id}')">Apagar</button>` : '<span></span>'}
+      <div class="stage-flow">${flowButtons}</div>
     </div>
   `;
 }
