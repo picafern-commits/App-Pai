@@ -1768,6 +1768,16 @@ td.acoes-col, .acoes-col{
   }
 }
 
+
+.pipeline-like-btn.fatura-disabled{
+  background:linear-gradient(180deg, rgba(148,163,184,.12), rgba(100,116,139,.08));
+  border-color:rgba(148,163,184,.20);
+  color:#94a3b8;
+  box-shadow:none;
+  cursor:default;
+  pointer-events:none;
+}
+
 </style>
 </head>
 <body>
@@ -3128,6 +3138,16 @@ td.acoes-col, .acoes-col{
   }
 }
 
+
+.pipeline-like-btn.fatura-disabled{
+  background:linear-gradient(180deg, rgba(148,163,184,.12), rgba(100,116,139,.08));
+  border-color:rgba(148,163,184,.20);
+  color:#94a3b8;
+  box-shadow:none;
+  cursor:default;
+  pointer-events:none;
+}
+
 </style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 
@@ -3372,7 +3392,7 @@ function trabalhoActions(t){
   return `
     <div class="enterprise-actions">
       ${descButton}
-      ${showInvoice ? `<button class="pipeline-like-btn fatura-btn" onclick="generateInvoice('${t.id}')">Fatura</button>` : '<span></span>'}
+      ${showInvoice ? `<button class="pipeline-like-btn fatura-btn" onclick="generateInvoice('${t.id}')">Fatura</button>` : `<span class="pipeline-like-btn fatura-disabled">Fatura</span>`}
       ${canEdit ? `<button class="pipeline-like-btn edit-btn" onclick="editTrabalho('${t.id}')">Editar</button>` : '<span></span>'}
       ${canDelete ? `<button class="pipeline-like-btn delete-btn" onclick="deleteTrabalho('${t.id}')">Apagar</button>` : '<span></span>'}
       <div class="stage-flow">${flowButtons}</div>
