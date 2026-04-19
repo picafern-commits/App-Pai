@@ -2402,6 +2402,18 @@ td.acoes-col, .acoes-col{
   }
 }
 
+
+/* CAMPOS SÓ ADMIN MESTRE NO ADICIONAR */
+.master-edit-only.is-hidden-by-role{
+  display:none !important;
+}
+
+
+/* CAMPOS AVANÇADOS DO TRABALHO */
+.field-hidden-by-role{
+  display:none !important;
+}
+
 </style>
 </head>
 <body>
@@ -2548,10 +2560,10 @@ td.acoes-col, .acoes-col{
               </div>
               <div class="field"><label>Contacto do cliente</label><input id="contacto" type="text" readonly /></div>
               <div class="field"><label>Tipo de trabalho</label><input id="tipoTrabalho" type="text" required /></div>
-              <div class="field"><label>Valor (€)</label><input id="valor" type="number" min="0" step="0.01" /></div>
-              <div class="field"><label>Data de início</label><input id="dataInicio" type="date" /></div>
-              <div class="field"><label>Data de fim</label><input id="dataFim" type="date" /></div>
-              <div class="field"><label>Estado</label><select id="estado"><option>Pendente</option><option>Em curso</option><option>Concluído</option><option>Entregue</option><option>Cancelado</option></select></div>
+              <div class="field advanced-work-field master-edit-only"><label>Valor (€)</label><input id="valor" type="number" min="0" step="0.01" /></div>
+              <div class="field advanced-work-field master-edit-only"><label>Data de início</label><input id="dataInicio" type="date" /></div>
+              <div class="field advanced-work-field master-edit-only"><label>Data de fim</label><input id="dataFim" type="date" /></div>
+              <div class="field advanced-work-field master-edit-only"><label>Estado</label><select id="estado"><option>Pendente</option><option>Em curso</option><option>Concluído</option><option>Entregue</option><option>Cancelado</option></select></div>
               <div class="field"><label>Faturação</label><select id="trabalhoInvoiceType"><option>Com Fatura</option><option>Sem Fatura</option></select></div>
               <div class="field field-span-2"><label>Descrição</label><textarea id="descricao" rows="5"></textarea></div>
               <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar trabalho</button><button type="button" class="btn btn-secondary" id="clearTrabalhoBtn">Limpar</button></div></div>
@@ -3352,7 +3364,19 @@ function buildProfessionalReportHtml(){
         table{width:100%;border-collapse:collapse;font-size:13px}
         th,td{border:1px solid #e2e8f0;padding:10px;text-align:left}
         th{background:#f5f3ff;color:#4c1d95}
-      </style>
+      
+/* CAMPOS SÓ ADMIN MESTRE NO ADICIONAR */
+.master-edit-only.is-hidden-by-role{
+  display:none !important;
+}
+
+
+/* CAMPOS AVANÇADOS DO TRABALHO */
+.field-hidden-by-role{
+  display:none !important;
+}
+
+</style>
     </head>
     <body>
       <div class="hero">
@@ -3490,6 +3514,23 @@ const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<
 const isMasterAdmin = () => currentRole === 'master_admin';
 const isAdminLike = () => currentRole === 'admin' || currentRole === 'master_admin';
 
+
+function updateTrabalhoAdvancedFields(){
+  const isEditing = !!($('trabalhoId') && $('trabalhoId').value);
+  const canSee = isMasterAdmin() || isEditing;
+  document.querySelectorAll('.master-edit-only').forEach(el => {
+    el.classList.toggle('is-hidden-by-role', !canSee);
+  });
+
+  if(!canSee){
+    if($('valor')) $('valor').value = '';
+    if($('dataInicio')) $('dataInicio').value = '';
+    if($('dataFim')) $('dataFim').value = '';
+    if($('estado')) $('estado').value = 'Pendente';
+  }
+}
+
+
 const ESTADOS_TRABALHO = ['Pendente','Em curso','Concluído','Pago','Entregue','Cancelado'];
 
 function normalizeEstado(value=''){
@@ -3576,6 +3617,33 @@ function getNextFlowEstado(value=''){
   return idx >= 0 && idx < ESTADOS_FLUXO.length - 1 ? ESTADOS_FLUXO[idx + 1] : null;
 }
 
+
+function isMasterAdminUser(){
+  try{
+    const role = String(window.currentRole || (typeof currentRole !== 'undefined' ? currentRole : '') || '').toLowerCase();
+    return role === 'master_admin';
+  }catch(e){
+    return false;
+  }
+}
+
+function isEditingTrabalho(){
+  try{
+    const idEl = document.getElementById('trabalhoId');
+    return !!(idEl && String(idEl.value || '').trim());
+  }catch(e){
+    return false;
+  }
+}
+
+function updateTrabalhoFieldVisibility(){
+  const showAdvanced = isMasterAdminUser() || isEditingTrabalho();
+  document.querySelectorAll('.advanced-work-field').forEach(el => {
+    el.classList.toggle('field-hidden-by-role', !showAdvanced);
+  });
+}
+
+
 function getTodayLocalDateStr(){
   const now = new Date();
   const y = now.getFullYear();
@@ -3597,7 +3665,7 @@ function setWorkEstadoById(id, novoEstado){
     t.dataInicio = hoje;
   }
 
-  if(estadoFinal === 'Concluído'){
+  if((estadoFinal === 'Concluído' || estadoFinal === 'Entregue') && !String(t.dataFim || '').trim()){
     t.dataFim = hoje;
   }
 
@@ -3609,19 +3677,38 @@ function setWorkEstadoById(id, novoEstado){
     data: new Date().toISOString()
   });
 
-  if(typeof window.saveData === 'function') window.saveData();
-  else if(typeof saveData === 'function') saveData();
-  else if(typeof window.saveTrabalhos === 'function') window.saveTrabalhos();
-  else if(typeof saveTrabalhos === 'function') saveTrabalhos();
-  else {
-    try { localStorage.setItem('trabalhos', JSON.stringify(trabalhosLista)); } catch(e) {}
+  try{
+    if(typeof window.trabalhos !== 'undefined') window.trabalhos = trabalhosLista;
+    if(typeof trabalhos !== 'undefined') trabalhos = trabalhosLista;
+  }catch(e){}
+
+  try{
+    if(typeof saveLocal === 'function') saveLocal();
+    else if(typeof window.saveData === 'function') window.saveData();
+    else if(typeof saveData === 'function') saveData();
+    else if(typeof window.saveTrabalhos === 'function') window.saveTrabalhos();
+    else if(typeof saveTrabalhos === 'function') saveTrabalhos();
+    else localStorage.setItem('trabalhos', JSON.stringify(trabalhosLista));
+  }catch(e){
+    console.error('Erro ao guardar estado localmente:', e);
   }
 
-  if(typeof window.renderTrabalhos === 'function') window.renderTrabalhos();
-  else if(typeof renderTrabalhos === 'function') renderTrabalhos();
-
-  try { if(typeof window.renderDashboard === 'function') window.renderDashboard(); else if(typeof renderDashboard === 'function') renderDashboard(); } catch(e) {}
-  try { if(typeof window.renderPagamentos === 'function') window.renderPagamentos(); else if(typeof renderPagamentos === 'function') renderPagamentos(); } catch(e) {}
+  Promise.resolve()
+    .then(async () => {
+      try{
+        if(typeof upsertRemote === 'function' && typeof syncReady !== 'undefined' && syncReady){
+          await upsertRemote('trabalhos', t);
+        }
+      }catch(e){
+        console.error('Erro ao sincronizar estado no Firebase:', e);
+      }
+    })
+    .finally(() => {
+      try { if(typeof window.renderTrabalhos === 'function') window.renderTrabalhos(); else if(typeof renderTrabalhos === 'function') renderTrabalhos(); } catch(e) {}
+      try { if(typeof window.renderDashboard === 'function') window.renderDashboard(); else if(typeof renderDashboard === 'function') renderDashboard(); } catch(e) {}
+      try { if(typeof window.renderPagamentos === 'function') window.renderPagamentos(); else if(typeof renderPagamentos === 'function') renderPagamentos(); } catch(e) {}
+      try { if(typeof window.renderRelatorios === 'function') window.renderRelatorios(); else if(typeof renderRelatorios === 'function') renderRelatorios(); } catch(e) {}
+    });
 }
 
 
@@ -3866,6 +3953,8 @@ function setRoleUI(){
     }
   }
   setSyncMessage(syncReady ? 'Firebase Sync' : syncMessage, syncReady ? 'ok' : 'warn');
+  try{ updateTrabalhoFieldVisibility(); }catch(e){}
+  updateTrabalhoAdvancedFields();
 }
 function switchTab(tab){
   navButtons.forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
@@ -5045,6 +5134,18 @@ td.acoes-col, .acoes-col{
   }
 }
 
+
+/* CAMPOS SÓ ADMIN MESTRE NO ADICIONAR */
+.master-edit-only.is-hidden-by-role{
+  display:none !important;
+}
+
+
+/* CAMPOS AVANÇADOS DO TRABALHO */
+.field-hidden-by-role{
+  display:none !important;
+}
+
 </style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 
@@ -5375,6 +5476,8 @@ $('clearTrabalhoBtn')?.addEventListener('click', ()=>{
   if($('cliente')) $('cliente').value='';
   if($('contacto')) $('contacto').value='';
   if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
+  try{ updateTrabalhoFieldVisibility(); }catch(e){}
+  updateTrabalhoAdvancedFields();
 });
 $('clearClienteBtn')?.addEventListener('click', ()=>{
   $('clienteForm')?.reset();
@@ -5429,6 +5532,8 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   if($('cliente')) $('cliente').value='';
   if($('contacto')) $('contacto').value='';
   if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
+  try{ updateTrabalhoFieldVisibility(); }catch(e){}
+  updateTrabalhoAdvancedFields();
 
   renderAll();
   switchTab('trabalhos');
@@ -5472,6 +5577,7 @@ window.editTrabalho = function(id){
   $('estado').value=normalizeEstado(t.estado||'Pendente');
   if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value=t.invoiceType||'Com Fatura';
   $('descricao').value=t.descricao||'';
+  updateTrabalhoAdvancedFields();
   switchTab('adicionar');
 };
 window.deleteTrabalho = async function(id){
@@ -6205,7 +6311,19 @@ function buildProfessionalReportHtml(){
         table{width:100%;border-collapse:collapse;font-size:13px}
         th,td{border:1px solid #e2e8f0;padding:10px;text-align:left}
         th{background:#f5f3ff;color:#4c1d95}
-      </style>
+      
+/* CAMPOS SÓ ADMIN MESTRE NO ADICIONAR */
+.master-edit-only.is-hidden-by-role{
+  display:none !important;
+}
+
+
+/* CAMPOS AVANÇADOS DO TRABALHO */
+.field-hidden-by-role{
+  display:none !important;
+}
+
+</style>
     </head>
     <body>
       <div class="hero">
