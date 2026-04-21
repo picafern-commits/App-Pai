@@ -6731,8 +6731,7 @@ function renderRelatorios() {
         .join('')
     : '<div class="report-card">Sem dados para relatório.</div>';
 }
-function renderAll(){ if(!currentRole) return; try{ const profile = await fetchRoleProfileForUser(user); currentRole = profile.role; }catch(e){}
-      setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); try{ if(typeof renderDashboardAgenda === 'function') renderDashboardAgenda(); }catch(e){ console.warn('renderDashboardAgenda indisponível:', e); } renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios();
+function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); try{ if(typeof renderDashboardAgenda === 'function') renderDashboardAgenda(); }catch(e){ console.warn('renderDashboardAgenda indisponível:', e); } renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios();
   try{ renderAdvancedReports(); }catch(e){}
   renderManagedUsers();
   updateWorkCodePreview();
@@ -6986,8 +6985,7 @@ window.startApp = function(role, username){
   currentRole = role;
   currentUsername = username;
   loadLocal();
-  try{ const profile = await fetchRoleProfileForUser(user); currentRole = profile.role; }catch(e){}
-      setRoleUI();
+  setRoleUI();
   renderAll();
   initFirebaseSync().catch(err => console.error(err));
 };
@@ -7245,7 +7243,6 @@ $('userManagerForm')?.addEventListener('submit', async (e) => {
     if(currentUserEmail && currentUserEmail === email){
       currentRole = role;
       currentUsername = String(nome || email.split('@')[0] || currentUsername || 'Utilizador').trim();
-      try{ const profile = await fetchRoleProfileForUser(user); currentRole = profile.role; }catch(e){}
       setRoleUI();
       try{ updatePresenceState(true); }catch(e) {}
       try{ renderOnlineUsersCard(); }catch(e) {}
