@@ -477,6 +477,8 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 .role-view-user .admin-only{display:none!important}
 .role-view-user .master-only{display:none!important}
 .role-view-admin .master-only{display:none!important}
+.role-device-view .device-edit-only{display:none!important}
+.role-device-view-banner{position:fixed;right:18px;bottom:18px;z-index:1200;padding:10px 14px;border-radius:999px;background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.35);color:#fcd34d;font-weight:700;backdrop-filter:blur(8px)}
 .bottom-nav{display:none}
 .modal{
   position:fixed; inset:0; background:rgba(0,0,0,.55); display:grid; place-items:center; z-index:100; padding:20px;
@@ -2914,6 +2916,9 @@ td.acoes-col, .acoes-col{
   .online-users-list{padding:10px;max-height:280px;}
 }
 
+
+.table-sort-btn{background:none;border:none;color:inherit;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:0}
+.table-sort-btn span{opacity:.8}
 </style>
 </head>
 <body>
@@ -3147,7 +3152,14 @@ td.acoes-col, .acoes-col{
             <div class="panel-head"><h3>Registo de pagamentos</h3></div>
             <div id="pagamentosCardsWrap" class="mobile-cards-wrap"></div><div class="table-wrap">
               <table>
-                <thead><tr><th>Cliente</th><th>Nome do Trabalho</th><th>Data do Trabalho</th><th>Valor</th><th>Método</th><th>Faturação</th><th>Ações</th></tr></thead>
+                <thead><tr>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('cliente')">Cliente <span id="sortIcon-cliente">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('referencia')">Nome do Trabalho <span id="sortIcon-referencia">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('data')">Data do Trabalho <span id="sortIcon-data">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('valor')">Valor <span id="sortIcon-valor">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('metodo')">Método <span id="sortIcon-metodo">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('invoiceType')">Faturação <span id="sortIcon-invoiceType">↕</span></button></th>
+<th>Ações</th></tr></thead>
                 <tbody id="pagamentosTableBody"></tbody>
               </table>
             </div>
@@ -3185,8 +3197,11 @@ td.acoes-col, .acoes-col{
                 <div class="panel-head"><h3>Roles de utilizador</h3></div>
                 <form id="userManagerForm" class="form-grid">
                   <input type="hidden" id="managedUserIndex" />
+                  <div class="field"><label>Nome do utilizador</label><input id="managedDisplayName" type="text" placeholder="Jorge Computador" /></div>
                   <div class="field"><label>Email</label><input id="managedUsername" type="email" placeholder="utilizador@empresa.com" required /></div>
                   <div class="field"><label>Tipo</label><select id="managedRole"><option value="user">User</option><option value="admin">Admin</option><option value="master_admin">Master Admin</option></select></div>
+                  <div class="field"><label>Computador</label><select id="managedPcMode"><option value="edit">Pode mexer</option><option value="view">Só ver</option></select></div>
+                  <div class="field"><label>Mobile</label><select id="managedMobileMode"><option value="edit">Pode mexer</option><option value="view">Só ver</option></select></div>
                   <div class="field field-span-2">
                     <div class="inline-actions">
                       <button type="submit" class="btn btn-primary">Guardar role</button>
@@ -3200,7 +3215,7 @@ td.acoes-col, .acoes-col{
                 <div class="panel-head"><h3>Lista de utilizadores</h3></div>
                 <div class="table-wrap">
                   <table>
-                    <thead><tr><th>Email</th><th>Tipo</th><th>Ações</th></tr></thead>
+                    <thead><tr><th>Nome</th><th>Email</th><th>Tipo</th><th>Computador</th><th>Mobile</th><th>Ações</th></tr></thead>
                     <tbody id="managedUsersTableBody"></tbody>
                   </table>
                 </div>
@@ -4287,6 +4302,8 @@ const APP_VERSION = '1.0.6';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' , lastTrabId:'ge_last_trab_id' };
 
 let currentRole = null, currentUsername = null, currentUserEmail = null;
+let currentDeviceType = 'computador';
+let currentAccessMode = 'edit';
 let managedUsersCache = [];
 const ROLE_COLLECTION = 'user_roles';
 const MASTER_EMAILS = ['pica.fern@gmail.com'];
@@ -4323,6 +4340,20 @@ function normalizeRoleValue(role){
   const value = String(role || 'user').toLowerCase();
   return ['user','admin','master_admin'].includes(value) ? value : 'user';
 }
+function normalizeAccessMode(mode){
+  const value = String(mode || 'edit').toLowerCase();
+  return ['edit','view'].includes(value) ? value : 'edit';
+}
+function detectCurrentDeviceType(){
+  try{
+    const ua = String(navigator.userAgent || '').toLowerCase();
+    const mobileUa = /android|iphone|ipad|mobile|tablet/.test(ua);
+    const narrow = (window.innerWidth || 0) <= 900;
+    return (mobileUa || narrow) ? 'mobile' : 'computador';
+  }catch(e){
+    return 'computador';
+  }
+}
 function normalizeRoleEmail(email){
   return String(email || '').trim().toLowerCase();
 }
@@ -4358,6 +4389,32 @@ async function fetchRoleForUser(user){
   }
   await ensureRoleSeed(email, 'user');
   return 'user';
+}
+async function fetchRoleProfileForUser(user){
+  const email = normalizeRoleEmail(user?.email);
+  const baseProfile = { role:'user', pcMode:'edit', mobileMode:'edit', nome:'', displayName:'' };
+  if(!email) return baseProfile;
+  const forcedRole = isMasterEmail(email) ? 'master_admin' : 'user';
+  await ensureRoleSeed(email, forcedRole);
+  if(!firestoreDb){
+    return { ...baseProfile, role: forcedRole };
+  }
+  try{
+    const snap = await getDoc(doc(firestoreDb, ROLE_COLLECTION, email));
+    if(snap.exists()){
+      const data = snap.data() || {};
+      return {
+        nome: String(data.nome || data.displayName || '').trim(),
+        displayName: String(data.displayName || data.nome || '').trim(),
+        role: isMasterEmail(email) ? 'master_admin' : normalizeRoleValue(data.role),
+        pcMode: normalizeAccessMode(data.pcMode),
+        mobileMode: normalizeAccessMode(data.mobileMode)
+      };
+    }
+  }catch(err){
+    console.warn('Não foi possível ler perfil do utilizador:', err);
+  }
+  return { ...baseProfile, role: forcedRole };
 }
 async function ensureFirebaseCore(){
   if (!firebaseApp) firebaseApp = initializeApp(firebaseConfig);
@@ -4466,7 +4523,7 @@ async function updatePresenceState(isOnline = true){
     const email = normalizeRoleEmail(currentUser.email || currentUserEmail);
     const payload = {
       email: email || '',
-      username: String(currentUsername || deriveLoginUsername(currentUser) || 'Utilizador'),
+      username: String(currentUsername || deriveLoginUsername(currentUser) || 'Utilizador').trim(),
       role: normalizeRoleValue(currentRole || 'user'),
       isOnline: !!isOnline,
       updatedAt: Date.now(),
@@ -4529,8 +4586,11 @@ function startPresenceTracking(){
 
 async function applyAuthenticatedSession(user){
   await ensureFirebaseCore();
-  const role = await fetchRoleForUser(user);
-  const username = deriveLoginUsername(user);
+  const profile = await fetchRoleProfileForUser(user);
+  const role = normalizeRoleValue(profile?.role);
+  currentDeviceType = detectCurrentDeviceType();
+  currentAccessMode = normalizeAccessMode(currentDeviceType === 'mobile' ? profile?.mobileMode : profile?.pcMode);
+  const username = String(profile?.nome || profile?.displayName || deriveLoginUsername(user) || 'Utilizador').trim();
   currentUserEmail = normalizeRoleEmail(user?.email);
   if(window.showApp) window.showApp();
   const loginError = $('loginError');
@@ -4673,8 +4733,62 @@ const euro = (v) => Number(v || 0).toLocaleString('pt-PT', {style:'currency', cu
 const fmtDate = (v) => { if(!v) return '-'; const d = new Date(v); return isNaN(d) ? '-' : d.toLocaleDateString('pt-PT'); };
 const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const isMasterAdmin = () => currentRole === 'master_admin';
-const isAdminLike = () => currentRole === 'admin' || currentRole === 'master_admin';
+const isDeviceViewMode = () => !isMasterAdmin() && normalizeAccessMode(currentAccessMode) === 'view';
+const isAdminLike = () => !isDeviceViewMode() && (currentRole === 'admin' || currentRole === 'master_admin');
 
+function applyDeviceAccessRestrictions(){
+  const viewMode = isDeviceViewMode();
+  document.body.classList.toggle('role-device-view', viewMode);
+
+  const oldBanner = document.getElementById('deviceViewModeBanner');
+  if(oldBanner) oldBanner.remove();
+  if(viewMode){
+    const banner = document.createElement('div');
+    banner.id = 'deviceViewModeBanner';
+    banner.className = 'role-device-view-banner';
+    banner.textContent = `Modo Só Ver ativo (${currentDeviceType})`;
+    document.body.appendChild(banner);
+  }
+
+  const actionTexts = ['guardar','apagar','editar','importar','adicionar','confirmar','pago','por pagar','guardar cliente','guardar trabalho','guardar role'];
+  document.querySelectorAll('button,label[for="backupImportInputPremium"]').forEach(el => {
+    if(!el || el.closest('#loginScreen')) return;
+    if(isMasterAdmin()) return;
+    const txt = String(el.textContent || '').trim().toLowerCase();
+    const shouldBlock = actionTexts.some(k => txt.includes(k));
+    if(!shouldBlock) return;
+    if(viewMode){
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '0.45';
+      el.setAttribute('aria-disabled','true');
+      if(el.tagName === 'BUTTON') el.disabled = true;
+    }else{
+      el.style.pointerEvents = '';
+      el.style.opacity = '';
+      el.removeAttribute('aria-disabled');
+      if(el.tagName === 'BUTTON') el.disabled = false;
+    }
+  });
+
+  ['trabalhoForm','clienteForm','userManagerForm'].forEach(formId => {
+    const form = $(formId);
+    if(!form || isMasterAdmin()) return;
+    form.querySelectorAll('input,select,textarea,button').forEach(el => {
+      if(el.closest('#loginScreen')) return;
+      const allowClear = (el.id === 'clearTrabalhoBtn' || el.id === 'clearClienteBtn' || el.id === 'clearManagedUserBtn');
+      if(!viewMode){
+        if(el.dataset.viewDisabled === '1'){ el.disabled = false; }
+        return;
+      }
+      if(allowClear) return;
+      el.disabled = true;
+      el.dataset.viewDisabled = '1';
+    });
+  });
+
+  const backupImport = $('backupImportInputPremium');
+  if(backupImport && !isMasterAdmin()) backupImport.disabled = viewMode;
+}
 
 function updateTrabalhoAdvancedFields(){
   const isEditing = !!($('trabalhoId') && $('trabalhoId').value);
@@ -4998,10 +5112,27 @@ function normalizeManagedUsers(users){
   (Array.isArray(users) ? users : []).forEach((u) => {
     const email = normalizeRoleEmail(u.email || u.username);
     if(!email) return;
-    map.set(email, { email, username: email, role: normalizeRoleValue(u.role) });
+    map.set(email, {
+      nome: String(u.nome || u.displayName || '').trim(),
+      displayName: String(u.displayName || u.nome || '').trim(),
+      email,
+      username: email,
+      role: normalizeRoleValue(u.role),
+      pcMode: normalizeAccessMode(u.pcMode),
+      mobileMode: normalizeAccessMode(u.mobileMode)
+    });
   });
   MASTER_EMAILS.forEach(email => {
-    map.set(email, { email, username: email, role: 'master_admin' });
+    const prev = map.get(email) || {};
+    map.set(email, {
+      nome: String(prev.nome || prev.displayName || '').trim(),
+      displayName: String(prev.displayName || prev.nome || '').trim(),
+      email,
+      username: email,
+      role: 'master_admin',
+      pcMode: normalizeAccessMode(prev.pcMode),
+      mobileMode: normalizeAccessMode(prev.mobileMode)
+    });
   });
   return Array.from(map.values()).sort((a,b)=> (a.email || '').localeCompare(b.email || ''));
 }
@@ -5034,7 +5165,13 @@ async function loadManagedUsersFromFirestore(){
     const users = [];
     snap.forEach(docSnap => {
       const data = docSnap.data() || {};
-      users.push({ email: normalizeRoleEmail(data.email || docSnap.id), role: normalizeRoleValue(data.role) });
+      users.push({
+        nome: String(data.nome || data.displayName || '').trim(),
+        email: normalizeRoleEmail(data.email || docSnap.id),
+        role: normalizeRoleValue(data.role),
+        pcMode: normalizeAccessMode(data.pcMode),
+        mobileMode: normalizeAccessMode(data.mobileMode)
+      });
     });
     MASTER_EMAILS.forEach(email => {
       if(!users.some(u => normalizeRoleEmail(u.email) === email)) users.push({ email, role:'master_admin' });
@@ -5050,12 +5187,16 @@ async function loadManagedUsersFromFirestore(){
 async function renderManagedUsers(){
   const tbody = $('managedUsersTableBody');
   if(!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="3">A carregar...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="6">A carregar...</td></tr>';
   const users = await loadManagedUsersFromFirestore();
+  const modeLabel = (mode) => normalizeAccessMode(mode) === 'view' ? 'Só ver' : 'Pode mexer';
   tbody.innerHTML = users.length ? users.map((u, idx) => `
     <tr>
+      <td>${escapeHtml(u.nome || '-')}</td>
       <td>${escapeHtml(u.email || u.username || '-')}</td>
       <td>${escapeHtml(u.role || 'user')}</td>
+      <td>${escapeHtml(modeLabel(u.pcMode))}</td>
+      <td>${escapeHtml(modeLabel(u.mobileMode))}</td>
       <td>
         <div class="row-actions">
           <button class="small-btn" onclick="window.editManagedUser(${idx})">Editar</button>
@@ -5063,7 +5204,7 @@ async function renderManagedUsers(){
         </div>
       </td>
     </tr>
-  `).join('') : '<tr><td colspan="3">Sem utilizadores.</td></tr>';
+  `).join('') : '<tr><td colspan="6">Sem utilizadores.</td></tr>';
 }
 
 window.editManagedUser = function(index){
@@ -5072,8 +5213,11 @@ window.editManagedUser = function(index){
   const u = users[index];
   if(!u) return;
   $('managedUserIndex').value = String(index);
+  if($('managedDisplayName')) $('managedDisplayName').value = u.nome || u.displayName || '';
   $('managedUsername').value = u.email || u.username || '';
   $('managedRole').value = u.role || 'user';
+  if($('managedPcMode')) $('managedPcMode').value = normalizeAccessMode(u.pcMode);
+  if($('managedMobileMode')) $('managedMobileMode').value = normalizeAccessMode(u.mobileMode);
   switchTab('configuracoes');
 };
 
@@ -5132,17 +5276,18 @@ function setSyncMessage(msg, level='warn'){
 function setRoleUI(){
   if(!currentRole) return;
   const roleLabel = currentRole === 'master_admin' ? 'Admin Mestre' : (currentRole === 'admin' ? 'Admin' : 'User');
+  const accessLabel = isDeviceViewMode() ? 'Só ver' : 'Pode mexer';
   document.body.classList.toggle('role-view-user', currentRole === 'user');
   document.body.classList.toggle('role-view-admin', currentRole === 'admin');
   $('roleBadge').textContent = roleLabel;
-  $('roleLine').textContent = `Role: ${roleLabel}`;
+  $('roleLine').textContent = `Role: ${roleLabel} • ${currentDeviceType}: ${accessLabel}`;
   $('versionBadge').textContent = APP_VERSION;
   $('currentUserName').textContent = currentUsername || 'Utilizador';
   const usersSection = $('usersSection');
   if(usersSection) usersSection.style.display = isMasterAdmin() ? 'block' : 'none';
   const workCodeField = $('workCodeDisplay');
   if(workCodeField){
-    workCodeField.readOnly = !isMasterAdmin();
+    workCodeField.readOnly = !isMasterAdmin() || isDeviceViewMode();
     if(!workCodeField.value){
       workCodeField.value = nextTrabalhoIdPreview();
     }
@@ -5150,6 +5295,7 @@ function setRoleUI(){
   setSyncMessage(syncReady ? 'Firebase Sync' : syncMessage, syncReady ? 'ok' : 'warn');
   try{ updateTrabalhoFieldVisibility(); }catch(e){}
   updateTrabalhoAdvancedFields();
+  applyDeviceAccessRestrictions();
 }
 function switchTab(tab){
   try{ sessionStorage.setItem('gestao:lastTab', tab); }catch(e){}
@@ -6875,11 +7021,53 @@ function renderClientes(){
   });
   $('clientesTableBody').innerHTML = rows.length ? rows.slice().reverse().map(c=>`<tr><td>${escapeHtml(c.nome||'-')}</td><td>${escapeHtml(c.telefone||'-')}</td><td>${escapeHtml(c.email||'-')}</td><td>${escapeHtml(c.nif||'-')}</td><td><div class="row-actions">${clienteActions(c)}</div></td></tr>`).join('') : '<tr><td colspan="5">Sem clientes registados.</td></tr>';
 }
+let pagamentoSortKey = 'data';
+let pagamentoSortDir = 'desc';
+
+function getPagamentoSortValue(p, key) {
+  if (key === 'data') return new Date(p.workDate || p.data || 0).getTime() || 0;
+  if (key === 'valor') return Number(p.valor || 0);
+  return String(p[key] || '').toLowerCase();
+}
+
+function updatePagamentoSortIcons() {
+  ['cliente','referencia','data','valor','metodo','invoiceType'].forEach((key) => {
+    const el = document.getElementById(`sortIcon-${key}`);
+    if (!el) return;
+    el.textContent = pagamentoSortKey === key ? (pagamentoSortDir === 'asc' ? '↑' : '↓') : '↕';
+  });
+}
+
+window.setPagamentoSort = function(key) {
+  if (pagamentoSortKey === key) {
+    pagamentoSortDir = pagamentoSortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    pagamentoSortKey = key;
+    pagamentoSortDir = key === 'data' || key === 'valor' ? 'desc' : 'asc';
+  }
+  renderPagamentos();
+};
+
 function renderPagamentos() {
   const tbody = $('pagamentosTableBody');
   if (!tbody) return;
-  tbody.innerHTML = pagamentos.length
-    ? pagamentos.slice().reverse().map((p) => {
+
+  const listaOrdenada = pagamentos.slice().sort((a, b) => {
+    const av = getPagamentoSortValue(a, pagamentoSortKey);
+    const bv = getPagamentoSortValue(b, pagamentoSortKey);
+
+    let cmp = 0;
+    if (typeof av === 'number' && typeof bv === 'number') {
+      cmp = av - bv;
+    } else {
+      cmp = String(av).localeCompare(String(bv), 'pt', { numeric: true, sensitivity: 'base' });
+    }
+
+    return pagamentoSortDir === 'asc' ? cmp : -cmp;
+  });
+
+  tbody.innerHTML = listaOrdenada.length
+    ? listaOrdenada.map((p) => {
       const invoiceType = p.invoiceType || 'Com Fatura';
       const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
       return `
@@ -6894,6 +7082,8 @@ function renderPagamentos() {
       </tr>`;
     }).join('')
     : '<tr><td colspan="7">Sem pagamentos registados.</td></tr>';
+
+  updatePagamentoSortIcons();
 }
 function renderRelatorios() {
   const map = {};
@@ -6950,7 +7140,8 @@ function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOption
   renderManagedUsers();
   updateWorkCodePreview();
   updateWorkCodePreview();
-  renderMobileCards(); }
+  renderMobileCards();
+  applyDeviceAccessRestrictions(); }
 
 $('searchTrabalhos')?.addEventListener('input', ()=>{ renderTrabalhos(); renderMobileCards(); });
 $('filterEstado')?.addEventListener('change', ()=>{ renderTrabalhos(); renderMobileCards(); });
@@ -7420,8 +7611,11 @@ $('userManagerForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   if(!isMasterAdmin()) return;
 
+  const nome = String($('managedDisplayName')?.value || '').trim();
   const email = normalizeRoleEmail($('managedUsername').value);
   const role = normalizeRoleValue($('managedRole').value);
+  const pcMode = normalizeAccessMode($('managedPcMode')?.value);
+  const mobileMode = normalizeAccessMode($('managedMobileMode')?.value);
 
   if(!email){
     alert('Preenche o email do utilizador.');
@@ -7431,21 +7625,31 @@ $('userManagerForm')?.addEventListener('submit', async (e) => {
   try{
     await ensureFirebaseCore();
     await setDoc(doc(firestoreDb, ROLE_COLLECTION, email), {
+      nome,
+      displayName: nome,
       email,
       role,
+      pcMode,
+      mobileMode,
       updatedAt: new Date().toISOString()
     }, { merge:true });
     await loadManagedUsersFromFirestore();
     $('userManagerForm').reset();
+    if($('managedDisplayName')) $('managedDisplayName').value = '';
     $('managedUserIndex').value = '';
     $('managedRole').value = 'user';
+    if($('managedPcMode')) $('managedPcMode').value = 'edit';
+    if($('managedMobileMode')) $('managedMobileMode').value = 'edit';
     renderManagedUsers();
     updateWorkCodePreview();
     updateWorkCodePreview();
     renderMobileCards();
     if(currentUserEmail && currentUserEmail === email){
       currentRole = role;
+      currentUsername = String(nome || email.split('@')[0] || currentUsername || 'Utilizador').trim();
       setRoleUI();
+      try{ updatePresenceState(true); }catch(e) {}
+      try{ renderOnlineUsersCard(); }catch(e) {}
       renderAll();
     }
   }catch(err){
@@ -7456,8 +7660,11 @@ $('userManagerForm')?.addEventListener('submit', async (e) => {
 
 $('clearManagedUserBtn')?.addEventListener('click', ()=>{
   $('userManagerForm')?.reset();
+  if($('managedDisplayName')) $('managedDisplayName').value = '';
   $('managedUserIndex').value = '';
   $('managedRole').value = 'user';
+  if($('managedPcMode')) $('managedPcMode').value = 'edit';
+  if($('managedMobileMode')) $('managedMobileMode').value = 'edit';
 });
 
 
