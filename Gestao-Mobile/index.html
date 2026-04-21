@@ -4363,32 +4363,12 @@ function isMasterEmail(email){
 async function ensureRoleSeed(email, role='user'){
   const cleanEmail = normalizeRoleEmail(email);
   if(!cleanEmail || !firestoreDb) return;
-
   try{
-    const ref = doc(firestoreDb, ROLE_COLLECTION, cleanEmail);
-    const snap = await getDoc(ref);
-
-    if(snap.exists()){
-      const existing = snap.data() || {};
-      const payload = {
-        email: cleanEmail,
-        updatedAt: new Date().toISOString()
-      };
-
-      if(isMasterEmail(cleanEmail) && normalizeRoleValue(existing.role) !== 'master_admin'){
-        payload.role = 'master_admin';
-      }
-
-      await setDoc(ref, payload, { merge:true });
-      return;
-    }
-
-    await setDoc(ref, {
+    await setDoc(doc(firestoreDb, ROLE_COLLECTION, cleanEmail), {
       email: cleanEmail,
       role: normalizeRoleValue(role),
       updatedAt: new Date().toISOString()
     }, { merge:true });
-
   }catch(err){
     console.warn('Não foi possível gravar role seed:', err);
   }
