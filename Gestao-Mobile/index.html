@@ -477,6 +477,8 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
 .role-view-user .admin-only{display:none!important}
 .role-view-user .master-only{display:none!important}
 .role-view-admin .master-only{display:none!important}
+.role-device-view .device-edit-only{display:none!important}
+.role-device-view-banner{position:fixed;right:18px;bottom:18px;z-index:1200;padding:10px 14px;border-radius:999px;background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.35);color:#fcd34d;font-weight:700;backdrop-filter:blur(8px)}
 .bottom-nav{display:none}
 .modal{
   position:fixed; inset:0; background:rgba(0,0,0,.55); display:grid; place-items:center; z-index:100; padding:20px;
@@ -2440,6 +2442,24 @@ td.acoes-col, .acoes-col{
   background:linear-gradient(180deg, rgba(168,85,247,.24), rgba(126,34,206,.16));
   border:1px solid rgba(216,180,254,.32);
 }
+.backups-premium-pill.daily{
+  color:#e9d5ff;
+}
+.backups-premium-pill.ok{
+  color:#dcfce7;
+  background:linear-gradient(180deg, rgba(34,197,94,.22), rgba(22,163,74,.16));
+  border-color:rgba(74,222,128,.36);
+}
+.backups-premium-pill.warn{
+  color:#fef3c7;
+  background:linear-gradient(180deg, rgba(245,158,11,.22), rgba(217,119,6,.16));
+  border-color:rgba(251,191,36,.36);
+}
+.backups-premium-pill.error{
+  color:#fee2e2;
+  background:linear-gradient(180deg, rgba(239,68,68,.22), rgba(185,28,28,.16));
+  border-color:rgba(248,113,113,.36);
+}
 .backups-premium-grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
@@ -2751,6 +2771,154 @@ td.acoes-col, .acoes-col{
   display:none !important;
 }
 
+
+
+.online-widget{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:1200;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+}
+.online-widget.hidden{display:none !important;}
+.online-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(74,222,128,.28);
+  background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(30,41,59,.94));
+  color:#fff;
+  box-shadow:0 14px 30px rgba(0,0,0,.26);
+  cursor:pointer;
+}
+.online-toggle-count{
+  min-width:24px;
+  height:24px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(34,197,94,.18);
+  color:#bbf7d0;
+  font-size:12px;
+  font-weight:800;
+  padding:0 6px;
+}
+.online-card{
+  width:min(320px, calc(100vw - 28px));
+  max-height:min(420px, calc(100vh - 90px));
+  overflow:hidden;
+  border-radius:22px;
+  border:1px solid rgba(148,163,184,.16);
+  background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(30,41,59,.96));
+  box-shadow:0 24px 50px rgba(0,0,0,.32);
+  backdrop-filter:blur(14px);
+}
+.online-card.hidden{display:none !important;}
+.online-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 16px 12px;
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+.online-card-head h3{
+  margin:0;
+  font-size:15px;
+  color:#fff;
+}
+.online-card-head small{
+  display:block;
+  margin-top:3px;
+  color:#94a3b8;
+}
+.online-head-actions{display:flex;align-items:center;gap:8px;}
+.online-head-btn{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,.16);
+  background:rgba(15,23,42,.66);
+  color:#e2e8f0;
+  cursor:pointer;
+}
+.online-users-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:14px;
+  overflow:auto;
+  max-height:320px;
+}
+.online-user-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:rgba(15,23,42,.64);
+  border:1px solid rgba(148,163,184,.12);
+}
+.online-user-main{display:flex;align-items:center;gap:12px;min-width:0;}
+.online-dot{
+  width:11px;
+  height:11px;
+  border-radius:999px;
+  background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.16);
+  flex:0 0 auto;
+}
+.online-user-meta{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.online-user-name{
+  color:#fff;
+  font-weight:800;
+  font-size:14px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.online-user-sub{
+  color:#94a3b8;
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.online-role-pill{
+  border-radius:999px;
+  padding:6px 10px;
+  background:rgba(59,130,246,.14);
+  border:1px solid rgba(96,165,250,.22);
+  color:#dbeafe;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+.online-empty{
+  padding:18px 12px;
+  text-align:center;
+  color:#94a3b8;
+  font-size:13px;
+}
+@media (max-width: 768px){
+  .online-widget{top:10px;right:10px;}
+  .online-card{width:min(300px, calc(100vw - 20px));border-radius:18px;}
+  .online-card-head{padding:14px 14px 10px;}
+  .online-users-list{padding:10px;max-height:280px;}
+}
+
+
+.table-sort-btn{background:none;border:none;color:inherit;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:0}
+.table-sort-btn span{opacity:.8}
 </style>
 </head>
 <body>
@@ -2771,7 +2939,7 @@ td.acoes-col, .acoes-col{
         <form id="loginForm" class="login-form">
           <div class="field">
             <label>Utilizador</label>
-            <input id="loginUsername" type="text" placeholder="Ricardo, admin ou user" required />
+            <input id="loginUsername" type="email" placeholder="email@exemplo.com" required />
           </div>
           <div class="field">
             <label>Palavra-passe</label>
@@ -2785,6 +2953,25 @@ td.acoes-col, .acoes-col{
   </div>
 
   <div id="appRoot" class="app-shell hidden">
+    <div id="onlineUsersWidget" class="online-widget hidden">
+      <button id="onlineUsersToggle" type="button" class="online-toggle" title="Mostrar / esconder utilizadores online">
+        <span>👥 Online</span>
+        <span id="onlineUsersCount" class="online-toggle-count">0</span>
+      </button>
+      <div id="onlineUsersCard" class="online-card">
+        <div class="online-card-head">
+          <div>
+            <h3>Utilizadores online</h3>
+            <small>Atualização em tempo real</small>
+          </div>
+          <div class="online-head-actions">
+            <button id="onlineUsersRefresh" type="button" class="online-head-btn" title="Atualizar">↻</button>
+            <button id="onlineUsersHide" type="button" class="online-head-btn" title="Esconder">✕</button>
+          </div>
+        </div>
+        <div id="onlineUsersList" class="online-users-list"></div>
+      </div>
+    </div>
     <div id="mobileSidebarBackdrop" class="mobile-sidebar-backdrop"></div>
     <aside class="sidebar">
       <div class="brand-card">
@@ -2965,7 +3152,14 @@ td.acoes-col, .acoes-col{
             <div class="panel-head"><h3>Registo de pagamentos</h3></div>
             <div id="pagamentosCardsWrap" class="mobile-cards-wrap"></div><div class="table-wrap">
               <table>
-                <thead><tr><th>Cliente</th><th>Nome do Trabalho</th><th>Data do Trabalho</th><th>Valor</th><th>Método</th><th>Faturação</th><th>Ações</th></tr></thead>
+                <thead><tr>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('cliente')">Cliente <span id="sortIcon-cliente">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('referencia')">Nome do Trabalho <span id="sortIcon-referencia">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('data')">Data do Trabalho <span id="sortIcon-data">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('valor')">Valor <span id="sortIcon-valor">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('metodo')">Método <span id="sortIcon-metodo">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('invoiceType')">Faturação <span id="sortIcon-invoiceType">↕</span></button></th>
+<th>Ações</th></tr></thead>
                 <tbody id="pagamentosTableBody"></tbody>
               </table>
             </div>
@@ -3000,25 +3194,28 @@ td.acoes-col, .acoes-col{
 
             <div class="content-grid single-panel-grid">
               <section class="panel admin-only form-panel">
-                <div class="panel-head"><h3>Novo utilizador</h3></div>
+                <div class="panel-head"><h3>Roles de utilizador</h3></div>
                 <form id="userManagerForm" class="form-grid">
                   <input type="hidden" id="managedUserIndex" />
-                  <div class="field"><label>Nome</label><input id="managedUsername" type="text" required /></div>
-                  <div class="field"><label>Palavra-passe</label><input id="managedPassword" type="text" required /></div>
+                  <div class="field"><label>Nome do utilizador</label><input id="managedDisplayName" type="text" placeholder="Jorge Computador" /></div>
+                  <div class="field"><label>Email</label><input id="managedUsername" type="email" placeholder="utilizador@empresa.com" required /></div>
                   <div class="field"><label>Tipo</label><select id="managedRole"><option value="user">User</option><option value="admin">Admin</option><option value="master_admin">Master Admin</option></select></div>
+                  <div class="field"><label>Computador</label><select id="managedPcMode"><option value="edit">Pode mexer</option><option value="view">Só ver</option></select></div>
+                  <div class="field"><label>Mobile</label><select id="managedMobileMode"><option value="edit">Pode mexer</option><option value="view">Só ver</option></select></div>
                   <div class="field field-span-2">
                     <div class="inline-actions">
-                      <button type="submit" class="btn btn-primary">Guardar utilizador</button>
+                      <button type="submit" class="btn btn-primary">Guardar role</button>
                       <button type="button" class="btn btn-secondary" id="clearManagedUserBtn">Limpar</button>
                     </div>
                   </div>
                 </form>
+                <small style="display:block;margin-top:10px;opacity:.8">A conta precisa existir no Firebase Auth. Aqui só defines a role.</small>
               </section>
               <section class="panel wide-panel history-panel">
                 <div class="panel-head"><h3>Lista de utilizadores</h3></div>
                 <div class="table-wrap">
                   <table>
-                    <thead><tr><th>Nome</th><th>Tipo</th><th>Ações</th></tr></thead>
+                    <thead><tr><th>Nome</th><th>Email</th><th>Tipo</th><th>Computador</th><th>Mobile</th><th>Ações</th></tr></thead>
                     <tbody id="managedUsersTableBody"></tbody>
                   </table>
                 </div>
@@ -3031,104 +3228,46 @@ td.acoes-col, .acoes-col{
       </section>
 <script>
 
-const DEFAULT_USERS = [
-  { username: 'jorge', password: 'jfernandes', role: 'admin' },
-  { username: 'fatima', password: 'ffernandes', role: 'user' },
-  { username: 'ricardo', password: '2297', role: 'master_admin' }
-];
-
-function normalizeUsers(users){
-  const list = Array.isArray(users) ? users.slice() : [];
-  const idx = list.findIndex(u => String(u.username || '').toLowerCase() === 'ricardo');
-  const ricardo = { username: 'ricardo', password: '2297', role: 'master_admin' };
-  if(idx >= 0) list[idx] = { ...list[idx], ...ricardo };
-  else list.push(ricardo);
-  return list;
-}
-
-function getUsers(){
-  try{
-    const stored = JSON.parse(localStorage.getItem('app_users') || 'null');
-    if(Array.isArray(stored) && stored.length){
-      const fixed = normalizeUsers(stored);
-      localStorage.setItem('app_users', JSON.stringify(fixed));
-      return fixed;
-    }
-  }catch{}
-  const fixedDefaults = normalizeUsers(DEFAULT_USERS);
-  localStorage.setItem('app_users', JSON.stringify(fixedDefaults));
-  return fixedDefaults;
-}
 
 const loginForm = document.getElementById('loginForm');
-
-function saveSession(role, username){
-  localStorage.setItem('app_session', JSON.stringify({ role, username }));
-}
-
-function readSession(){
-  return JSON.parse(localStorage.getItem('app_session') || 'null');
-}
-
-function clearSession(){
-  localStorage.removeItem('app_session');
-}
 
 function showApp(){
   document.getElementById('loginScreen')?.classList.add('hidden');
   document.getElementById('appRoot')?.classList.remove('hidden');
+  document.getElementById('onlineUsersWidget')?.classList.remove('hidden');
 }
 
 function showLogin(){
   document.getElementById('loginScreen')?.classList.remove('hidden');
   document.getElementById('appRoot')?.classList.add('hidden');
+  document.getElementById('onlineUsersWidget')?.classList.add('hidden');
 }
 
-function bootFromSession(){
-  const session = readSession();
-  if(!session || !window.startApp) return false;
+window.showApp = showApp;
+window.showLogin = showLogin;
 
-  showApp();
-  window.startApp(session.role, session.username);
-  return true;
-}
-
-loginForm?.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-  const password = document.getElementById('loginPassword').value;
-
-  const found = getUsers().find(
-    u => u.username.toLowerCase() === username && u.password === password
-  );
-
-  if (!found) {
-    document.getElementById('loginError').textContent = 'Credenciais inválidas.';
-    return;
+window.handleFirebaseLogout = async function(){
+  try{
+    if(window.firebaseLogout){
+      await window.firebaseLogout();
+      return;
+    }
+  }catch(e){
+    console.error(e);
   }
-
-  saveSession(found.role, found.username);
-  document.getElementById('loginError').textContent = '';
-  showApp();
-
-  if(window.startApp){
-    window.startApp(found.role, found.username);
-  }
-});
-
-document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  clearSession();
   showLogin();
-  loginForm.reset();
+  loginForm?.reset();
+};
+
+document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
+  e.preventDefault();
+  await window.handleFirebaseLogout();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  if(!bootFromSession()){
-    showLogin();
-  }
+  showLogin();
 });
+
 
 
 
@@ -3237,19 +3376,33 @@ function getAppDataSnapshot(){
   };
 }
 
+
 function refreshBackupStatusUi(){
   const lastEl = document.getElementById('backupLastStatus');
   const countEl = document.getElementById('backupCountStatus');
-  const weeklyBackups = JSON.parse(localStorage.getItem('weeklyAutoBackups') || '[]');
-  const last = localStorage.getItem('weeklyAutoBackupLastDate');
+  const dayEl = document.getElementById('backupTodayStatus');
+  const dailyBackups = JSON.parse(localStorage.getItem('dailyAutoBackups') || localStorage.getItem('weeklyAutoBackups') || '[]');
+  const last = localStorage.getItem('dailyAutoBackupLastDate') || localStorage.getItem('weeklyAutoBackupLastDate') || localStorage.getItem('backupFridayDone') || '';
+  const today = new Date().toISOString().split('T')[0];
+
   if(lastEl){
     lastEl.textContent = (last ? fmtDate(last) : '--');
   }
   if(countEl){
-    countEl.textContent = String(weeklyBackups.length);
+    countEl.textContent = String(dailyBackups.length);
+  }
+  if(dayEl){
+    if(last === today){
+      dayEl.textContent = 'Feito hoje';
+    }else if(last){
+      dayEl.textContent = 'Pendente hoje';
+    }else{
+      dayEl.textContent = 'Sem backup';
+    }
   }
   try{ updateBackupWeekIndicator(); }catch(e){}
 }
+
 
 function exportBackupManual(){
   const data = getAppDataSnapshot();
@@ -3280,87 +3433,290 @@ function recalcLastTrabIdFromList(trabalhosLista){
   try{
     if(typeof window.lastTrabId !== 'undefined') window.lastTrabId = maxId;
     localStorage.setItem('lastTrabId', String(maxId));
+    localStorage.setItem('ge_last_trab_id', String(maxId));
   }catch(e){}
 }
 
-function importBackupDataObject(data){
+
+async function waitForFirebaseUser(timeoutMs = 15000){
+  try{
+    const authObj = window.firebaseAuth || null;
+    if(!authObj) return null;
+    if(authObj.currentUser) return authObj.currentUser;
+    if(typeof authObj.authStateReady === 'function'){
+      try{ await Promise.race([authObj.authStateReady(), new Promise(resolve => setTimeout(resolve, timeoutMs))]); }catch(e){}
+      if(authObj.currentUser) return authObj.currentUser;
+    }
+    const onAuthStateChangedFn = window.onAuthStateChanged;
+    if(typeof onAuthStateChangedFn !== 'function') return authObj.currentUser || null;
+    return await new Promise(resolve => {
+      let done = false;
+      let unsub = null;
+      const finish = (user) => {
+        if(done) return;
+        done = true;
+        try{ if(typeof unsub === 'function') unsub(); }catch(e){}
+        resolve(user || authObj.currentUser || null);
+      };
+      const timer = setTimeout(() => finish(authObj.currentUser || null), timeoutMs);
+      try{
+        unsub = onAuthStateChangedFn(authObj, user => {
+          clearTimeout(timer);
+          finish(user || authObj.currentUser || null);
+        }, () => {
+          clearTimeout(timer);
+          finish(authObj.currentUser || null);
+        });
+      }catch(err){
+        clearTimeout(timer);
+        finish(authObj.currentUser || null);
+      }
+    });
+  }catch(err){
+    console.warn('Não foi possível esperar pelo utilizador Firebase:', err);
+    return (window.firebaseAuth) ? (window.firebaseAuth.currentUser || null) : null;
+  }
+}
+
+async function syncBackupCollectionToFirebase(collectionName, items){
+  if(!Array.isArray(items)) return { upserts:0, deletes:0, failures:0, skipped:false, reason:'' };
+  const ensureReady = window.ensureFirebaseReady || window.ensureFirebaseCore || null;
+  if(typeof ensureReady === 'function'){
+    try{ await ensureReady(); }catch(e){ console.warn('Falha ao preparar Firebase para import:', e); }
+  }
+  const getDocsFn = window.getDocs;
+  const collectionFn = window.collection;
+  const writeBatchFn = window.writeBatch;
+  const docFn = window.doc;
+  const dbObj = window.firestoreDb;
+  if(typeof getDocsFn !== 'function' || typeof collectionFn !== 'function' || typeof writeBatchFn !== 'function' || typeof docFn !== 'function' || !dbObj){
+    return { upserts:0, deletes:0, failures:0, skipped:true, reason:'firebase-api-indisponivel' };
+  }
+
+  try{ await waitForFirebaseUser(4000); }catch(e){}
+
+  const normalized = [];
+  for(const rawItem of items){
+    if(!rawItem || typeof rawItem !== 'object') continue;
+    const item = { ...rawItem };
+    if(!item.id){
+      item.id = `${collectionName}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+    }
+    normalized.push(item);
+  }
+
+  let remoteIds = new Set();
+  try{
+    const snap = await getDocsFn(collectionFn(dbObj, collectionName));
+    remoteIds = new Set((snap.docs || []).map(docSnap => String(docSnap.id)));
+  }catch(err){
+    console.error('Falha ao ler coleção remota antes do import:', collectionName, err);
+    return { upserts:0, deletes:0, failures:normalized.length, skipped:false, reason:err?.code || err?.message || 'read-failed' };
+  }
+
+  const nextIds = new Set(normalized.map(item => String(item.id)));
+  let upserts = 0;
+  let deletes = 0;
+  let failures = 0;
+  let firstError = '';
+
+  const chunkSize = 350;
+  for(let i = 0; i < normalized.length; i += chunkSize){
+    const chunk = normalized.slice(i, i + chunkSize);
+    const batch = writeBatchFn(dbObj);
+    for(const item of chunk){
+      batch.set(docFn(dbObj, collectionName, item.id), item, { merge:true });
+    }
+    try{
+      await batch.commit();
+      upserts += chunk.length;
+    }catch(err){
+      failures += chunk.length;
+      firstError = firstError || (err?.code || err?.message || 'batch-upsert-failed');
+      console.error(`Falha no batch de import ${collectionName}:`, err);
+    }
+  }
+
+  const idsToDelete = Array.from(remoteIds).filter(id => !nextIds.has(id));
+  for(let i = 0; i < idsToDelete.length; i += chunkSize){
+    const chunk = idsToDelete.slice(i, i + chunkSize);
+    const batch = writeBatchFn(dbObj);
+    for(const id of chunk){
+      batch.delete(docFn(dbObj, collectionName, id));
+    }
+    try{
+      await batch.commit();
+      deletes += chunk.length;
+    }catch(err){
+      failures += chunk.length;
+      firstError = firstError || (err?.code || err?.message || 'batch-delete-failed');
+      console.error(`Falha ao apagar remoto em batch ${collectionName}:`, err);
+    }
+  }
+
+  return { upserts, deletes, failures, skipped:false, reason:firstError };
+}
+
+function extractImportArrays(data){
+  if(!data || typeof data !== 'object') return { trabalhos:[], clientes:[], pagamentos:[] };
+  const trabalhosRaw = Array.isArray(data.trabalhos) ? data.trabalhos : Array.isArray(data.ge_trabalhos) ? data.ge_trabalhos : [];
+  const clientesRaw = Array.isArray(data.clientes) ? data.clientes : Array.isArray(data.ge_clientes) ? data.ge_clientes : [];
+  const pagamentosRaw = Array.isArray(data.pagamentos) ? data.pagamentos : Array.isArray(data.ge_pagamentos) ? data.ge_pagamentos : [];
+  const trabalhos = trabalhosRaw.filter(item => item && typeof item === 'object').map(item => typeof normalizeTrabalhoStateShape === 'function' ? normalizeTrabalhoStateShape({ ...item }) : { ...item });
+  const clientes = clientesRaw.filter(item => item && typeof item === 'object').map(item => ({ ...item }));
+  const pagamentos = pagamentosRaw.filter(item => item && typeof item === 'object').map(item => ({ ...item }));
+  return { trabalhos, clientes, pagamentos };
+}
+
+async function importBackupDataObject(data){
   if(!data || typeof data !== 'object'){
     alert('Backup inválido.');
     return;
   }
-  const novosTrabalhos = Array.isArray(data.trabalhos) ? data.trabalhos : [];
-  const novosClientes = Array.isArray(data.clientes) ? data.clientes : [];
-  const novosPagamentos = Array.isArray(data.pagamentos) ? data.pagamentos : [];
 
-  localStorage.setItem('trabalhos', JSON.stringify(novosTrabalhos));
-  localStorage.setItem('clientes', JSON.stringify(novosClientes));
-  localStorage.setItem('pagamentos', JSON.stringify(novosPagamentos));
+  const imported = extractImportArrays(data);
+  const novosTrabalhos = imported.trabalhos;
+  const novosClientes = imported.clientes;
+  const novosPagamentos = imported.pagamentos;
 
+  if(!novosTrabalhos.length && !novosClientes.length && !novosPagamentos.length){
+    console.warn('Backup sem listas reconhecidas:', Object.keys(data || {}));
+    alert('O ficheiro foi lido mas não foram encontrados dados válidos em trabalhos, clientes ou pagamentos.');
+    return;
+  }
+
+  const keys = (typeof STORAGE_KEYS === 'object' && STORAGE_KEYS) ? STORAGE_KEYS : { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos', lastTrabId:'ge_last_trab_id' };
+
+  isImportingBackup = true;
+  try{ if(typeof clearRealtimeListeners === 'function') clearRealtimeListeners(); }catch(e){}
+
+  const importedTrabalhos = novosTrabalhos.map(item => typeof normalizeTrabalhoStateShape === 'function' ? normalizeTrabalhoStateShape({ ...item }) : { ...item });
+  const importedClientes = novosClientes.map(item => ({ ...item }));
+  const importedPagamentos = novosPagamentos.map(item => ({ ...item }));
+
+  trabalhos = importedTrabalhos.map(item => ({ ...item }));
+  clientes = importedClientes.map(item => ({ ...item }));
+  pagamentos = importedPagamentos.map(item => ({ ...item }));
+  window.trabalhos = trabalhos;
+  window.clientes = clientes;
+  window.pagamentos = pagamentos;
+
+  localStorage.setItem(keys.trabalhos, JSON.stringify(trabalhos));
+  localStorage.setItem(keys.clientes, JSON.stringify(clientes));
+  localStorage.setItem(keys.pagamentos, JSON.stringify(pagamentos));
+  localStorage.setItem('trabalhos', JSON.stringify(trabalhos));
+  localStorage.setItem('clientes', JSON.stringify(clientes));
+  localStorage.setItem('pagamentos', JSON.stringify(pagamentos));
+
+  recalcLastTrabIdFromList(trabalhos);
+  try{ if(typeof saveLocal === 'function') saveLocal(); }catch(e){}
+  try{ if(typeof renderAll === 'function') renderAll(); }catch(e){}
+  try{ if(typeof refreshVisibleViews === 'function') refreshVisibleViews(); }catch(e){}
+
+  let remoteSummary = '';
+  let syncOk = false;
   try{
-    if(typeof window.trabalhos !== 'undefined') window.trabalhos = novosTrabalhos;
-    if(typeof window.clientes !== 'undefined') window.clientes = novosClientes;
-    if(typeof window.pagamentos !== 'undefined') window.pagamentos = novosPagamentos;
-  }catch(e){}
+    const trabSync = await syncBackupCollectionToFirebase('trabalhos', trabalhos);
+    const cliSync = await syncBackupCollectionToFirebase('clientes', clientes);
+    const pagSync = await syncBackupCollectionToFirebase('pagamentos', pagamentos);
+    const totalFailures = (trabSync.failures||0) + (cliSync.failures||0) + (pagSync.failures||0);
+    const skipped = [trabSync, cliSync, pagSync].every(r => r && r.skipped);
+    const reasons = [trabSync?.reason, cliSync?.reason, pagSync?.reason].filter(Boolean).join(', ');
+    if(skipped){
+      remoteSummary = ` Firebase: sincronização adiada (${reasons || 'sem-sessao'}). Faz login completo e tenta importar novamente.`;
+    }else{
+      remoteSummary = ` Firebase: ${trabSync.upserts} trabalhos, ${cliSync.upserts} clientes e ${pagSync.upserts} pagamentos sincronizados.${totalFailures ? ` Falhas: ${totalFailures}.` : ''}${reasons ? ` Motivo: ${reasons}.` : ''}`;
+      syncOk = totalFailures === 0;
+    }
+  }catch(err){
+    console.error('Erro ao sincronizar backup para Firebase:', err);
+    remoteSummary = ` Importado localmente, mas houve erro a sincronizar com a Firebase${err?.code ? ` (${err.code})` : ''}.`;
+  }
 
-  recalcLastTrabIdFromList(novosTrabalhos);
+  trabalhos = importedTrabalhos.map(item => ({ ...item }));
+  clientes = importedClientes.map(item => ({ ...item }));
+  pagamentos = importedPagamentos.map(item => ({ ...item }));
+  window.trabalhos = trabalhos;
+  window.clientes = clientes;
+  window.pagamentos = pagamentos;
+  try{ if(typeof saveLocal === 'function') saveLocal(); }catch(e){}
+  try{ if(typeof renderAll === 'function') renderAll(); }catch(e){}
+  try{ if(typeof refreshVisibleViews === 'function') refreshVisibleViews(); }catch(e){}
 
-  try { if(typeof renderTrabalhos === 'function') renderTrabalhos(); } catch(e){}
-  try { if(typeof renderClientes === 'function') renderClientes(); } catch(e){}
-  try { if(typeof renderPagamentos === 'function') renderPagamentos(); } catch(e){}
-  try { if(typeof renderDashboard === 'function') renderDashboard(); } catch(e){}
-  try { if(typeof renderRelatorios === 'function') { renderRelatorios(); try{ renderAdvancedReports(); }catch(e){} }
-  try{ renderAdvancedReports(); }catch(e){} } catch(e){}
-  try { if(typeof loadAllData === 'function') loadAllData(); } catch(e){}
+  const activePage = document.querySelector('.page.active');
+  const activeTab = activePage ? activePage.id.replace(/-page$/, '') : (sessionStorage.getItem('gestao:lastTab') || 'dashboard');
+  try{ sessionStorage.setItem('gestao:lastTab', activeTab); }catch(e){}
 
-  alert('Backup importado com sucesso.');
+  alert(`Backup importado com sucesso. Trabalhos: ${trabalhos.length}, Clientes: ${clientes.length}, Pagamentos: ${pagamentos.length}.${remoteSummary}`);
+
+  isImportingBackup = false;
+  try{ if(typeof attachRealtimeListeners === 'function') attachRealtimeListeners(); }catch(e){}
+  if(syncOk){
+    setTimeout(() => {
+      try{ if(typeof refreshVisibleViews === 'function') refreshVisibleViews(); }catch(e){}
+    }, 250);
+  }
 }
+
 
 function importBackupFile(event){
   const file = event && event.target && event.target.files ? event.target.files[0] : null;
   if(!file) return;
   const reader = new FileReader();
-  reader.onload = function(e){
+  reader.onload = async function(e){
     try{
-      const data = JSON.parse(e.target.result);
-      importBackupDataObject(data);
-      if(event.target) event.target.value = '';
+      const raw = String(e && e.target ? e.target.result || '' : '');
+      const data = JSON.parse(raw);
+      await importBackupDataObject(data);
     }catch(err){
+      console.error('Erro ao importar backup:', err);
       alert('Não foi possível ler o backup.');
+    }finally{
+      if(event && event.target) event.target.value = '';
     }
   };
-  reader.readAsText(file);
+  reader.onerror = function(err){
+    console.error('Erro FileReader backup:', err);
+    if(event && event.target) event.target.value = '';
+    alert('Não foi possível ler o ficheiro selecionado.');
+  };
+  reader.readAsText(file, 'utf-8');
 }
+
 
 function runWeeklyAutomaticBackupSilently(){
   const now = new Date();
-  const lastDateIso = localStorage.getItem('weeklyAutoBackupLastDate');
-  if(lastDateIso){
-    const diffDays = (now - new Date(lastDateIso)) / (1000 * 60 * 60 * 24);
-    if(diffDays < 7){
-      refreshBackupStatusUi();
-  try{ updateBackupWeekIndicator(); }catch(e){}
-  try{fazerBackupSexta();}catch(e){}
-      return;
-    }
+  const todayIso = now.toISOString().split('T')[0];
+  const lastDateIso = localStorage.getItem('dailyAutoBackupLastDate') || localStorage.getItem('weeklyAutoBackupLastDate') || localStorage.getItem('backupFridayDone');
+
+  if(lastDateIso && String(lastDateIso).slice(0,10) === todayIso){
+    refreshBackupStatusUi();
+    try{ updateBackupWeekIndicator(); }catch(e){}
+    return;
   }
 
   const snapshot = getAppDataSnapshot();
-  const backups = JSON.parse(localStorage.getItem('weeklyAutoBackups') || '[]');
+  const backups = JSON.parse(localStorage.getItem('dailyAutoBackups') || localStorage.getItem('weeklyAutoBackups') || '[]');
   backups.push(snapshot);
-  while(backups.length > 12){
+  while(backups.length > 30){
     backups.shift();
   }
+  localStorage.setItem('dailyAutoBackups', JSON.stringify(backups));
+  localStorage.setItem('dailyAutoBackupLastDate', snapshot.dataBackup || new Date().toISOString());
   localStorage.setItem('weeklyAutoBackups', JSON.stringify(backups));
-  localStorage.setItem('weeklyAutoBackupLastDate', snapshot.dataBackup);
+  localStorage.setItem('weeklyAutoBackupLastDate', snapshot.dataBackup || new Date().toISOString());
+  localStorage.setItem('backupFridayDone', todayIso);
+  localStorage.setItem('backupFridayHistory', JSON.stringify(backups));
   refreshBackupStatusUi();
   try{ updateBackupWeekIndicator(); }catch(e){}
-  try{fazerBackupSexta();}catch(e){}
 }
 
+
+
 function downloadLatestWeeklyBackup(){
-  const backups = JSON.parse(localStorage.getItem('weeklyAutoBackups') || '[]');
+  const backups = JSON.parse(localStorage.getItem('dailyAutoBackups') || localStorage.getItem('weeklyAutoBackups') || '[]');
   if(!backups.length){
-    alert('Sem backups semanais.');
+    alert('Sem backups diários.');
     return;
   }
   const latest = backups[backups.length - 1];
@@ -3368,7 +3724,7 @@ function downloadLatestWeeklyBackup(){
   const blob = new Blob([JSON.stringify(latest, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `backup-semanal-${stamp}.json`;
+  a.download = `backup-diario-${stamp}.json`;
   document.body.appendChild(a);
   a.click();
   setTimeout(() => {
@@ -3376,6 +3732,7 @@ function downloadLatestWeeklyBackup(){
     a.remove();
   }, 1500);
 }
+
 
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -3394,7 +3751,7 @@ document.addEventListener("DOMContentLoaded", function(){
           <h3>Backups</h3>
           <p>Proteção automática e recuperação rápida dos dados da app.</p>
         </div>
-        <span class="backups-premium-pill">Semanal Automático</span>
+        <span id="backupModeBadge" class="backups-premium-pill daily">Diário Automático</span>
       </div>
 
       <div class="backups-premium-grid">
@@ -3405,6 +3762,10 @@ document.addEventListener("DOMContentLoaded", function(){
         <div class="backups-premium-stat">
           <span class="label">Backups guardados</span>
           <span class="value" id="backupCountStatus">0</span>
+        </div>
+        <div class="backups-premium-stat">
+          <span class="label">Estado do backup</span>
+          <span class="value" id="backupTodayStatus">Pendente</span>
         </div>
       </div>
 
@@ -3432,42 +3793,47 @@ function isFriday(){
 }
 
 function getLastBackupDay(){
-  return localStorage.getItem("backupFridayDone");
+  return localStorage.getItem("dailyAutoBackupLastDate") || localStorage.getItem("backupFridayDone");
 }
 
 function setBackupDoneToday(){
   const today = new Date().toISOString().split('T')[0];
+  localStorage.setItem("dailyAutoBackupLastDate", today);
   localStorage.setItem("backupFridayDone", today);
 }
+
+
 
 function fazerBackupSexta(){
   const hoje = new Date().toISOString().split('T')[0];
   const ultimo = getLastBackupDay();
 
-  if(!isFriday()) return;
-
-  if(ultimo === hoje) return;
+  if(String(ultimo || '').slice(0,10) === hoje) return;
 
   const data = {
-    trabalhos: JSON.parse(localStorage.getItem("trabalhos") || "[]"),
-    clientes: JSON.parse(localStorage.getItem("clientes") || "[]"),
-    pagamentos: JSON.parse(localStorage.getItem("pagamentos") || "[]"),
+    trabalhos: JSON.parse(localStorage.getItem("trabalhos") || localStorage.getItem("ge_trabalhos") || "[]"),
+    clientes: JSON.parse(localStorage.getItem("clientes") || localStorage.getItem("ge_clientes") || "[]"),
+    pagamentos: JSON.parse(localStorage.getItem("pagamentos") || localStorage.getItem("ge_pagamentos") || "[]"),
     dataBackup: new Date().toISOString()
   };
 
-  const backups = JSON.parse(localStorage.getItem("backupFridayHistory") || "[]");
+  const backups = JSON.parse(localStorage.getItem("dailyAutoBackups") || localStorage.getItem("backupFridayHistory") || "[]");
   backups.push(data);
 
-  if(backups.length > 10){
+  if(backups.length > 30){
     backups.shift();
   }
 
+  localStorage.setItem("dailyAutoBackups", JSON.stringify(backups));
   localStorage.setItem("backupFridayHistory", JSON.stringify(backups));
 
   setBackupDoneToday();
 
   mostrarAvisoBackup();
+  refreshBackupStatusUi();
+  try{ updateBackupWeekIndicator(); }catch(e){}
 }
+
 
 function mostrarAvisoBackup(){
   const aviso = document.createElement("div");
@@ -3485,7 +3851,7 @@ function mostrarAvisoBackup(){
       color:white;
       font-size:13px;
     ">
-      Backup semanal criado ✔
+      Backup diário criado ✔
       <br>
       <button onclick="exportBackupManual()" style="margin-top:6px">Exportar agora</button>
     </div>
@@ -3505,43 +3871,49 @@ function getWeekStart(dateObj){
   return d;
 }
 
+
 function updateBackupWeekIndicator(){
-  const badge = document.getElementById('backupWeekBadge');
+  const badge = document.getElementById('backupModeBadge') || document.getElementById('backupWeekBadge');
   const weekStatus = document.getElementById('backupWeekStatus');
   const lastStatus = document.getElementById('backupLastStatus');
   const countStatus = document.getElementById('backupCountStatus');
+  const todayStatus = document.getElementById('backupTodayStatus');
 
-  const backups = JSON.parse(localStorage.getItem('backupFridayHistory') || '[]');
-  const lastDateIso = localStorage.getItem('backupFridayDone') || localStorage.getItem('weeklyAutoBackupLastDate') || '';
-  const lastDate = lastDateIso ? new Date(lastDateIso) : null;
-  const now = new Date();
-
-  let hasThisWeek = false;
-  if(lastDate && !isNaN(lastDate.getTime())){
-    const weekStartNow = getWeekStart(now).getTime();
-    const weekStartLast = getWeekStart(lastDate).getTime();
-    hasThisWeek = weekStartNow === weekStartLast;
-  }
+  const backups = JSON.parse(localStorage.getItem('dailyAutoBackups') || localStorage.getItem('backupFridayHistory') || localStorage.getItem('weeklyAutoBackups') || '[]');
+  const lastDateIso = localStorage.getItem('dailyAutoBackupLastDate') || localStorage.getItem('backupFridayDone') || localStorage.getItem('weeklyAutoBackupLastDate') || '';
+  const todayIso = new Date().toISOString().split('T')[0];
+  const hasToday = String(lastDateIso || '').slice(0,10) === todayIso;
 
   if(lastStatus) lastStatus.textContent = lastDateIso ? fmtDate(lastDateIso) : '--';
   if(countStatus) countStatus.textContent = String(backups.length);
 
-  if(hasThisWeek){
-    if(weekStatus) weekStatus.textContent = 'Backup feito';
+  if(hasToday){
+    if(todayStatus) todayStatus.textContent = 'Feito hoje';
+    if(weekStatus) weekStatus.textContent = 'Backup diário feito';
     if(badge){
-      badge.textContent = 'Feito esta semana';
-      badge.classList.remove('warn');
+      badge.textContent = 'Diário OK';
+      badge.classList.remove('warn','error');
       badge.classList.add('ok');
     }
-  }else{
-    if(weekStatus) weekStatus.textContent = 'Falta backup';
+  }else if(lastDateIso){
+    if(todayStatus) todayStatus.textContent = 'Pendente hoje';
+    if(weekStatus) weekStatus.textContent = 'Falta backup hoje';
     if(badge){
-      badge.textContent = 'Falta backup';
-      badge.classList.remove('ok');
+      badge.textContent = 'Pendente hoje';
+      badge.classList.remove('ok','error');
       badge.classList.add('warn');
+    }
+  }else{
+    if(todayStatus) todayStatus.textContent = 'Sem backup';
+    if(weekStatus) weekStatus.textContent = 'Sem backup';
+    if(badge){
+      badge.textContent = 'Sem backup';
+      badge.classList.remove('ok','warn');
+      badge.classList.add('error');
     }
   }
 }
+
 
 
 function getReportWorkList(){
@@ -3606,6 +3978,8 @@ function formatEuroValue(v){
   const num = Number(v || 0);
   return `${num.toFixed(2)}€`;
 }
+
+function renderDashboardAgenda(){ return; }
 
 function renderAdvancedReports(){
   const avgEl = document.getElementById('reportAvgWorkValue');
@@ -3705,6 +4079,151 @@ function buildProfessionalReportHtml(){
   display:none !important;
 }
 
+
+
+.online-widget{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:1200;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+}
+.online-widget.hidden{display:none !important;}
+.online-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(74,222,128,.28);
+  background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(30,41,59,.94));
+  color:#fff;
+  box-shadow:0 14px 30px rgba(0,0,0,.26);
+  cursor:pointer;
+}
+.online-toggle-count{
+  min-width:24px;
+  height:24px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(34,197,94,.18);
+  color:#bbf7d0;
+  font-size:12px;
+  font-weight:800;
+  padding:0 6px;
+}
+.online-card{
+  width:min(320px, calc(100vw - 28px));
+  max-height:min(420px, calc(100vh - 90px));
+  overflow:hidden;
+  border-radius:22px;
+  border:1px solid rgba(148,163,184,.16);
+  background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(30,41,59,.96));
+  box-shadow:0 24px 50px rgba(0,0,0,.32);
+  backdrop-filter:blur(14px);
+}
+.online-card.hidden{display:none !important;}
+.online-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 16px 12px;
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+.online-card-head h3{
+  margin:0;
+  font-size:15px;
+  color:#fff;
+}
+.online-card-head small{
+  display:block;
+  margin-top:3px;
+  color:#94a3b8;
+}
+.online-head-actions{display:flex;align-items:center;gap:8px;}
+.online-head-btn{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,.16);
+  background:rgba(15,23,42,.66);
+  color:#e2e8f0;
+  cursor:pointer;
+}
+.online-users-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:14px;
+  overflow:auto;
+  max-height:320px;
+}
+.online-user-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:rgba(15,23,42,.64);
+  border:1px solid rgba(148,163,184,.12);
+}
+.online-user-main{display:flex;align-items:center;gap:12px;min-width:0;}
+.online-dot{
+  width:11px;
+  height:11px;
+  border-radius:999px;
+  background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.16);
+  flex:0 0 auto;
+}
+.online-user-meta{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.online-user-name{
+  color:#fff;
+  font-weight:800;
+  font-size:14px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.online-user-sub{
+  color:#94a3b8;
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.online-role-pill{
+  border-radius:999px;
+  padding:6px 10px;
+  background:rgba(59,130,246,.14);
+  border:1px solid rgba(96,165,250,.22);
+  color:#dbeafe;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+.online-empty{
+  padding:18px 12px;
+  text-align:center;
+  color:#94a3b8;
+  font-size:13px;
+}
+@media (max-width: 768px){
+  .online-widget{top:10px;right:10px;}
+  .online-card{width:min(300px, calc(100vw - 20px));border-radius:18px;}
+  .online-card-head{padding:14px 14px 10px;}
+  .online-users-list{padding:10px;max-height:280px;}
+}
+
 </style>
     </head>
     <body>
@@ -3766,23 +4285,28 @@ function printProfessionalReport(){
 </script>
   <script type="module">
 const firebaseConfig = {
-  apiKey: "AIzaSyDbiMRCFhD9WC4Z17fc9M9uXdY8ETUO05Q",
-  authDomain: "app-pai-feb73.firebaseapp.com",
-  projectId: "app-pai-feb73",
-  storageBucket: "app-pai-feb73.appspot.com",
-  messagingSenderId: "594270955224",
-  appId: "1:594270955224:web:85d1d530889704d0f359ad"
+  apiKey: "AIzaSyD2nCoO5TP56H_gm5SBWM6DLf_SZW1UPxI",
+  authDomain: "app-gestao-c932d.firebaseapp.com",
+  projectId: "app-gestao-c932d",
+  storageBucket: "app-gestao-c932d.firebasestorage.app",
+  messagingSenderId: "318015040210",
+  appId: "1:318015040210:web:e3070e6b8f4d74a8799b0b"
 };
 
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const APP_VERSION = '1.0.6';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' , lastTrabId:'ge_last_trab_id' };
 
-let currentRole = null, currentUsername = null;
+let currentRole = null, currentUsername = null, currentUserEmail = null;
+let currentDeviceType = 'computador';
+let currentAccessMode = 'edit';
+let managedUsersCache = [];
+const ROLE_COLLECTION = 'user_roles';
+const MASTER_EMAILS = ['pica.fern@gmail.com'];
 let trabalhos = [], clientes = [], pagamentos = [];
 let lastTrabId = 0;
 
@@ -3792,12 +4316,370 @@ let firestoreDb = null;
 let syncReady = false;
 let syncMessage = 'Local';
 let unsubs = [];
+let isImportingBackup = false;
+let presenceUnsub = null;
+let presenceHeartbeat = null;
+let presenceVisibilityBound = false;
+let onlineUsersCache = [];
+const PRESENCE_COLLECTION = 'presence_status';
+const PRESENCE_TIMEOUT_MS = 70000;
+const PRESENCE_SESSION_STORAGE_KEY = 'ge_presence_session_id';
+const ONLINE_WIDGET_KEY = 'ge_online_widget_hidden';
+
+
+let authBootstrapped = false;
+let authListenerAttached = false;
+if(typeof window !== 'undefined'){ window.firebaseApp = firebaseApp; window.firebaseAuth = firebaseAuth; window.firestoreDb = firestoreDb; }
+
+function deriveLoginUsername(user){
+  const email = String(user?.email || '').trim();
+  if(email) return email.split('@')[0];
+  return String(user?.uid || 'utilizador');
+}
+function normalizeRoleValue(role){
+  const value = String(role || 'user').toLowerCase();
+  return ['user','admin','master_admin'].includes(value) ? value : 'user';
+}
+function normalizeAccessMode(mode){
+  const value = String(mode || 'edit').toLowerCase();
+  return ['edit','view'].includes(value) ? value : 'edit';
+}
+function detectCurrentDeviceType(){
+  try{
+    const ua = String(navigator.userAgent || '').toLowerCase();
+    const mobileUa = /android|iphone|ipad|mobile|tablet/.test(ua);
+    const narrow = (window.innerWidth || 0) <= 900;
+    return (mobileUa || narrow) ? 'mobile' : 'computador';
+  }catch(e){
+    return 'computador';
+  }
+}
+function normalizeRoleEmail(email){
+  return String(email || '').trim().toLowerCase();
+}
+function isMasterEmail(email){
+  return MASTER_EMAILS.includes(normalizeRoleEmail(email));
+}
+async function ensureRoleSeed(email, role='user'){
+  const cleanEmail = normalizeRoleEmail(email);
+  if(!cleanEmail || !firestoreDb) return;
+  try{
+    await setDoc(doc(firestoreDb, ROLE_COLLECTION, cleanEmail), {
+      email: cleanEmail,
+      role: normalizeRoleValue(role),
+      updatedAt: new Date().toISOString()
+    }, { merge:true });
+  }catch(err){
+    console.warn('Não foi possível gravar role seed:', err);
+  }
+}
+async function fetchRoleForUser(user){
+  const email = normalizeRoleEmail(user?.email);
+  if(!email) return 'user';
+  if(isMasterEmail(email)){
+    await ensureRoleSeed(email, 'master_admin');
+    return 'master_admin';
+  }
+  if(!firestoreDb) return 'user';
+  try{
+    const snap = await getDoc(doc(firestoreDb, ROLE_COLLECTION, email));
+    if(snap.exists()) return normalizeRoleValue(snap.data()?.role);
+  }catch(err){
+    console.warn('Não foi possível ler role do utilizador:', err);
+  }
+  await ensureRoleSeed(email, 'user');
+  return 'user';
+}
+async function fetchRoleProfileForUser(user){
+  const email = normalizeRoleEmail(user?.email);
+  const baseProfile = { role:'user', pcMode:'edit', mobileMode:'edit', nome:'', displayName:'' };
+  if(!email) return baseProfile;
+  const forcedRole = isMasterEmail(email) ? 'master_admin' : 'user';
+  await ensureRoleSeed(email, forcedRole);
+  if(!firestoreDb){
+    return { ...baseProfile, role: forcedRole };
+  }
+  try{
+    const snap = await getDoc(doc(firestoreDb, ROLE_COLLECTION, email));
+    if(snap.exists()){
+      const data = snap.data() || {};
+      return {
+        nome: String(data.nome || data.displayName || '').trim(),
+        displayName: String(data.displayName || data.nome || '').trim(),
+        role: isMasterEmail(email) ? 'master_admin' : normalizeRoleValue(data.role),
+        pcMode: normalizeAccessMode(data.pcMode),
+        mobileMode: normalizeAccessMode(data.mobileMode)
+      };
+    }
+  }catch(err){
+    console.warn('Não foi possível ler perfil do utilizador:', err);
+  }
+  return { ...baseProfile, role: forcedRole };
+}
+async function ensureFirebaseCore(){
+  if (!firebaseApp) firebaseApp = initializeApp(firebaseConfig);
+  if (!firebaseAuth) firebaseAuth = getAuth(firebaseApp);
+  if (!firestoreDb) firestoreDb = getFirestore(firebaseApp);
+  try{ await setPersistence(firebaseAuth, browserLocalPersistence); }catch(e){}
+  if(typeof window !== 'undefined'){
+    window.firebaseApp = firebaseApp;
+    window.firebaseAuth = firebaseAuth;
+    window.firestoreDb = firestoreDb;
+    window.ensureFirebaseCore = ensureFirebaseCore;
+    window.onAuthStateChanged = onAuthStateChanged;
+    window.getDocs = getDocs;
+    window.collection = collection;
+    window.writeBatch = writeBatch;
+    window.doc = doc;
+    window.setDoc = setDoc;
+    window.deleteDoc = deleteDoc;
+  }
+  return true;
+}
+
+function normalizePresenceId(){
+  const email = normalizeRoleEmail(currentUserEmail || firebaseAuth?.currentUser?.email);
+  if(email) return email.replace(/[^a-z0-9@._-]/gi, '_');
+  return String(firebaseAuth?.currentUser?.uid || currentUsername || 'utilizador').replace(/[^a-z0-9@._-]/gi, '_');
+}
+function roleLabel(role){
+  const val = normalizeRoleValue(role);
+  if(val === 'master_admin') return 'Master';
+  if(val === 'admin') return 'Admin';
+  return 'User';
+}
+function toggleOnlineUsersCard(force){
+  const card = $('onlineUsersCard');
+  const widget = $('onlineUsersWidget');
+  if(!card || !widget) return;
+  const shouldHide = typeof force === 'boolean' ? !force : !card.classList.contains('hidden');
+  card.classList.toggle('hidden', shouldHide);
+  try{ localStorage.setItem(ONLINE_WIDGET_KEY, shouldHide ? '1' : '0'); }catch(e){}
+}
+function initOnlineUsersUi(){
+  const widget = $('onlineUsersWidget');
+  const toggle = $('onlineUsersToggle');
+  const hideBtn = $('onlineUsersHide');
+  const refreshBtn = $('onlineUsersRefresh');
+  if(widget) widget.classList.toggle('hidden', !currentUsername);
+  if(toggle && !toggle.dataset.bound){
+    toggle.dataset.bound = '1';
+    toggle.addEventListener('click', () => toggleOnlineUsersCard());
+  }
+  if(hideBtn && !hideBtn.dataset.bound){
+    hideBtn.dataset.bound = '1';
+    hideBtn.addEventListener('click', () => toggleOnlineUsersCard(false));
+  }
+  if(refreshBtn && !refreshBtn.dataset.bound){
+    refreshBtn.dataset.bound = '1';
+    refreshBtn.addEventListener('click', () => renderOnlineUsersCard());
+  }
+  const hidden = (() => { try{ return localStorage.getItem(ONLINE_WIDGET_KEY) === '1'; }catch(e){ return false; } })();
+  toggleOnlineUsersCard(!hidden);
+}
+function getRenderableOnlineUsers(){
+  const map = new Map();
+  for(const user of onlineUsersCache || []){
+    if(!user) continue;
+    const key = normalizeRoleEmail(user.email) || String(user.id || user.username || Math.random());
+    const prev = map.get(key);
+    if(!prev || Number(user.updatedAt || 0) > Number(prev.updatedAt || 0)){
+      map.set(key, user);
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => {
+    const aSelf = normalizeRoleEmail(a.email) === normalizeRoleEmail(currentUserEmail) ? 1 : 0;
+    const bSelf = normalizeRoleEmail(b.email) === normalizeRoleEmail(currentUserEmail) ? 1 : 0;
+    if(aSelf !== bSelf) return bSelf - aSelf;
+    return String(a.username || a.email || '').localeCompare(String(b.username || b.email || ''), 'pt', { sensitivity:'base' });
+  });
+}
+function renderOnlineUsersCard(){
+  const list = $('onlineUsersList');
+  const count = $('onlineUsersCount');
+  const widget = $('onlineUsersWidget');
+  const users = getRenderableOnlineUsers();
+  if(widget) widget.classList.toggle('hidden', !currentUsername);
+  if(count) count.textContent = String(users.length || 0);
+  if(!list) return;
+  if(!users.length){
+    list.innerHTML = '<div class="online-empty">Sem utilizadores online neste momento.</div>';
+    return;
+  }
+  list.innerHTML = users.map(user => {
+    const you = normalizeRoleEmail(user.email) === normalizeRoleEmail(currentUserEmail) ? ' (Tu)' : '';
+    const email = escapeHtml(user.email || '-');
+    const name = escapeHtml((user.username || user.email || 'Utilizador') + you);
+    const role = escapeHtml(roleLabel(user.role));
+    const seen = user.updatedAt ? `Ativo agora • ${new Date(Number(user.updatedAt)).toLocaleTimeString('pt-PT', { hour:'2-digit', minute:'2-digit' })}` : 'Ativo agora';
+    return `<div class="online-user-item"><div class="online-user-main"><span class="online-dot"></span><div class="online-user-meta"><div class="online-user-name">${name}</div><div class="online-user-sub">${email}<br>${escapeHtml(seen)}</div></div></div><span class="online-role-pill">${role}</span></div>`;
+  }).join('');
+}
+async function updatePresenceState(isOnline = true){
+  try{
+    await ensureFirebaseCore();
+    const currentUser = firebaseAuth?.currentUser;
+    if(!currentUser || currentUser.isAnonymous) return;
+    const email = normalizeRoleEmail(currentUser.email || currentUserEmail);
+    const payload = {
+      email: email || '',
+      username: String(currentUsername || deriveLoginUsername(currentUser) || 'Utilizador').trim(),
+      role: normalizeRoleValue(currentRole || 'user'),
+      isOnline: !!isOnline,
+      updatedAt: Date.now(),
+      page: String(document.querySelector('.page.active')?.id || '')
+    };
+    await setDoc(doc(firestoreDb, PRESENCE_COLLECTION, normalizePresenceId()), payload, { merge:true });
+  }catch(err){
+    console.warn('Presença online não atualizada:', err);
+  }
+}
+function stopPresenceTracking(){
+  try{ presenceUnsub && presenceUnsub(); }catch(e){}
+  presenceUnsub = null;
+  if(presenceHeartbeat){ clearInterval(presenceHeartbeat); presenceHeartbeat = null; }
+  onlineUsersCache = [];
+  renderOnlineUsersCard();
+}
+function bindPresenceVisibility(){
+  if(presenceVisibilityBound) return;
+  presenceVisibilityBound = true;
+  document.addEventListener('visibilitychange', () => {
+    if(!currentUsername) return;
+    updatePresenceState(!document.hidden);
+  });
+  window.addEventListener('beforeunload', () => {
+    if(!currentUsername) return;
+    updatePresenceState(false);
+    try{
+      const currentUser = firebaseAuth?.currentUser;
+      const email = normalizeRoleEmail(currentUser?.email || currentUserEmail);
+      const payload = JSON.stringify({ email: email || '', username: String(currentUsername || ''), role: normalizeRoleValue(currentRole || 'user'), isOnline:false, updatedAt: Date.now(), sessionId:getPresenceSessionId() });
+      localStorage.setItem('ge_presence_fallback', payload);
+    }catch(e){}
+  });
+}
+function startPresenceTracking(){
+  if(!currentUsername || !firestoreDb) return;
+  initOnlineUsersUi();
+  bindPresenceVisibility();
+  stopPresenceTracking();
+  onlineUsersCache = [{
+    id: normalizePresenceId(),
+    email: normalizeRoleEmail(currentUserEmail || firebaseAuth?.currentUser?.email) || '',
+    username: String(currentUsername || 'Utilizador'),
+    role: normalizeRoleValue(currentRole || 'user'),
+    isOnline: true,
+    updatedAt: Date.now(),
+    optimistic: true
+  }];
+  renderOnlineUsersCard();
+  presenceUnsub = onSnapshot(collection(firestoreDb, PRESENCE_COLLECTION), snap => {
+    const now = Date.now();
+    onlineUsersCache = snap.docs.map(docSnap => ({ id: docSnap.id, ...(docSnap.data() || {}) }))
+      .filter(item => item && item.isOnline !== false && (now - Number(item.updatedAt || 0)) <= PRESENCE_TIMEOUT_MS);
+    renderOnlineUsersCard();
+  }, err => console.warn('Não foi possível ler utilizadores online:', err));
+  updatePresenceState(true);
+  presenceHeartbeat = setInterval(() => updatePresenceState(true), 25000);
+}
+
+async function applyAuthenticatedSession(user){
+  await ensureFirebaseCore();
+  const profile = await fetchRoleProfileForUser(user);
+  const role = normalizeRoleValue(profile?.role);
+  currentDeviceType = detectCurrentDeviceType();
+  currentAccessMode = normalizeAccessMode(currentDeviceType === 'mobile' ? profile?.mobileMode : profile?.pcMode);
+  const username = String(profile?.nome || profile?.displayName || deriveLoginUsername(user) || 'Utilizador').trim();
+  currentUserEmail = normalizeRoleEmail(user?.email);
+  if(window.showApp) window.showApp();
+  const loginError = $('loginError');
+  if(loginError) loginError.textContent = '';
+  if(window.startApp){
+    window.startApp(role, username);
+  }
+  initOnlineUsersUi();
+  startPresenceTracking();
+}
+function attachPrimaryAuthListener(){
+  if(authListenerAttached) return;
+  authListenerAttached = true;
+  onAuthStateChanged(firebaseAuth, user => {
+    if(user && !user.isAnonymous){
+      applyAuthenticatedSession(user).catch(err => console.error('Erro ao aplicar sessão autenticada:', err));
+    }else if(!currentUsername){
+      stopPresenceTracking();
+      if(window.showLogin) window.showLogin();
+    }
+  });
+}
+async function initFirebaseEmailLogin(){
+  if(authBootstrapped) return true;
+  authBootstrapped = true;
+  await ensureFirebaseCore();
+  attachPrimaryAuthListener();
+
+  const loginFormEl = $('loginForm');
+  if(loginFormEl && !loginFormEl.dataset.firebaseBound){
+    loginFormEl.dataset.firebaseBound = '1';
+    loginFormEl.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = String($('loginUsername')?.value || '').trim();
+      const password = String($('loginPassword')?.value || '');
+      const errBox = $('loginError');
+      if(errBox) errBox.textContent = '';
+      if(!email || !password){
+        if(errBox) errBox.textContent = 'Preenche email e palavra-passe.';
+        return;
+      }
+      try{
+        await ensureFirebaseCore();
+        await signInWithEmailAndPassword(firebaseAuth, email, password);
+      }catch(err){
+        console.error('Erro no login Firebase:', err);
+        const code = String(err?.code || '');
+        const msg = code === 'auth/invalid-credential' ? 'Email ou palavra-passe inválidos.'
+          : code === 'auth/invalid-email' ? 'Email inválido.'
+          : code === 'auth/user-disabled' ? 'Utilizador desativado.'
+          : code === 'auth/too-many-requests' ? 'Demasiadas tentativas. Tenta novamente mais tarde.'
+          : 'Não foi possível iniciar sessão.';
+        if(errBox) errBox.textContent = msg;
+      }
+    });
+  }
+
+  window.firebaseLogout = async function(){
+    try{
+      await ensureFirebaseCore();
+      await updatePresenceState(false);
+      if(firebaseAuth.currentUser && !firebaseAuth.currentUser.isAnonymous){
+        await signOut(firebaseAuth);
+      }
+    }catch(err){
+      console.error('Erro ao terminar sessão:', err);
+    }
+    stopPresenceTracking();
+    currentRole = null;
+    currentUsername = null;
+    currentUserEmail = null;
+    if(window.showLogin) window.showLogin();
+    $('loginForm')?.reset();
+  };
+
+  if(firebaseAuth.currentUser && !firebaseAuth.currentUser.isAnonymous){
+    applyAuthenticatedSession(firebaseAuth.currentUser);
+  }else if(window.showLogin){
+    window.showLogin();
+  }
+  return true;
+}
 
 const $ = (id) => document.getElementById(id);
 initUiScale();
 const navButtons = document.querySelectorAll('.nav-btn');
 const bottomButtons = document.querySelectorAll('.bottom-btn');
 const pages = document.querySelectorAll('.page');
+initFirebaseEmailLogin().catch(err => console.error('Falha ao iniciar login Firebase:', err));
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const mobileSidebarBackdrop = document.getElementById('mobileSidebarBackdrop');
 
@@ -3851,8 +4733,62 @@ const euro = (v) => Number(v || 0).toLocaleString('pt-PT', {style:'currency', cu
 const fmtDate = (v) => { if(!v) return '-'; const d = new Date(v); return isNaN(d) ? '-' : d.toLocaleDateString('pt-PT'); };
 const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const isMasterAdmin = () => currentRole === 'master_admin';
-const isAdminLike = () => currentRole === 'admin' || currentRole === 'master_admin';
+const isDeviceViewMode = () => !isMasterAdmin() && normalizeAccessMode(currentAccessMode) === 'view';
+const isAdminLike = () => !isDeviceViewMode() && (currentRole === 'admin' || currentRole === 'master_admin');
 
+function applyDeviceAccessRestrictions(){
+  const viewMode = isDeviceViewMode();
+  document.body.classList.toggle('role-device-view', viewMode);
+
+  const oldBanner = document.getElementById('deviceViewModeBanner');
+  if(oldBanner) oldBanner.remove();
+  if(viewMode){
+    const banner = document.createElement('div');
+    banner.id = 'deviceViewModeBanner';
+    banner.className = 'role-device-view-banner';
+    banner.textContent = `Modo Só Ver ativo (${currentDeviceType})`;
+    document.body.appendChild(banner);
+  }
+
+  const actionTexts = ['guardar','apagar','editar','importar','adicionar','confirmar','pago','por pagar','guardar cliente','guardar trabalho','guardar role'];
+  document.querySelectorAll('button,label[for="backupImportInputPremium"]').forEach(el => {
+    if(!el || el.closest('#loginScreen')) return;
+    if(isMasterAdmin()) return;
+    const txt = String(el.textContent || '').trim().toLowerCase();
+    const shouldBlock = actionTexts.some(k => txt.includes(k));
+    if(!shouldBlock) return;
+    if(viewMode){
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '0.45';
+      el.setAttribute('aria-disabled','true');
+      if(el.tagName === 'BUTTON') el.disabled = true;
+    }else{
+      el.style.pointerEvents = '';
+      el.style.opacity = '';
+      el.removeAttribute('aria-disabled');
+      if(el.tagName === 'BUTTON') el.disabled = false;
+    }
+  });
+
+  ['trabalhoForm','clienteForm','userManagerForm'].forEach(formId => {
+    const form = $(formId);
+    if(!form || isMasterAdmin()) return;
+    form.querySelectorAll('input,select,textarea,button').forEach(el => {
+      if(el.closest('#loginScreen')) return;
+      const allowClear = (el.id === 'clearTrabalhoBtn' || el.id === 'clearClienteBtn' || el.id === 'clearManagedUserBtn');
+      if(!viewMode){
+        if(el.dataset.viewDisabled === '1'){ el.disabled = false; }
+        return;
+      }
+      if(allowClear) return;
+      el.disabled = true;
+      el.dataset.viewDisabled = '1';
+    });
+  });
+
+  const backupImport = $('backupImportInputPremium');
+  if(backupImport && !isMasterAdmin()) backupImport.disabled = viewMode;
+}
 
 function updateTrabalhoAdvancedFields(){
   const isEditing = !!($('trabalhoId') && $('trabalhoId').value);
@@ -4172,44 +5108,95 @@ function fillClientContactFromSelection(){
 
 
 function normalizeManagedUsers(users){
-  const list = Array.isArray(users) ? users.slice() : [];
-  const idx = list.findIndex(u => String(u.username || '').toLowerCase() === 'ricardo');
-  const ricardo = { username: 'ricardo', password: '2297', role: 'master_admin' };
-  if(idx >= 0) list[idx] = { ...list[idx], ...ricardo };
-  else list.push(ricardo);
-  return list;
+  const map = new Map();
+  (Array.isArray(users) ? users : []).forEach((u) => {
+    const email = normalizeRoleEmail(u.email || u.username);
+    if(!email) return;
+    map.set(email, {
+      nome: String(u.nome || u.displayName || '').trim(),
+      displayName: String(u.displayName || u.nome || '').trim(),
+      email,
+      username: email,
+      role: normalizeRoleValue(u.role),
+      pcMode: normalizeAccessMode(u.pcMode),
+      mobileMode: normalizeAccessMode(u.mobileMode)
+    });
+  });
+  MASTER_EMAILS.forEach(email => {
+    const prev = map.get(email) || {};
+    map.set(email, {
+      nome: String(prev.nome || prev.displayName || '').trim(),
+      displayName: String(prev.displayName || prev.nome || '').trim(),
+      email,
+      username: email,
+      role: 'master_admin',
+      pcMode: normalizeAccessMode(prev.pcMode),
+      mobileMode: normalizeAccessMode(prev.mobileMode)
+    });
+  });
+  return Array.from(map.values()).sort((a,b)=> (a.email || '').localeCompare(b.email || ''));
 }
 
 function getManagedUsers(){
+  if(Array.isArray(managedUsersCache) && managedUsersCache.length) return managedUsersCache;
   try{
     const stored = JSON.parse(localStorage.getItem('app_users') || 'null');
     if(Array.isArray(stored) && stored.length){
-      const fixed = normalizeManagedUsers(stored);
-      localStorage.setItem('app_users', JSON.stringify(fixed));
-      return fixed;
+      managedUsersCache = normalizeManagedUsers(stored);
+      localStorage.setItem('app_users', JSON.stringify(managedUsersCache));
+      return managedUsersCache;
     }
   }catch{}
-  const fixedDefaults = normalizeManagedUsers([
-    { username: 'jorge', password: 'jfernandes', role: 'admin' },
-    { username: 'fatima', password: 'ffernandes', role: 'user' },
-    { username: 'ricardo', password: '2297', role: 'master_admin' }
-  ]);
-  localStorage.setItem('app_users', JSON.stringify(fixedDefaults));
-  return fixedDefaults;
+  managedUsersCache = normalizeManagedUsers([]);
+  localStorage.setItem('app_users', JSON.stringify(managedUsersCache));
+  return managedUsersCache;
 }
 
 function saveManagedUsers(users){
-  localStorage.setItem('app_users', JSON.stringify(users));
+  managedUsersCache = normalizeManagedUsers(users);
+  localStorage.setItem('app_users', JSON.stringify(managedUsersCache));
 }
 
-function renderManagedUsers(){
+async function loadManagedUsersFromFirestore(){
+  try{
+    await ensureFirebaseCore();
+    if(!firestoreDb) return getManagedUsers();
+    const snap = await getDocs(collection(firestoreDb, ROLE_COLLECTION));
+    const users = [];
+    snap.forEach(docSnap => {
+      const data = docSnap.data() || {};
+      users.push({
+        nome: String(data.nome || data.displayName || '').trim(),
+        email: normalizeRoleEmail(data.email || docSnap.id),
+        role: normalizeRoleValue(data.role),
+        pcMode: normalizeAccessMode(data.pcMode),
+        mobileMode: normalizeAccessMode(data.mobileMode)
+      });
+    });
+    MASTER_EMAILS.forEach(email => {
+      if(!users.some(u => normalizeRoleEmail(u.email) === email)) users.push({ email, role:'master_admin' });
+    });
+    saveManagedUsers(users);
+    return managedUsersCache;
+  }catch(err){
+    console.warn('Não foi possível carregar roles:', err);
+    return getManagedUsers();
+  }
+}
+
+async function renderManagedUsers(){
   const tbody = $('managedUsersTableBody');
   if(!tbody) return;
-  const users = getManagedUsers();
+  tbody.innerHTML = '<tr><td colspan="6">A carregar...</td></tr>';
+  const users = await loadManagedUsersFromFirestore();
+  const modeLabel = (mode) => normalizeAccessMode(mode) === 'view' ? 'Só ver' : 'Pode mexer';
   tbody.innerHTML = users.length ? users.map((u, idx) => `
     <tr>
-      <td>${escapeHtml(u.username || '-')}</td>
+      <td>${escapeHtml(u.nome || '-')}</td>
+      <td>${escapeHtml(u.email || u.username || '-')}</td>
       <td>${escapeHtml(u.role || 'user')}</td>
+      <td>${escapeHtml(modeLabel(u.pcMode))}</td>
+      <td>${escapeHtml(modeLabel(u.mobileMode))}</td>
       <td>
         <div class="row-actions">
           <button class="small-btn" onclick="window.editManagedUser(${idx})">Editar</button>
@@ -4217,7 +5204,7 @@ function renderManagedUsers(){
         </div>
       </td>
     </tr>
-  `).join('') : '<tr><td colspan="3">Sem utilizadores.</td></tr>';
+  `).join('') : '<tr><td colspan="6">Sem utilizadores.</td></tr>';
 }
 
 window.editManagedUser = function(index){
@@ -4226,9 +5213,11 @@ window.editManagedUser = function(index){
   const u = users[index];
   if(!u) return;
   $('managedUserIndex').value = String(index);
-  $('managedUsername').value = u.username || '';
-  $('managedPassword').value = u.password || '';
+  if($('managedDisplayName')) $('managedDisplayName').value = u.nome || u.displayName || '';
+  $('managedUsername').value = u.email || u.username || '';
   $('managedRole').value = u.role || 'user';
+  if($('managedPcMode')) $('managedPcMode').value = normalizeAccessMode(u.pcMode);
+  if($('managedMobileMode')) $('managedMobileMode').value = normalizeAccessMode(u.mobileMode);
   switchTab('configuracoes');
 };
 
@@ -4237,10 +5226,21 @@ window.deleteManagedUser = function(index){
   const users = getManagedUsers();
   const u = users[index];
   if(!u) return;
-  if(!confirm(`Apagar o utilizador ${u.username}?`)) return;
-  users.splice(index, 1);
-  saveManagedUsers(users);
-  renderManagedUsers();
+  const targetEmail = normalizeRoleEmail(u.email || u.username);
+  if(isMasterEmail(targetEmail)){ alert('O Admin Mestre não pode ser apagado.'); return; }
+  if(!confirm(`Apagar o utilizador ${targetEmail}?`)) return;
+  (async()=>{
+    try{
+      await ensureFirebaseCore();
+      await deleteDoc(doc(firestoreDb, ROLE_COLLECTION, targetEmail));
+      const users = getManagedUsers().filter(item => normalizeRoleEmail(item.email || item.username) !== targetEmail);
+      saveManagedUsers(users);
+      renderManagedUsers();
+    }catch(err){
+      console.error('Erro ao apagar role:', err);
+      alert('Não foi possível apagar a role.');
+    }
+  })();
   updateWorkCodePreview();
   updateWorkCodePreview();
   renderMobileCards();
@@ -4276,17 +5276,18 @@ function setSyncMessage(msg, level='warn'){
 function setRoleUI(){
   if(!currentRole) return;
   const roleLabel = currentRole === 'master_admin' ? 'Admin Mestre' : (currentRole === 'admin' ? 'Admin' : 'User');
+  const accessLabel = isDeviceViewMode() ? 'Só ver' : 'Pode mexer';
   document.body.classList.toggle('role-view-user', currentRole === 'user');
   document.body.classList.toggle('role-view-admin', currentRole === 'admin');
   $('roleBadge').textContent = roleLabel;
-  $('roleLine').textContent = `Role: ${roleLabel}`;
+  $('roleLine').textContent = `Role: ${roleLabel} • ${currentDeviceType}: ${accessLabel}`;
   $('versionBadge').textContent = APP_VERSION;
   $('currentUserName').textContent = currentUsername || 'Utilizador';
   const usersSection = $('usersSection');
   if(usersSection) usersSection.style.display = isMasterAdmin() ? 'block' : 'none';
   const workCodeField = $('workCodeDisplay');
   if(workCodeField){
-    workCodeField.readOnly = !isMasterAdmin();
+    workCodeField.readOnly = !isMasterAdmin() || isDeviceViewMode();
     if(!workCodeField.value){
       workCodeField.value = nextTrabalhoIdPreview();
     }
@@ -4294,6 +5295,7 @@ function setRoleUI(){
   setSyncMessage(syncReady ? 'Firebase Sync' : syncMessage, syncReady ? 'ok' : 'warn');
   try{ updateTrabalhoFieldVisibility(); }catch(e){}
   updateTrabalhoAdvancedFields();
+  applyDeviceAccessRestrictions();
 }
 function switchTab(tab){
   try{ sessionStorage.setItem('gestao:lastTab', tab); }catch(e){}
@@ -4302,6 +5304,7 @@ function switchTab(tab){
   pages.forEach(p => p.classList.toggle('active', p.id===`${tab}-page`));
   const btn=document.querySelector(`.nav-btn[data-tab="${tab}"]`);
   $('pageTitle').textContent = btn ? btn.textContent.trim() : 'Dashboard';
+  try{ updatePresenceState(true); }catch(e){}
   if(tab === 'dashboard'){
     renderDashboard();
     renderAlerts();
@@ -4323,6 +5326,16 @@ function switchTab(tab){
 navButtons.forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
 bottomButtons.forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
 document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', ()=>switchTab(b.dataset.go)));
+
+
+function refreshVisibleViews(){
+  try{ renderAll(); }catch(e){}
+  try{
+    const activePage = document.querySelector('.page.active');
+    const activeTab = activePage ? activePage.id.replace(/-page$/, '') : (sessionStorage.getItem('gestao:lastTab') || 'dashboard');
+    switchTab(activeTab);
+  }catch(e){}
+}
 
 function forceAppRefresh(){
   try{
@@ -4364,14 +5377,8 @@ async function initFirebaseSync(){
       attachRealtimeListeners();
 
       if(!firebaseAuth.currentUser){
-        try{
-          await signInAnonymously(firebaseAuth);
-        }catch(authErr){
-          console.warn('Anonymous auth indisponível, continuo com Firestore direto:', authErr);
-          if(authErr?.code === 'auth/operation-not-allowed'){
-            setSyncMessage('Firebase Sync (sem auth anónima)', 'warn');
-          }
-        }
+        console.warn('Sem utilizador autenticado na Firebase; a app não vai tentar auth anónima.');
+        setSyncMessage('Firebase Sync (à espera de login)', 'warn');
       }
 
       onAuthStateChanged(firebaseAuth, user => {
@@ -4381,7 +5388,7 @@ async function initFirebaseSync(){
           clearRealtimeListeners();
           attachRealtimeListeners();
         }
-        if (currentRole) renderAll();
+        if (currentRole) refreshVisibleViews();
       });
 
       await waitForFirebaseSyncReady();
@@ -4410,10 +5417,12 @@ function attachRealtimeListeners(){
   if (!firestoreDb || unsubs.length) return;
   const bind = (name, setter) => {
     const unsub = onSnapshot(collection(firestoreDb, name), snap => {
+      if (isImportingBackup) return;
       const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       setter(rows);
       saveLocal();
-      if (currentRole) renderAll();
+      setSyncMessage('Firebase Sync', 'ok');
+      if (currentRole) refreshVisibleViews();
     }, err => {
       console.error(`Snapshot ${name} failed:`, err);
       setSyncMessage('Erro de sync, uso local', 'bad');
@@ -4428,6 +5437,11 @@ async function ensureFirebaseReady(timeoutMs = 12000){
   if (!firestoreDb) {
     await initFirebaseSync();
     await waitForFirebaseSyncReady(timeoutMs);
+  }
+  if(typeof window !== 'undefined'){
+    window.ensureFirebaseReady = ensureFirebaseReady;
+    window.firestoreDb = firestoreDb;
+    window.firebaseAuth = firebaseAuth;
   }
   return true;
 }
@@ -5293,6 +6307,24 @@ td.acoes-col, .acoes-col{
   background:linear-gradient(180deg, rgba(168,85,247,.24), rgba(126,34,206,.16));
   border:1px solid rgba(216,180,254,.32);
 }
+.backups-premium-pill.daily{
+  color:#e9d5ff;
+}
+.backups-premium-pill.ok{
+  color:#dcfce7;
+  background:linear-gradient(180deg, rgba(34,197,94,.22), rgba(22,163,74,.16));
+  border-color:rgba(74,222,128,.36);
+}
+.backups-premium-pill.warn{
+  color:#fef3c7;
+  background:linear-gradient(180deg, rgba(245,158,11,.22), rgba(217,119,6,.16));
+  border-color:rgba(251,191,36,.36);
+}
+.backups-premium-pill.error{
+  color:#fee2e2;
+  background:linear-gradient(180deg, rgba(239,68,68,.22), rgba(185,28,28,.16));
+  border-color:rgba(248,113,113,.36);
+}
 .backups-premium-grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
@@ -5604,6 +6636,151 @@ td.acoes-col, .acoes-col{
   display:none !important;
 }
 
+
+
+.online-widget{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:1200;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+}
+.online-widget.hidden{display:none !important;}
+.online-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(74,222,128,.28);
+  background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(30,41,59,.94));
+  color:#fff;
+  box-shadow:0 14px 30px rgba(0,0,0,.26);
+  cursor:pointer;
+}
+.online-toggle-count{
+  min-width:24px;
+  height:24px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(34,197,94,.18);
+  color:#bbf7d0;
+  font-size:12px;
+  font-weight:800;
+  padding:0 6px;
+}
+.online-card{
+  width:min(320px, calc(100vw - 28px));
+  max-height:min(420px, calc(100vh - 90px));
+  overflow:hidden;
+  border-radius:22px;
+  border:1px solid rgba(148,163,184,.16);
+  background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(30,41,59,.96));
+  box-shadow:0 24px 50px rgba(0,0,0,.32);
+  backdrop-filter:blur(14px);
+}
+.online-card.hidden{display:none !important;}
+.online-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 16px 12px;
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+.online-card-head h3{
+  margin:0;
+  font-size:15px;
+  color:#fff;
+}
+.online-card-head small{
+  display:block;
+  margin-top:3px;
+  color:#94a3b8;
+}
+.online-head-actions{display:flex;align-items:center;gap:8px;}
+.online-head-btn{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,.16);
+  background:rgba(15,23,42,.66);
+  color:#e2e8f0;
+  cursor:pointer;
+}
+.online-users-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:14px;
+  overflow:auto;
+  max-height:320px;
+}
+.online-user-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:rgba(15,23,42,.64);
+  border:1px solid rgba(148,163,184,.12);
+}
+.online-user-main{display:flex;align-items:center;gap:12px;min-width:0;}
+.online-dot{
+  width:11px;
+  height:11px;
+  border-radius:999px;
+  background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.16);
+  flex:0 0 auto;
+}
+.online-user-meta{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.online-user-name{
+  color:#fff;
+  font-weight:800;
+  font-size:14px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.online-user-sub{
+  color:#94a3b8;
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.online-role-pill{
+  border-radius:999px;
+  padding:6px 10px;
+  background:rgba(59,130,246,.14);
+  border:1px solid rgba(96,165,250,.22);
+  color:#dbeafe;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+.online-empty{
+  padding:18px 12px;
+  text-align:center;
+  color:#94a3b8;
+  font-size:13px;
+}
+@media (max-width: 768px){
+  .online-widget{top:10px;right:10px;}
+  .online-card{width:min(300px, calc(100vw - 20px));border-radius:18px;}
+  .online-card-head{padding:14px 14px 10px;}
+  .online-users-list{padding:10px;max-height:280px;}
+}
+
 </style></head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 
@@ -5844,11 +7021,53 @@ function renderClientes(){
   });
   $('clientesTableBody').innerHTML = rows.length ? rows.slice().reverse().map(c=>`<tr><td>${escapeHtml(c.nome||'-')}</td><td>${escapeHtml(c.telefone||'-')}</td><td>${escapeHtml(c.email||'-')}</td><td>${escapeHtml(c.nif||'-')}</td><td><div class="row-actions">${clienteActions(c)}</div></td></tr>`).join('') : '<tr><td colspan="5">Sem clientes registados.</td></tr>';
 }
+let pagamentoSortKey = 'data';
+let pagamentoSortDir = 'desc';
+
+function getPagamentoSortValue(p, key) {
+  if (key === 'data') return new Date(p.workDate || p.data || 0).getTime() || 0;
+  if (key === 'valor') return Number(p.valor || 0);
+  return String(p[key] || '').toLowerCase();
+}
+
+function updatePagamentoSortIcons() {
+  ['cliente','referencia','data','valor','metodo','invoiceType'].forEach((key) => {
+    const el = document.getElementById(`sortIcon-${key}`);
+    if (!el) return;
+    el.textContent = pagamentoSortKey === key ? (pagamentoSortDir === 'asc' ? '↑' : '↓') : '↕';
+  });
+}
+
+window.setPagamentoSort = function(key) {
+  if (pagamentoSortKey === key) {
+    pagamentoSortDir = pagamentoSortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    pagamentoSortKey = key;
+    pagamentoSortDir = key === 'data' || key === 'valor' ? 'desc' : 'asc';
+  }
+  renderPagamentos();
+};
+
 function renderPagamentos() {
   const tbody = $('pagamentosTableBody');
   if (!tbody) return;
-  tbody.innerHTML = pagamentos.length
-    ? pagamentos.slice().reverse().map((p) => {
+
+  const listaOrdenada = pagamentos.slice().sort((a, b) => {
+    const av = getPagamentoSortValue(a, pagamentoSortKey);
+    const bv = getPagamentoSortValue(b, pagamentoSortKey);
+
+    let cmp = 0;
+    if (typeof av === 'number' && typeof bv === 'number') {
+      cmp = av - bv;
+    } else {
+      cmp = String(av).localeCompare(String(bv), 'pt', { numeric: true, sensitivity: 'base' });
+    }
+
+    return pagamentoSortDir === 'asc' ? cmp : -cmp;
+  });
+
+  tbody.innerHTML = listaOrdenada.length
+    ? listaOrdenada.map((p) => {
       const invoiceType = p.invoiceType || 'Com Fatura';
       const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
       return `
@@ -5863,6 +7082,8 @@ function renderPagamentos() {
       </tr>`;
     }).join('')
     : '<tr><td colspan="7">Sem pagamentos registados.</td></tr>';
+
+  updatePagamentoSortIcons();
 }
 function renderRelatorios() {
   const map = {};
@@ -5914,12 +7135,13 @@ function renderRelatorios() {
         .join('')
     : '<div class="report-card">Sem dados para relatório.</div>';
 }
-function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); renderDashboardAgenda(); renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios();
+function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); try{ if(typeof renderDashboardAgenda === 'function') renderDashboardAgenda(); }catch(e){ console.warn('renderDashboardAgenda indisponível:', e); } renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios();
   try{ renderAdvancedReports(); }catch(e){}
   renderManagedUsers();
   updateWorkCodePreview();
   updateWorkCodePreview();
-  renderMobileCards(); }
+  renderMobileCards();
+  applyDeviceAccessRestrictions(); }
 
 $('searchTrabalhos')?.addEventListener('input', ()=>{ renderTrabalhos(); renderMobileCards(); });
 $('filterEstado')?.addEventListener('change', ()=>{ renderTrabalhos(); renderMobileCards(); });
@@ -6045,9 +7267,7 @@ window.deleteTrabalho = async function(id){
     await removeRemote('trabalhos', id);
     trabalhos = trabalhos.filter(x=>x.id!==id);
     saveLocal();
-    renderAll();
-    forceAppRefresh();
-    forceAppRefresh();
+    refreshVisibleViews();
   }catch(err){
     console.error(err);
     setSyncMessage('Erro a apagar no Firebase', 'bad');
@@ -6067,7 +7287,7 @@ window.deleteCliente = async function(id){
     await removeRemote('clientes', id);
     clientes = clientes.filter(x=>x.id!==id);
     saveLocal();
-    renderAll();
+    refreshVisibleViews();
   }catch(err){
     console.error(err);
     setSyncMessage('Erro a apagar no Firebase', 'bad');
@@ -6232,9 +7452,8 @@ window.markAsPaid = async function(id, metodo='Manual', dataPagamento='', valorP
       pagamentos.push(pagamento);
     }
     saveLocal();
-    renderAll();
-    setTimeout(()=>{ try{ renderAll(); }catch(e){} }, 200);
-    forceAppRefresh();
+    refreshVisibleViews();
+    setTimeout(()=>{ try{ refreshVisibleViews(); }catch(e){} }, 200);
     return true;
   } catch(err){
     console.error(err);
@@ -6251,8 +7470,7 @@ window.deletePagamento = async function(id){
     await removeRemote('pagamentos', id);
     pagamentos = pagamentos.filter(x => x.id !== id);
     saveLocal();
-    renderAll();
-    forceAppRefresh();
+    refreshVisibleViews();
   }catch(err){
     console.error(err);
     setSyncMessage('Erro a apagar no Firebase', 'bad');
@@ -6379,58 +7597,74 @@ $('paymentConfirmBtn')?.addEventListener('click', async ()=>{
   const ok = await window.markAsPaid(currentPaymentId, currentPaymentMethod, currentPaymentDate, currentPaymentValue);
   paymentConfirmInFlight = false;
   if(ok){
-    renderAll();
-    setTimeout(()=>{ try { renderAll(); } catch(e) {} }, 200);
+    refreshVisibleViews();
+    setTimeout(()=>{ try { refreshVisibleViews(); } catch(e) {} }, 200);
   } else {
-    alert(`Não foi possível guardar o pagamento na Firebase. ${err?.code ? '(' + err.code + ')' : ''}`.trim());
+    alert('Não foi possível guardar o pagamento na Firebase.');
   }
 });
 
 $('cliente')?.addEventListener('change', fillClientContactFromSelection);
 
 
-$('userManagerForm')?.addEventListener('submit', (e) => {
+$('userManagerForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   if(!isMasterAdmin()) return;
 
-  const indexRaw = $('managedUserIndex').value;
-  const username = $('managedUsername').value.trim();
-  const password = $('managedPassword').value.trim();
-  const role = $('managedRole').value;
+  const nome = String($('managedDisplayName')?.value || '').trim();
+  const email = normalizeRoleEmail($('managedUsername').value);
+  const role = normalizeRoleValue($('managedRole').value);
+  const pcMode = normalizeAccessMode($('managedPcMode')?.value);
+  const mobileMode = normalizeAccessMode($('managedMobileMode')?.value);
 
-  if(!username || !password){
-    alert('Preenche nome e palavra-passe.');
+  if(!email){
+    alert('Preenche o email do utilizador.');
     return;
   }
 
-  const users = getManagedUsers();
-  const item = { username, password, role };
-
-  if(indexRaw !== ''){
-    users[Number(indexRaw)] = item;
-  }else{
-    const exists = users.some(u => (u.username || '').toLowerCase() === username.toLowerCase());
-    if(exists){
-      alert('Esse utilizador já existe.');
-      return;
+  try{
+    await ensureFirebaseCore();
+    await setDoc(doc(firestoreDb, ROLE_COLLECTION, email), {
+      nome,
+      displayName: nome,
+      email,
+      role,
+      pcMode,
+      mobileMode,
+      updatedAt: new Date().toISOString()
+    }, { merge:true });
+    await loadManagedUsersFromFirestore();
+    $('userManagerForm').reset();
+    if($('managedDisplayName')) $('managedDisplayName').value = '';
+    $('managedUserIndex').value = '';
+    $('managedRole').value = 'user';
+    if($('managedPcMode')) $('managedPcMode').value = 'edit';
+    if($('managedMobileMode')) $('managedMobileMode').value = 'edit';
+    renderManagedUsers();
+    updateWorkCodePreview();
+    updateWorkCodePreview();
+    renderMobileCards();
+    if(currentUserEmail && currentUserEmail === email){
+      currentRole = role;
+      currentUsername = String(nome || email.split('@')[0] || currentUsername || 'Utilizador').trim();
+      setRoleUI();
+      try{ updatePresenceState(true); }catch(e) {}
+      try{ renderOnlineUsersCard(); }catch(e) {}
+      renderAll();
     }
-    users.push(item);
+  }catch(err){
+    console.error('Erro ao guardar role:', err);
+    alert('Não foi possível guardar a role.');
   }
-
-  saveManagedUsers(users);
-  $('userManagerForm').reset();
-  $('managedUserIndex').value = '';
-  $('managedRole').value = 'user';
-  renderManagedUsers();
-  updateWorkCodePreview();
-  updateWorkCodePreview();
-  renderMobileCards();
 });
 
 $('clearManagedUserBtn')?.addEventListener('click', ()=>{
   $('userManagerForm')?.reset();
+  if($('managedDisplayName')) $('managedDisplayName').value = '';
   $('managedUserIndex').value = '';
   $('managedRole').value = 'user';
+  if($('managedPcMode')) $('managedPcMode').value = 'edit';
+  if($('managedMobileMode')) $('managedMobileMode').value = 'edit';
 });
 
 
@@ -6630,7 +7864,7 @@ function isFriday(){
 }
 
 function getLastBackupDay(){
-  return localStorage.getItem("backupFridayDone");
+  return localStorage.getItem("dailyAutoBackupLastDate") || localStorage.getItem("backupFridayDone");
 }
 
 function setBackupDoneToday(){
@@ -6683,7 +7917,7 @@ function mostrarAvisoBackup(){
       color:white;
       font-size:13px;
     ">
-      Backup semanal criado ✔
+      Backup diário criado ✔
       <br>
       <button onclick="exportBackupManual()" style="margin-top:6px">Exportar agora</button>
     </div>
@@ -6901,6 +8135,151 @@ function buildProfessionalReportHtml(){
 /* CAMPOS AVANÇADOS DO TRABALHO */
 .field-hidden-by-role{
   display:none !important;
+}
+
+
+
+.online-widget{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:1200;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+}
+.online-widget.hidden{display:none !important;}
+.online-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(74,222,128,.28);
+  background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(30,41,59,.94));
+  color:#fff;
+  box-shadow:0 14px 30px rgba(0,0,0,.26);
+  cursor:pointer;
+}
+.online-toggle-count{
+  min-width:24px;
+  height:24px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(34,197,94,.18);
+  color:#bbf7d0;
+  font-size:12px;
+  font-weight:800;
+  padding:0 6px;
+}
+.online-card{
+  width:min(320px, calc(100vw - 28px));
+  max-height:min(420px, calc(100vh - 90px));
+  overflow:hidden;
+  border-radius:22px;
+  border:1px solid rgba(148,163,184,.16);
+  background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(30,41,59,.96));
+  box-shadow:0 24px 50px rgba(0,0,0,.32);
+  backdrop-filter:blur(14px);
+}
+.online-card.hidden{display:none !important;}
+.online-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 16px 12px;
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+.online-card-head h3{
+  margin:0;
+  font-size:15px;
+  color:#fff;
+}
+.online-card-head small{
+  display:block;
+  margin-top:3px;
+  color:#94a3b8;
+}
+.online-head-actions{display:flex;align-items:center;gap:8px;}
+.online-head-btn{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,.16);
+  background:rgba(15,23,42,.66);
+  color:#e2e8f0;
+  cursor:pointer;
+}
+.online-users-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:14px;
+  overflow:auto;
+  max-height:320px;
+}
+.online-user-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:rgba(15,23,42,.64);
+  border:1px solid rgba(148,163,184,.12);
+}
+.online-user-main{display:flex;align-items:center;gap:12px;min-width:0;}
+.online-dot{
+  width:11px;
+  height:11px;
+  border-radius:999px;
+  background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.16);
+  flex:0 0 auto;
+}
+.online-user-meta{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.online-user-name{
+  color:#fff;
+  font-weight:800;
+  font-size:14px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.online-user-sub{
+  color:#94a3b8;
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.online-role-pill{
+  border-radius:999px;
+  padding:6px 10px;
+  background:rgba(59,130,246,.14);
+  border:1px solid rgba(96,165,250,.22);
+  color:#dbeafe;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+.online-empty{
+  padding:18px 12px;
+  text-align:center;
+  color:#94a3b8;
+  font-size:13px;
+}
+@media (max-width: 768px){
+  .online-widget{top:10px;right:10px;}
+  .online-card{width:min(300px, calc(100vw - 20px));border-radius:18px;}
+  .online-card-head{padding:14px 14px 10px;}
+  .online-users-list{padding:10px;max-height:280px;}
 }
 
 </style>
