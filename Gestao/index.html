@@ -4034,13 +4034,39 @@ function normalizeRoleEmail(email){
 function isMasterEmail(email){
   return MASTER_EMAILS.includes(normalizeRoleEmail(email));
 }
+function resolveEffectiveRole(email, role){
+  const cleanEmail = normalizeRoleEmail(email);
+  if(isMasterEmail(cleanEmail)) return 'master_admin';
+  const normalizedRole = normalizeRoleValue(role);
+  return normalizedRole === 'master_admin' ? 'admin' : normalizedRole;
+}
 async function ensureRoleSeed(email, role='user'){
   const cleanEmail = normalizeRoleEmail(email);
   if(!cleanEmail || !firestoreDb) return;
+  const roleRef = doc(firestoreDb, ROLE_COLLECTION, cleanEmail);
   try{
-    await setDoc(doc(firestoreDb, ROLE_COLLECTION, cleanEmail), {
+    const snap = await getDoc(roleRef);
+    if(snap.exists()){
+      const data = snap.data() || {};
+      const existingRole = normalizeRoleValue(data.role);
+      if(isMasterEmail(cleanEmail) && existingRole !== 'master_admin'){
+        await setDoc(roleRef, {
+          email: cleanEmail,
+          role: 'master_admin',
+          updatedAt: new Date().toISOString()
+        }, { merge:true });
+      }else if(!data.email){
+        await setDoc(roleRef, {
+          email: cleanEmail,
+          updatedAt: new Date().toISOString()
+        }, { merge:true });
+      }
+      return;
+    }
+
+    await setDoc(roleRef, {
       email: cleanEmail,
-      role: normalizeRoleValue(role),
+      role: resolveEffectiveRole(cleanEmail, role),
       updatedAt: new Date().toISOString()
     }, { merge:true });
   }catch(err){
@@ -4057,7 +4083,7 @@ async function fetchRoleForUser(user){
   if(!firestoreDb) return 'user';
   try{
     const snap = await getDoc(doc(firestoreDb, ROLE_COLLECTION, email));
-    if(snap.exists()) return normalizeRoleValue(snap.data()?.role);
+    if(snap.exists()) return resolveEffectiveRole(email, snap.data()?.role);
   }catch(err){
     console.warn('Não foi possível ler role do utilizador:', err);
   }
@@ -4066,12 +4092,12 @@ async function fetchRoleForUser(user){
 }
 async function fetchRoleProfileForUser(user){
   const email = normalizeRoleEmail(user?.email);
-  const baseProfile = { nome:"", displayName:"", role:"admin", pcMode:"edit", mobileMode:"edit" };
+  const baseProfile = { role:'user', pcMode:'edit', mobileMode:'edit', nome:'', displayName:'' };
   if(!email) return baseProfile;
-  const forcedRole = isMasterEmail(email) ? 'master_admin' : 'user';
-  await ensureRoleSeed(email, forcedRole);
+  const forcedRole = isMasterEmail(email) ? 'master_admin' : null;
+  await ensureRoleSeed(email, forcedRole || 'user');
   if(!firestoreDb){
-    return { ...baseProfile, role: forcedRole };
+    return { ...baseProfile, role: forcedRole || 'user' };
   }
   try{
     const snap = await getDoc(doc(firestoreDb, ROLE_COLLECTION, email));
@@ -4080,7 +4106,7 @@ async function fetchRoleProfileForUser(user){
       return {
         nome: String(data.nome || data.displayName || '').trim(),
         displayName: String(data.displayName || data.nome || '').trim(),
-        role: isMasterEmail(email) ? 'master_admin' : normalizeRoleValue(data.role),
+        role: resolveEffectiveRole(email, data.role),
         pcMode: normalizeAccessMode(data.pcMode),
         mobileMode: normalizeAccessMode(data.mobileMode)
       };
@@ -4088,7 +4114,7 @@ async function fetchRoleProfileForUser(user){
   }catch(err){
     console.warn('Não foi possível ler perfil do utilizador:', err);
   }
-  return { ...baseProfile, role: forcedRole };
+  return { ...baseProfile, role: forcedRole || 'user' };
 }
 async function ensureFirebaseCore(){
   if (!firebaseApp) firebaseApp = initializeApp(firebaseConfig);
@@ -4781,7 +4807,7 @@ function normalizeManagedUsers(users){
       displayName: String(u.displayName || u.nome || '').trim(),
       email,
       username: email,
-      role: normalizeRoleValue(u.role),
+      role: resolveEffectiveRole(email, u.role),
       pcMode: normalizeAccessMode(u.pcMode),
       mobileMode: normalizeAccessMode(u.mobileMode)
     });
@@ -4832,7 +4858,7 @@ async function loadManagedUsersFromFirestore(){
       users.push({
         nome: String(data.nome || data.displayName || '').trim(),
         email: normalizeRoleEmail(data.email || docSnap.id),
-        role: normalizeRoleValue(data.role),
+        role: resolveEffectiveRole(data.email || docSnap.id, data.role),
         pcMode: normalizeAccessMode(data.pcMode),
         mobileMode: normalizeAccessMode(data.mobileMode)
       });
@@ -7209,12 +7235,17 @@ $('userManagerForm')?.addEventListener('submit', async (e) => {
 
   const nome = String($('managedDisplayName')?.value || '').trim();
   const email = normalizeRoleEmail($('managedUsername').value);
-  const role = normalizeRoleValue($('managedRole').value);
+  const requestedRole = normalizeRoleValue($('managedRole').value);
+  const role = resolveEffectiveRole(email, requestedRole);
   const pcMode = normalizeAccessMode($('managedPcMode')?.value);
   const mobileMode = normalizeAccessMode($('managedMobileMode')?.value);
 
   if(!email){
     alert('Preenche o email do utilizador.');
+    return;
+  }
+  if(requestedRole === 'master_admin' && !isMasterEmail(email)){
+    alert('Master Admin só pode ser atribuído aos emails definidos na lista MASTER_EMAILS.');
     return;
   }
 
