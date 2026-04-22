@@ -2638,6 +2638,12 @@ td.acoes-col, .acoes-col{
 
 .table-sort-btn{background:none;border:none;color:inherit;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:0}
 .table-sort-btn span{opacity:.8}
+
+/* HOTFIX LOGIN + BACKUP */
+.clean-brand-copy h1,.login-only-title h1{color:#eef3ff!important;text-shadow:0 6px 18px rgba(0,0,0,.35)!important}
+.login-brand,.login-panel{background:linear-gradient(180deg,rgba(20,28,48,.92),rgba(15,21,36,.92))!important}
+.login-screen .field label,.login-error,.remember-login,.remember-login span{color:#dbe3ff!important}
+
 </style>
 </head>
 <body>
@@ -3600,7 +3606,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   try{refreshBackupStatusUi();
   try{ updateBackupWeekIndicator(); }catch(e){}
-  try{fazerBackupSexta();}catch(e){}}catch(e){}
+  /* hotfix: auto backup deferred */}catch(e){}
 
 });
 
@@ -8343,7 +8349,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   try{refreshBackupStatusUi();
   try{ updateBackupWeekIndicator(); }catch(e){}
-  try{fazerBackupSexta();}catch(e){}}catch(e){}
+  /* hotfix: auto backup deferred */}catch(e){}
 
 });
 
