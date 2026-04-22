@@ -7411,8 +7411,11 @@ window.openClientHistory = function(id){
   if(!c) return;
   const relatedTrabalhos = trabalhos.filter(t => (t.cliente||'').trim().toLowerCase() === (c.nome||'').trim().toLowerCase());
   const relatedPagamentos = pagamentos.filter(p => (p.cliente||'').trim().toLowerCase() === (c.nome||'').trim().toLowerCase());
-  const totalTrabalhos = relatedTrabalhos.reduce((s,t)=>s+Number(t.valor||0),0);
+  const totalTrabalhos = relatedTrabalhos.reduce((s,t)=>s+Number(t.valorPago ?? t.valor ?? 0),0);
   const totalPagamentos = relatedPagamentos.reduce((s,p)=>s+Number(p.valor||0),0);
+  const saldo = totalPagamentos - totalTrabalhos;
+  const divida = Math.max(totalTrabalhos - totalPagamentos, 0);
+  const clientHistoryStatus = divida > 0 ? 'Com dívida' : (relatedPagamentos.length ? 'Saldo regularizado' : 'Sem pagamentos');
 
   $('clientModalTitle').textContent = `Histórico de ${c.nome || 'Cliente'}`;
   $('clientModalContent').innerHTML = `
@@ -7420,8 +7423,21 @@ window.openClientHistory = function(id){
       <div class="client-summary-card"><span>Total trabalhos</span><strong>${relatedTrabalhos.length}</strong></div>
       <div class="client-summary-card"><span>Total faturado</span><strong>${euro(totalTrabalhos)}</strong></div>
       <div class="client-summary-card"><span>Total pago</span><strong>${euro(totalPagamentos)}</strong></div>
-      <div class="client-summary-card"><span>Estado</span><strong>${relatedPagamentos.length ? 'Com histórico' : 'Sem pagamentos'}</strong></div>
+      <div class="client-summary-card"><span>Dívida / Saldo</span><strong>${saldo >= 0 ? '+' : '-'}${euro(Math.abs(saldo))}</strong></div>
     </div>
+    <section class="panel">
+      <div class="panel-head"><h3>Resumo financeiro</h3><span class="autobackup-badge">${clientHistoryStatus}</span></div>
+      <div class="table-wrap">
+        <table>
+          <tbody>
+            <tr><td><strong>Total faturado</strong></td><td>${euro(totalTrabalhos)}</td></tr>
+            <tr><td><strong>Total recebido</strong></td><td>${euro(totalPagamentos)}</td></tr>
+            <tr><td><strong>Em dívida</strong></td><td>${euro(divida)}</td></tr>
+            <tr><td><strong>Saldo</strong></td><td>${saldo >= 0 ? '+' : '-'}${euro(Math.abs(saldo))}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
     <section class="panel">
       <div class="panel-head"><h3>Dados do cliente</h3><span class="autobackup-badge">Histórico ativo</span></div>
       <div class="table-wrap">
