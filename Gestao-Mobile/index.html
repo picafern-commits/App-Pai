@@ -2985,6 +2985,132 @@ td.acoes-col, .acoes-col{
 .firebase-backup-actions{display:flex;gap:8px;flex-wrap:wrap}
 .firebase-backup-preview{margin-top:12px;padding:14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
 
+
+/* ===== SIDEBAR PREMIUM ===== */
+.sidebar{
+  background:linear-gradient(180deg, rgba(6,10,18,.96), rgba(10,15,28,.92)) !important;
+  border-right:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:20px 0 50px rgba(0,0,0,.22);
+}
+.brand-card{
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:24px !important;
+  padding:16px !important;
+}
+.brand-card h1{
+  font-size:24px !important;
+  letter-spacing:-.02em;
+}
+.brand-card p{
+  color:#b8c6e6 !important;
+  font-size:12px !important;
+}
+.sidebar-logo{
+  width:62px !important;
+  height:62px !important;
+  border-radius:18px !important;
+  background:rgba(255,255,255,.05) !important;
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+}
+.nav{
+  gap:8px !important;
+}
+.nav-btn{
+  position:relative;
+  padding:13px 14px !important;
+  border-radius:18px !important;
+  background:rgba(255,255,255,.02) !important;
+  border:1px solid transparent !important;
+  transition:all .18s ease !important;
+  font-weight:600;
+}
+.nav-btn:hover{
+  background:linear-gradient(135deg, rgba(111,92,255,.14), rgba(36,200,255,.08)) !important;
+  border-color:rgba(255,255,255,.08) !important;
+  transform:translateX(2px);
+}
+.nav-btn.active{
+  background:linear-gradient(135deg, rgba(111,92,255,.22), rgba(36,200,255,.12)) !important;
+  border-color:rgba(255,255,255,.10) !important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16);
+}
+.nav-btn.active::before{
+  content:"";
+  position:absolute;
+  left:-2px;
+  top:10px;
+  bottom:10px;
+  width:4px;
+  border-radius:999px;
+  background:linear-gradient(180deg, #ff7a18, #24c8ff);
+}
+.nav-icon{
+  width:32px !important;
+  height:32px !important;
+  border-radius:12px !important;
+  background:rgba(255,255,255,.07) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+}
+.mini-card{
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)) !important;
+  border:1px solid rgba(255,255,255,.07) !important;
+  border-radius:20px !important;
+}
+.sidebar-footer{
+  gap:10px !important;
+}
+@media (max-width: 900px){
+  .sidebar{
+    box-shadow:28px 0 60px rgba(0,0,0,.38) !important;
+  }
+  .brand-card{
+    margin-top:6px;
+  }
+}
+
+
+/* ===== DASHBOARD EMPRESA SMART ===== */
+.empresa-smart-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}
+.empresa-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.empresa-kpi{padding:16px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.07)}
+.empresa-kpi span{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}
+.empresa-kpi strong{display:block;font-size:26px;line-height:1.05;margin-bottom:6px}
+.empresa-kpi small{color:#c9d6f5}
+.empresa-list{display:grid;gap:10px}
+.empresa-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.empresa-item .meta{display:grid;gap:4px}
+.empresa-item .title{font-weight:700}
+.empresa-pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.empresa-pill.warn{background:rgba(245,158,11,.14);color:#fde68a;border:1px solid rgba(245,158,11,.22)}
+.empresa-pill.good{background:rgba(34,197,94,.14);color:#86efac;border:1px solid rgba(34,197,94,.22)}
+.empresa-pill.danger{background:rgba(239,68,68,.14);color:#fca5a5;border:1px solid rgba(239,68,68,.22)}
+.empresa-empty{padding:16px;border-radius:18px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.08);color:var(--muted)}
+@media (max-width:1100px){.empresa-smart-grid{grid-template-columns:1fr}.empresa-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:700px){.empresa-kpi-grid{grid-template-columns:1fr}}
+
+
+/* ===== ORÇAMENTOS ACTIONS PREMIUM ===== */
+.orc-actions{display:flex;gap:8px;flex-wrap:wrap}
+.orc-btn{
+  min-height:34px;
+  padding:8px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.08);
+  color:#fff;
+  cursor:pointer;
+  font-weight:700;
+  letter-spacing:.01em;
+  transition:.18s ease;
+  background:rgba(255,255,255,.05);
+}
+.orc-btn:hover{transform:translateY(-1px);filter:brightness(1.04)}
+.orc-btn.edit{background:linear-gradient(135deg,rgba(36,200,255,.18),rgba(111,92,255,.14));border-color:rgba(36,200,255,.25)}
+.orc-btn.pending{background:linear-gradient(135deg,rgba(245,158,11,.20),rgba(251,191,36,.14));border-color:rgba(245,158,11,.28);color:#fde68a}
+.orc-btn.paid{background:linear-gradient(135deg,rgba(34,197,94,.18),rgba(16,185,129,.14));border-color:rgba(34,197,94,.28);color:#bbf7d0}
+.orc-btn.reject{background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(248,113,113,.14));border-color:rgba(239,68,68,.28);color:#fecaca}
+.orc-btn.delete{background:linear-gradient(135deg,rgba(127,29,29,.45),rgba(239,68,68,.16));border-color:rgba(239,68,68,.32);color:#fff}
+
 </style>
   
 </head>
@@ -3057,6 +3183,7 @@ td.acoes-col, .acoes-col{
         <button class="nav-btn active" data-tab="dashboard"><span class="nav-icon">◈</span><span>Dashboard</span></button>
         <button class="nav-btn" data-tab="adicionar"><span class="nav-icon">＋</span><span>Adicionar Trabalho</span></button>
         <button class="nav-btn" data-tab="trabalhos"><span class="nav-icon">☰</span><span>Histórico Trabalhos</span></button>
+        <button class="nav-btn" data-tab="orcamentos"><span class="nav-icon">📝</span><span>Orçamentos</span></button>
         <button class="nav-btn" data-tab="clientes"><span class="nav-icon">◉</span><span>Clientes</span></button>
         <button class="nav-btn" data-tab="pagamentos"><span class="nav-icon">€</span><span>Pagamentos</span></button>
         <button class="nav-btn" data-tab="relatorios"><span class="nav-icon">▣</span><span>Relatórios</span></button>
@@ -3123,10 +3250,16 @@ td.acoes-col, .acoes-col{
           <div id="alertCards" class="alert-grid"></div>
         </section>
 
-        <section class="panel">
-          <div class="panel-head">
-          <div id="dashboardAgendaWrap" class="agenda-smart-grid"></div>
-        </section>
+        <div class="empresa-smart-grid">
+          <section class="panel">
+            <div class="panel-head"><h3>Clientes com dívida</h3></div>
+            <div id="empresaClientesDividaList" class="empresa-list"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h3>Orçamentos pendentes</h3></div>
+            <div id="empresaOrcamentosPendentesList" class="empresa-list"></div>
+          </section>
+        </div>
 
         <div class="dashboard-grid">
           <section class="panel">
@@ -3140,9 +3273,18 @@ td.acoes-col, .acoes-col{
           </section>
         </div>
 
+
+        <section class="panel" id="dashboardEmpresaSmartSection">
+          <div class="panel-head"><h3>Resumo empresa</h3></div>
+          <div class="empresa-kpi-grid">
+            <div class="empresa-kpi"><span>Total recebido</span><strong id="empresaTotalRecebido">0 €</strong><small>Pagamentos registados</small></div>
+            <div class="empresa-kpi"><span>Em dívida</span><strong id="empresaTotalDivida">0 €</strong><small>Valor em aberto</small></div>
+            <div class="empresa-kpi"><span>Orçamentos pendentes</span><strong id="empresaOrcPendentes">0</strong><small>A aguardar decisão</small></div>
+            <div class="empresa-kpi"><span>Clientes com dívida</span><strong id="empresaClientesDivida">0</strong><small>Prioridade do dia</small></div>
+          </div>
+        </section>
       </section>
 
-      
 <section class="page" id="adicionar-page">
         <div class="content-grid single-panel-grid">
           <section class="panel admin-only">
@@ -3234,6 +3376,35 @@ td.acoes-col, .acoes-col{
 <th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('invoiceType')">Faturação <span id="sortIcon-invoiceType">↕</span></button></th>
 <th>Ações</th></tr></thead>
                 <tbody id="pagamentosTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+
+      <section class="page" id="orcamentos-page">
+        <div class="content-grid">
+          <section class="panel admin-only">
+            <div class="panel-head"><h3>Novo orçamento</h3></div>
+            <form id="orcamentoForm" class="form-grid">
+              <input type="hidden" id="orcamentoId" />
+              <div class="field"><label>Cliente</label><select id="orcamentoCliente"></select></div>
+              <div class="field"><label>Descrição</label><input id="orcamentoDescricao" type="text" placeholder="Serviço / orçamento" required /></div>
+              <div class="field"><label>Valor</label><input id="orcamentoValor" type="number" step="0.01" min="0" /></div>
+              <div class="field"><label>Data</label><input id="orcamentoData" type="date" /></div>
+              <div class="field"><label>Estado</label><select id="orcamentoEstado"><option value="pendente">Pendente</option><option value="aprovado">Aprovado</option><option value="rejeitado">Rejeitado</option><option value="rejeitado">Rejeitado</option></select></div>
+              <div class="field field-span-2"><label>Notas</label><textarea id="orcamentoNotas" rows="4"></textarea></div>
+              <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar orçamento</button><button type="button" class="btn btn-secondary" id="clearOrcamentoBtn">Limpar</button></div></div>
+            </form>
+          </section>
+          <section class="panel wide-panel">
+            <div class="panel-head"><h3>Lista de orçamentos</h3></div>
+            <div class="toolbar"><input id="searchOrcamentos" type="text" placeholder="Pesquisar orçamento" /></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Código</th><th>Cliente</th><th>Descrição</th><th>Valor</th><th>Data</th><th>Estado</th><th>Ações</th></tr></thead>
+                <tbody id="orcamentosTableBody"></tbody>
               </table>
             </div>
           </section>
@@ -5091,7 +5262,7 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPe
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const APP_VERSION = '1.0.6';
-const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos' , lastTrabId:'ge_last_trab_id' };
+const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos', orcamentos:'ge_orcamentos', lastTrabId:'ge_last_trab_id' };
 const LOGS_COLLECTION = 'logs';
 
 let currentRole = null, currentUsername = null, currentUserEmail = null;
@@ -5100,7 +5271,7 @@ let currentAccessMode = 'edit';
 let managedUsersCache = [];
 const ROLE_COLLECTION = 'user_roles';
 const MASTER_EMAILS = ['pica.fern@gmail.com'];
-let trabalhos = [], clientes = [], pagamentos = [];
+let trabalhos = [], clientes = [], pagamentos = [], orcamentos = []; if(typeof window !== 'undefined') window.orcamentos = orcamentos;
 let lastTrabId = 0;
 
 let firebaseApp = null;
@@ -5889,6 +6060,8 @@ function loadLocal(){
   try{trabalhos=(JSON.parse(localStorage.getItem(STORAGE_KEYS.trabalhos))||[]).map(normalizeTrabalhoStateShape)}catch{trabalhos=[]}
   try{clientes=JSON.parse(localStorage.getItem(STORAGE_KEYS.clientes))||[]}catch{clientes=[]}
   try{pagamentos=JSON.parse(localStorage.getItem(STORAGE_KEYS.pagamentos))||[]}catch{pagamentos=[]}
+  try{orcamentos=JSON.parse(localStorage.getItem(STORAGE_KEYS.orcamentos))||[]}catch{orcamentos=[]}
+  if(typeof window !== 'undefined') window.orcamentos = orcamentos;
   try{ lastTrabId = Number(localStorage.getItem(STORAGE_KEYS.lastTrabId) || 0) || 0 }catch{ lastTrabId = 0 }
   normalizeTrabalhosIds();
   refreshLastTrabIdFromWorks();
@@ -5897,7 +6070,9 @@ function saveLocal(){
   localStorage.setItem(STORAGE_KEYS.trabalhos, JSON.stringify(trabalhos));
   localStorage.setItem(STORAGE_KEYS.clientes, JSON.stringify(clientes));
   localStorage.setItem(STORAGE_KEYS.pagamentos, JSON.stringify(pagamentos));
+  localStorage.setItem(STORAGE_KEYS.orcamentos, JSON.stringify(orcamentos));
   localStorage.setItem(STORAGE_KEYS.lastTrabId, String(lastTrabId));
+  if(typeof window !== 'undefined'){ window.orcamentos = orcamentos; window.trabalhos = trabalhos; window.clientes = clientes; window.pagamentos = pagamentos; }
   autoBackupInvisible();
 }
 
@@ -6364,6 +6539,7 @@ function switchTab(tab){
   if(tab === 'trabalhos') renderTrabalhos();
   if(tab === 'clientes') renderClientes();
   if(tab === 'pagamentos') renderPagamentos();
+  if(tab === 'orcamentos') renderOrcamentos();
   if(tab === 'relatorios') renderRelatorios();
   if(tab === 'logs') renderAuditLogs(false);
   try{ renderAdvancedReports(); }catch(e){}
@@ -6486,6 +6662,7 @@ function attachRealtimeListeners(){
   bind('trabalhos', rows => { trabalhos = rows.map(r => normalizeTrabalhoStateShape({ ...r, workCode: r.workCode || r.ordemId || '' })); normalizeTrabalhosIds(); refreshLastTrabIdFromWorks(); });
   bind('clientes', rows => { clientes = rows; });
   bind('pagamentos', rows => { pagamentos = rows; });
+  bind('orcamentos', rows => { orcamentos = rows; if(typeof window !== 'undefined') window.orcamentos = orcamentos; });
 }
 async function ensureFirebaseReady(timeoutMs = 12000){
   if (!firestoreDb) {
@@ -7984,6 +8161,92 @@ function renderCalendario(){
   }).join('');
 }
 
+
+function getDashboardOrcamentosLista(){
+  const lista = window.orcamentos || [];
+  if(Array.isArray(lista) && lista.length) return lista;
+  try{
+    const raw = localStorage.getItem('ge_orcamentos');
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function renderDashboardEmpresaSmart(){
+  const recebidoEl = document.getElementById('empresaTotalRecebido');
+  const dividaEl = document.getElementById('empresaTotalDivida');
+  const orcEl = document.getElementById('empresaOrcPendentes');
+  const cliEl = document.getElementById('empresaClientesDivida');
+  const cliList = document.getElementById('empresaClientesDividaList');
+  const orcList = document.getElementById('empresaOrcamentosPendentesList');
+  if(!recebidoEl || !dividaEl || !orcEl || !cliEl || !cliList || !orcList) return;
+
+  const trabalhosLista = Array.isArray(trabalhos) ? trabalhos : [];
+  const pagamentosLista = Array.isArray(pagamentos) ? pagamentos : [];
+  const orcamentosLista = getDashboardOrcamentosLista();
+
+  const totalFaturado = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
+  const totalRecebido = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
+  const totalDivida = Math.max(totalFaturado - totalRecebido, 0);
+
+  const clientTotals = {};
+  trabalhosLista.forEach(t => {
+    const nome = String(t.cliente || t.clienteNome || '').trim();
+    if(!nome) return;
+    clientTotals[nome] = clientTotals[nome] || { faturado:0, pago:0 };
+    clientTotals[nome].faturado += Number(t.valor || t.valorPago || 0) || 0;
+  });
+  pagamentosLista.forEach(p => {
+    const nome = String(p.cliente || p.clienteNome || '').trim();
+    if(!nome) return;
+    clientTotals[nome] = clientTotals[nome] || { faturado:0, pago:0 };
+    clientTotals[nome].pago += Number(p.valor || p.valorPago || 0) || 0;
+  });
+  const clientesDivida = Object.entries(clientTotals)
+    .map(([nome, vals]) => ({ nome, divida: Math.max((vals.faturado||0) - (vals.pago||0), 0) }))
+    .filter(item => item.divida > 0.009)
+    .sort((a,b) => b.divida - a.divida)
+    .slice(0,6);
+
+  const orcPendentes = orcamentosLista
+    .filter(o => String(o.estado || '').toLowerCase().includes('pend'))
+    .sort((a,b) => String(b.data || '').localeCompare(String(a.data || '')))
+    .slice(0,6);
+
+  recebidoEl.textContent = euro(totalRecebido);
+  dividaEl.textContent = euro(totalDivida);
+  orcEl.textContent = String(orcPendentes.length);
+  cliEl.textContent = String(clientesDivida.length);
+
+  cliList.innerHTML = clientesDivida.length ? clientesDivida.map(item => `
+    <div class="empresa-item">
+      <div class="meta">
+        <span class="title">${escapeHtml(item.nome)}</span>
+        <span class="sub">Cliente com valor em aberto</span>
+      </div>
+      <div style="display:grid;justify-items:end;gap:6px;">
+        <span class="empresa-pill danger">Dívida</span>
+        <strong>${euro(item.divida)}</strong>
+      </div>
+    </div>
+  `).join('') : '<div class="empresa-empty">Sem clientes com dívida neste momento.</div>';
+
+  orcList.innerHTML = orcPendentes.length ? orcPendentes.map(item => `
+    <div class="empresa-item">
+      <div class="meta">
+        <span class="title">${escapeHtml(item.cliente || 'Sem cliente')}</span>
+        <span class="sub">${escapeHtml(item.descricao || item.tipoTrabalho || 'Orçamento pendente')}</span>
+      </div>
+      <div style="display:grid;justify-items:end;gap:6px;">
+        <span class="empresa-pill warn">Pendente</span>
+        <strong>${euro(Number(item.valor || 0) || 0)}</strong>
+      </div>
+    </div>
+  `).join('') : '<div class="empresa-empty">Sem orçamentos pendentes.</div>';
+}
+
 function renderDashboard(){
   const totalTrabalhos = trabalhos.length;
   const emAndamento = trabalhos.filter(t=>['Pendente','Em curso','Aguardar peça'].includes(normalizeEstado(t.estado))).length;
@@ -8027,7 +8290,8 @@ function renderDashboard(){
     chip.textContent = totalTrabalhos ? 'Empresa Ativa' : 'Online';
     chip.className = totalTrabalhos ? 'status-ok' : 'status-warn';
   }
-  renderDashboardCharts();
+  try{ renderDashboardEmpresaSmart(); }catch(e){}
+  try{ renderDashboardCharts(); }catch(e){}
 }
 
 
@@ -8295,7 +8559,7 @@ function renderRelatorios() {
         .join('')
     : '<div class="report-card">Sem dados para relatório.</div>';
 }
-function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); renderDashboard(); renderAlerts(); try{ if(typeof renderDashboardAgenda === 'function') renderDashboardAgenda(); }catch(e){ console.warn('renderDashboardAgenda indisponível:', e); } renderTrabalhos(); renderClientes(); renderPagamentos(); renderRelatorios();
+function renderAll(){ if(!currentRole) return; setRoleUI(); populateClientOptions(); populateClientOptions(); populateOrcamentoClientOptions(); renderDashboard(); renderAlerts(); try{ if(typeof renderDashboardAgenda === 'function') renderDashboardAgenda(); }catch(e){ console.warn('renderDashboardAgenda indisponível:', e); } renderTrabalhos(); renderClientes(); renderPagamentos(); renderOrcamentos(); renderRelatorios();
   try{ renderAdvancedReports(); }catch(e){}
   renderManagedUsers();
   updateWorkCodePreview();
@@ -9560,6 +9824,157 @@ function printProfessionalReport(){
   openProfessionalReportWindow(true);
 }
 
+
+function populateOrcamentoClientOptions(selected=''){
+  const select = $('orcamentoCliente');
+  if(!select) return;
+  const current = selected || select.value || '';
+  const sorted = clientes.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+  select.innerHTML = ['<option value="">Selecionar cliente</option>']
+    .concat(sorted.map(c => `<option value="${escapeHtml(c.nome || '')}">${escapeHtml(c.nome || '')}</option>`))
+    .join('');
+  if(current) select.value = current;
+}
+function renderOrcamentos(){
+  const tbody = $('orcamentosTableBody');
+  if(!tbody) return;
+  populateOrcamentoClientOptions();
+  const term = ($('searchOrcamentos')?.value||'').trim().toLowerCase();
+  const rows = orcamentos.filter(o => [o.codigo,o.cliente,o.descricao,o.estado,o.notas].join(' ').toLowerCase().includes(term))
+    .slice().sort((a,b)=> new Date(b.data || 0) - new Date(a.data || 0));
+  tbody.innerHTML = rows.length ? rows.map(o => `
+    <tr>
+      <td><strong>${escapeHtml(o.codigo||'-')}</strong></td>
+      <td>${escapeHtml(o.cliente||'-')}</td>
+      <td>${escapeHtml(o.descricao||'-')}</td>
+      <td>${euro(o.valor||0)}</td>
+      <td>${fmtDate(o.data||'')}</td>
+      <td><span class="badge" data-state="${escapeHtml((o.estado||'pendente').replace(/^./,m=>m.toUpperCase()))}">${escapeHtml((o.estado||'pendente').replace(/^./,m=>m.toUpperCase()))}</span></td>
+      <td><div class="orc-actions">${isAdminLike()?`<button class="orc-btn edit" onclick="editOrcamento('${o.id}')">Editar</button><button class="orc-btn pending" onclick="approveOrcamento('${o.id}')">Pend.</button><button class="orc-btn paid" onclick="approveOrcamentoAsPaid('${o.id}')">Pago</button><button class="orc-btn reject" onclick="rejectOrcamento('${o.id}')">Rejeitar</button><button class="orc-btn delete" onclick="deleteOrcamento('${o.id}')">Apagar</button>`:''}</div></td>
+    </tr>`).join('') : '<tr><td colspan="7">Sem orçamentos registados.</td></tr>';
+}
+$('searchOrcamentos')?.addEventListener('input', renderOrcamentos);
+$('orcamentoForm')?.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  if(!adminGuard()) return;
+  const existingId = $('orcamentoId').value;
+  const current = existingId ? orcamentos.find(x=>x.id===existingId) : null;
+  const item = {
+    id: existingId || genId('orc'),
+    codigo: current?.codigo || `ORC-${String(orcamentos.length + 1).padStart(4,'0')}`,
+    cliente: $('orcamentoCliente').value.trim(),
+    descricao: $('orcamentoDescricao').value.trim(),
+    valor: Number($('orcamentoValor').value || 0),
+    data: $('orcamentoData').value || getTodayLocalDateStr(),
+    estado: $('orcamentoEstado').value || 'pendente',
+    notas: $('orcamentoNotas').value.trim()
+  };
+  if(!item.cliente || !item.descricao){ alert('Preenche cliente e descrição do orçamento.'); return; }
+  const i = orcamentos.findIndex(x=>x.id===item.id);
+  if(i>=0) orcamentos[i] = item; else orcamentos.push(item);
+  saveLocal();
+  try{ await upsertRemote('orcamentos', item); }catch(e){ console.error(e); }
+  try{ await logAction(i>=0?'update_orcamento':'create_orcamento',{ entity:'orcamento', orcamentoId:item.id, codigo:item.codigo, cliente:item.cliente, valor:item.valor, estado:item.estado }); }catch(e){}
+  $('orcamentoForm').reset();
+  if($('orcamentoId')) $('orcamentoId').value='';
+  if($('orcamentoEstado')) $('orcamentoEstado').value='pendente';
+  if($('orcamentoData')) $('orcamentoData').value = getTodayLocalDateStr();
+  renderAll();
+  switchTab('orcamentos');
+});
+window.editOrcamento = function(id){
+  if(!adminGuard()) return;
+  const o = orcamentos.find(x=>x.id===id); if(!o) return;
+  $('orcamentoId').value = o.id;
+  populateOrcamentoClientOptions(o.cliente || '');
+  $('orcamentoDescricao').value = o.descricao || '';
+  $('orcamentoValor').value = o.valor || '';
+  $('orcamentoData').value = o.data || getTodayLocalDateStr();
+  $('orcamentoEstado').value = o.estado || 'pendente';
+  $('orcamentoNotas').value = o.notas || '';
+  switchTab('orcamentos');
+};
+window.deleteOrcamento = async function(id){
+  if(!adminGuard()) return;
+  if(!confirm('Apagar este orçamento?')) return;
+  orcamentos = orcamentos.filter(x=>x.id!==id);
+  if(typeof window !== 'undefined') window.orcamentos = orcamentos;
+  saveLocal();
+  try{ await removeRemote('orcamentos', id); }catch(e){ console.error(e); }
+  try{ await logAction('delete_orcamento',{ entity:'orcamento', orcamentoId:id }); }catch(e){}
+  renderAll();
+};
+window.approveOrcamento = async function(id){
+  if(!adminGuard()) return;
+  const o = orcamentos.find(x=>x.id===id); if(!o) return;
+  if(!confirm('Aprovar orçamento e criar trabalho pendente?')) return;
+  o.estado = 'aprovado';
+  try{ await upsertRemote('orcamentos', o); }catch(e){ console.error(e); }
+  const novoTrabalho = {
+    id: genId('trab'),
+    workCode: nextTrabalhoId(),
+    cliente: o.cliente || '',
+    contacto: '',
+    tipoTrabalho: o.descricao || 'Orçamento aprovado',
+    valor: Number(o.valor || 0),
+    dataInicio: getTodayLocalDateStr(),
+    dataFim: '',
+    estado: 'Pendente',
+    invoiceType: 'Com Fatura',
+    descricao: `Criado a partir do orçamento ${o.codigo || ''}${o.notas ? ' - ' + o.notas : ''}`
+  };
+  trabalhos.push(novoTrabalho);
+  saveLocal();
+  try{ await upsertRemote('trabalhos', novoTrabalho); }catch(e){ console.error(e); }
+  try{ await logAction('approve_orcamento_pendente',{ entity:'orcamento', orcamentoId:o.id, codigo:o.codigo, trabalhoId:novoTrabalho.id, workCode:novoTrabalho.workCode, modo:'pendente' }); }catch(e){}
+  renderAll();
+  switchTab('trabalhos');
+};
+
+window.approveOrcamentoAsPaid = async function(id){
+  if(!adminGuard()) return;
+  const o = orcamentos.find(x=>x.id===id); if(!o) return;
+  if(!confirm('Aprovar orçamento e criar trabalho já pago?')) return;
+  o.estado = 'aprovado';
+  try{ await upsertRemote('orcamentos', o); }catch(e){ console.error(e); }
+  const novoTrabalho = {
+    id: genId('trab'),
+    workCode: nextTrabalhoId(),
+    cliente: o.cliente || '',
+    contacto: '',
+    tipoTrabalho: o.descricao || 'Orçamento aprovado',
+    valor: Number(o.valor || 0),
+    dataInicio: getTodayLocalDateStr(),
+    dataFim: '',
+    estado: 'Pendente',
+    invoiceType: 'Com Fatura',
+    descricao: `Criado a partir do orçamento ${o.codigo || ''}${o.notas ? ' - ' + o.notas : ''}`
+  };
+  trabalhos.push(novoTrabalho);
+  saveLocal();
+  try{ await upsertRemote('trabalhos', novoTrabalho); }catch(e){ console.error(e); }
+  try{
+    if(typeof window.markAsPaid === 'function'){
+      await window.markAsPaid(novoTrabalho.id, 'Orçamento Aprovado', getTodayLocalDateStr(), Number(o.valor || 0));
+    }
+  }catch(e){ console.error(e); }
+  try{ await logAction('approve_orcamento_pago',{ entity:'orcamento', orcamentoId:o.id, codigo:o.codigo, trabalhoId:novoTrabalho.id, workCode:novoTrabalho.workCode, modo:'pago' }); }catch(e){}
+  renderAll();
+  switchTab('pagamentos');
+};
+
+window.rejectOrcamento = async function(id){
+  if(!adminGuard()) return;
+  const o = orcamentos.find(x=>x.id===id); if(!o) return;
+  if(!confirm('Marcar este orçamento como rejeitado?')) return;
+  o.estado = 'rejeitado';
+  saveLocal();
+  try{ await upsertRemote('orcamentos', o); }catch(e){ console.error(e); }
+  try{ await logAction('reject_orcamento',{ entity:'orcamento', orcamentoId:o.id, codigo:o.codigo }); }catch(e){}
+  renderAll();
+  switchTab('orcamentos');
+};
+$('orcamentoData') && !$('orcamentoData').value && ($('orcamentoData').value = getTodayLocalDateStr());
 </script>
 
   <div id="clientModal" class="modal hidden">
