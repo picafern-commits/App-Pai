@@ -2777,6 +2777,11 @@ td.acoes-col, .acoes-col{
 .orc-btn.reject{background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(248,113,113,.14));border-color:rgba(239,68,68,.28);color:#fecaca}
 .orc-btn.delete{background:linear-gradient(135deg,rgba(127,29,29,.45),rgba(239,68,68,.16));border-color:rgba(239,68,68,.32);color:#fff}
 
+
+/* ALERTAS SAFE */
+.alert-card strong{display:block;font-size:28px;margin:6px 0 8px}
+.alert-card p{margin:0;color:var(--muted);line-height:1.45}
+
 </style>
   
 </head>
@@ -7783,6 +7788,7 @@ function renderDashboardEmpresaSmart(){
   const cliEl = document.getElementById('empresaClientesDivida');
   const cliList = document.getElementById('empresaClientesDividaList');
   const orcList = document.getElementById('empresaOrcamentosPendentesList');
+  const alertCards = document.getElementById('alertCards');
   if(!recebidoEl || !dividaEl || !orcEl || !cliEl || !cliList || !orcList) return;
 
   const trabalhosLista = Array.isArray(trabalhos) ? trabalhos : [];
@@ -7821,6 +7827,27 @@ function renderDashboardEmpresaSmart(){
   dividaEl.textContent = euro(totalDivida);
   orcEl.textContent = String(orcPendentes.length);
   cliEl.textContent = String(clientesDivida.length);
+
+  if(alertCards){
+    const trabalhosPendentes = trabalhosLista.filter(t => {
+      const st = String(normalizeEstado(t.estado || '') || '').toLowerCase();
+      return !st || st.includes('pend') || st.includes('curso') || st.includes('aguardar');
+    }).length;
+    const alertHtml = [];
+    if(orcPendentes.length){
+      alertHtml.push(`<div class="alert-card"><span class="badge" data-state="Pendente">Orçamentos</span><strong>${orcPendentes.length}</strong><p>Orçamentos pendentes a precisar de decisão.</p></div>`);
+    }
+    if(trabalhosPendentes){
+      alertHtml.push(`<div class="alert-card"><span class="badge" data-state="Em andamento">Trabalhos</span><strong>${trabalhosPendentes}</strong><p>Trabalhos pendentes ou em andamento.</p></div>`);
+    }
+    if(clientesDivida.length){
+      alertHtml.push(`<div class="alert-card"><span class="badge" data-state="Pendente">Clientes</span><strong>${clientesDivida.length}</strong><p>Clientes com valores em dívida.</p></div>`);
+    }
+    if(totalDivida > 0.009){
+      alertHtml.push(`<div class="alert-card"><span class="badge" data-state="Pendente">Dívida</span><strong>${euro(totalDivida)}</strong><p>Valor global ainda por receber.</p></div>`);
+    }
+    alertCards.innerHTML = alertHtml.length ? alertHtml.join('') : '<div class="alert-card"><span class="badge" data-state="Concluído">Tudo em dia</span><strong>0</strong><p>Sem alertas críticos neste momento.</p></div>';
+  }
 
   cliList.innerHTML = clientesDivida.length ? clientesDivida.map(item => `
     <div class="empresa-item">
