@@ -94,7 +94,7 @@ Correções finais 1.0.6:
 Fix 1.0.6:
 - botão Pago no histórico
 - ao marcar Pago cria registo em Pagamentos
-- histórico mostra coluna Fatção
+- histórico mostra coluna Fat
 
 
 Fix 1.0.6:
@@ -102,7 +102,7 @@ Fix 1.0.6:
 
 
 Melhorias premium 1.0.6:
-- badges visuais de estado e Fatção
+- badges visuais de estado e Fat
 - escolha de método ao marcar como pago
 - dashboard com métricas melhores
 - ações por permissões (empresa)

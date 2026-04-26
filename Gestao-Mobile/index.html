@@ -3318,7 +3318,7 @@ td.acoes-col, .acoes-col{
           <div class="stat-card panel pink"><span>Total trabalhos</span><strong id="statTotalTrabalhos">0</strong><small>Todos os registos</small></div>
           <div class="stat-card panel blue"><span>Em andamento</span><strong id="statEmAndamento">0</strong><small>Serviços abertos</small></div>
           <div class="stat-card panel green"><span>Concluídos</span><strong id="statConcluidos">0</strong><small>Fechados ou pagos</small></div>
-          <div class="stat-card panel gold"><span>Total Recebido</span><strong id="statTotalRecebido">0 €</strong><small>Soma dos valores</small></div>
+          <div class="stat-card panel gold"><span>Total Fat</span><strong id="statTotalFat">0 €</strong><small>Soma dos valores</small></div>
         </div>
 
         <section class="panel">
@@ -8293,25 +8293,25 @@ function renderDashboardEmpresaSmart(){
   const pagamentosLista = Array.isArray(pagamentos) ? pagamentos : [];
   const orcamentosLista = getDashboardOrcamentosLista();
 
-  const totalRecebido = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
+  const totalFat = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
   const totalRecebido = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
-  const totalDivida = Math.max(totalRecebido - totalRecebido, 0);
+  const totalDivida = Math.max(totalFat - totalRecebido, 0);
 
   const clientTotals = {};
   trabalhosLista.forEach(t => {
     const nome = String(t.cliente || t.clienteNome || '').trim();
     if(!nome) return;
-    clientTotals[nome] = clientTotals[nome] || { Recebido:0, pago:0 };
-    clientTotals[nome].Recebido += Number(t.valor || t.valorPago || 0) || 0;
+    clientTotals[nome] = clientTotals[nome] || { Fat:0, pago:0 };
+    clientTotals[nome].Fat += Number(t.valor || t.valorPago || 0) || 0;
   });
   pagamentosLista.forEach(p => {
     const nome = String(p.cliente || p.clienteNome || '').trim();
     if(!nome) return;
-    clientTotals[nome] = clientTotals[nome] || { Recebido:0, pago:0 };
+    clientTotals[nome] = clientTotals[nome] || { Fat:0, pago:0 };
     clientTotals[nome].pago += Number(p.valor || p.valorPago || 0) || 0;
   });
   const clientesDivida = Object.entries(clientTotals)
-    .map(([nome, vals]) => ({ nome, divida: Math.max((vals.Recebido||0) - (vals.pago||0), 0) }))
+    .map(([nome, vals]) => ({ nome, divida: Math.max((vals.Fat||0) - (vals.pago||0), 0) }))
     .filter(item => item.divida > 0.009)
     .sort((a,b) => b.divida - a.divida)
     .slice(0,6);
@@ -8378,14 +8378,14 @@ function renderDashboard(){
   const totalTrabalhos = trabalhos.length;
   const emAndamento = trabalhos.filter(t=>['Pendente','Em curso','Aguardar peça'].includes(normalizeEstado(t.estado))).length;
   const concluidos = trabalhos.filter(t=>['Concluído','Pago','Entregue'].includes(normalizeEstado(t.estado))).length;
-  const totalRecebido = trabalhos.reduce((s,t)=>s+Number(t.valor||0),0);
+  const totalFat = trabalhos.reduce((s,t)=>s+Number(t.valor||0),0);
   const totalPago = pagamentos.reduce((s,p)=>s+Number(p.valor||0),0);
   const clientesAtivos = new Set(trabalhos.map(t=>(t.cliente||'').trim()).filter(Boolean)).size;
 
   $('statTotalTrabalhos').textContent = totalTrabalhos;
   $('statEmAndamento').textContent = emAndamento;
   $('statConcluidos').textContent = concluidos;
-  $('statTotalRecebido').textContent = euro(totalRecebido);
+  $('statTotalFat').textContent = euro(totalFat);
 
   const recentWrap=$('recentTrabalhos');
   recentWrap.innerHTML = !trabalhos.length
@@ -8439,9 +8439,9 @@ function buildDashboardChartData(){
     monthValues[d.getMonth()] += Number(t.valor || t.valorPago || 0) || 0;
   });
 
-  const totalRecebido = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
+  const totalFat = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
   const totalRecebido = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
-  const totalDivida = Math.max(totalRecebido - totalRecebido, 0);
+  const totalDivida = Math.max(totalFat - totalRecebido, 0);
 
   return { monthLabels, monthValues, totalRecebido, totalDivida };
 }
@@ -8902,7 +8902,7 @@ window.openClientHistory = function(id){
   $('clientModalContent').innerHTML = `
     <div class="client-summary-grid">
       <div class="client-summary-card"><span>Total trabalhos</span><strong>${relatedTrabalhos.length}</strong></div>
-      <div class="client-summary-card"><span>Total Recebido</span><strong>${euro(totalTrabalhos)}</strong></div>
+      <div class="client-summary-card"><span>Total Fat</span><strong>${euro(totalTrabalhos)}</strong></div>
       <div class="client-summary-card"><span>Total pago</span><strong>${euro(totalPagamentos)}</strong></div>
       <div class="client-summary-card"><span>Estado</span><strong>${relatedPagamentos.length ? 'Com histórico' : 'Sem pagamentos'}</strong></div>
     </div>
