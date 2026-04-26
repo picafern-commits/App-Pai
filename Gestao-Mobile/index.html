@@ -3381,7 +3381,7 @@ td.acoes-col, .acoes-col{
               <div class="field advanced-work-field master-edit-only"><label>Data de início</label><input id="dataInicio" type="date" /></div>
               <div class="field advanced-work-field master-edit-only"><label>Data de fim</label><input id="dataFim" type="date" /></div>
               <div class="field advanced-work-field master-edit-only"><label>Estado</label><select id="estado"><option>Pendente</option><option>Em curso</option><option>Concluído</option><option>Entregue</option><option>Cancelado</option></select></div>
-              <div class="field"><label>Fatção</label><select id="trabalhoInvoiceType"><option>Com Fat</option><option>Sem Fat</option></select></div>
+              <div class="field"><label>Fat</label><select id="trabalhoInvoiceType"><option>Com Fat</option><option>Sem Fat</option></select></div>
               <div class="field field-span-2"><label>Descrição</label><textarea id="descricao" rows="5"></textarea></div>
               <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar trabalho</button><button type="button" class="btn btn-secondary" id="clearTrabalhoBtn">Limpar</button></div></div>
             </form>
@@ -3400,7 +3400,7 @@ td.acoes-col, .acoes-col{
             </div>
             <div id="trabalhosCardsWrap" class="mobile-cards-wrap"></div><div class="table-wrap">
               <table>
-                <thead><tr><th>ID</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Início</th><th>Fim</th><th>Estado</th><th>Fatção</th><th>Ações</th></tr></thead>
+                <thead><tr><th>ID</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Início</th><th>Fim</th><th>Estado</th><th>Fat</th><th>Ações</th></tr></thead>
                 <tbody id="trabalhosTableBody"></tbody>
               </table>
             </div>
@@ -3462,7 +3462,7 @@ td.acoes-col, .acoes-col{
 <th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('data')">Data do Trabalho <span id="sortIcon-data">↕</span></button></th>
 <th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('valor')">Valor <span id="sortIcon-valor">↕</span></button></th>
 <th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('metodo')">Método <span id="sortIcon-metodo">↕</span></button></th>
-<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('invoiceType')">Fatção <span id="sortIcon-invoiceType">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('invoiceType')">Fat <span id="sortIcon-invoiceType">↕</span></button></th>
 <th>Ações</th></tr></thead>
                 <tbody id="pagamentosTableBody"></tbody>
               </table>
@@ -4694,7 +4694,7 @@ function buildProfessionalReportHtml(){
     <body>
       <div class="hero">
         <h1>Relatório Profissional</h1>
-        <p>Resumo avançado de clientes, Fatção e histórico.</p>
+        <p>Resumo avançado de clientes, Fat e histórico.</p>
       </div>
 
       <div class="stats">
@@ -4703,7 +4703,7 @@ function buildProfessionalReportHtml(){
           <div class="value">${formatEuroValue(data.avgValue)}</div>
         </div>
         <div class="card">
-          <div class="label">Cliente com mais Fatção</div>
+          <div class="label">Cliente com mais Fat</div>
           <div class="value">${data.topClient ? escapeHtml(data.topClient.nome) : '--'}</div>
         </div>
       </div>
@@ -8466,7 +8466,7 @@ function renderDashboardCharts(){
       data: {
         labels: monthLabels,
         datasets: [{
-          label: 'Fatção (€)',
+          label: 'Fat (€)',
           data: monthValues
         }]
       },
@@ -9310,7 +9310,7 @@ function renderMobileCards(){
           <div class="mobile-card-item"><span>ID</span><strong>${escapeHtml(t.workCode || '-')}</strong></div>
           <div class="mobile-card-item"><span>Valor</span><strong>${euro(t.valorPago ?? t.valor ?? 0)}</strong></div>
           <div class="mobile-card-item"><span>Estado</span><strong><div class="status-cell-inline"><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></div></strong></div>
-          <div class="mobile-card-item"><span>Fatção</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
+          <div class="mobile-card-item"><span>Fat</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
         </div>
         ${trabalhoActions(t)}
       </article>`;
@@ -9331,7 +9331,7 @@ function renderMobileCards(){
           <div class="mobile-card-item"><span>Data</span><strong>${fmtDate(p.workDate || p.data || '')}</strong></div>
           <div class="mobile-card-item"><span>Valor</span><strong>${euro(p.valor || 0)}</strong></div>
           <div class="mobile-card-item"><span>Método</span><strong>${escapeHtml(p.metodo || 'Manual')}</strong></div>
-          <div class="mobile-card-item"><span>Fatção</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
+          <div class="mobile-card-item"><span>Fat</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
         </div>
         ${isAdminLike() ? `<div class="row-actions"><button class="small-btn danger" onclick="deletePagamento('${p.id}')">Apagar</button></div>` : ''}
       </article>`;
@@ -9915,7 +9915,7 @@ function buildProfessionalReportHtml(){
     <body>
       <div class="hero">
         <h1>Relatório Profissional</h1>
-        <p>Resumo avançado de clientes, Fatção e histórico.</p>
+        <p>Resumo avançado de clientes, Fat e histórico.</p>
       </div>
 
       <div class="stats">
@@ -9924,7 +9924,7 @@ function buildProfessionalReportHtml(){
           <div class="value">${formatEuroValue(data.avgValue)}</div>
         </div>
         <div class="card">
-          <div class="label">Cliente com mais Fatção</div>
+          <div class="label">Cliente com mais Fat</div>
           <div class="value">${data.topClient ? escapeHtml(data.topClient.nome) : '--'}</div>
         </div>
       </div>
