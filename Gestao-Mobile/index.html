@@ -2092,7 +2092,7 @@ button.desc-status-btn:hover{transform:translateY(-1px)}
   color:#fee2e2;
   box-shadow:0 0 0 1px rgba(239,68,68,.08) inset;
 }
-.pipeline-like-btn.fatura-btn{
+.pipeline-like-btn.Fat-btn{
   background:linear-gradient(180deg, rgba(168,85,247,.22), rgba(126,34,206,.16));
   border-color:rgba(216,180,254,.32);
   color:#f3e8ff;
@@ -2164,7 +2164,7 @@ td.acoes-col, .acoes-col{
 }
 
 
-.pipeline-like-btn.fatura-disabled{
+.pipeline-like-btn.Fat-disabled{
   background:linear-gradient(180deg, rgba(148,163,184,.12), rgba(100,116,139,.08));
   border-color:rgba(148,163,184,.20);
   color:#94a3b8;
@@ -3318,7 +3318,7 @@ td.acoes-col, .acoes-col{
           <div class="stat-card panel pink"><span>Total trabalhos</span><strong id="statTotalTrabalhos">0</strong><small>Todos os registos</small></div>
           <div class="stat-card panel blue"><span>Em andamento</span><strong id="statEmAndamento">0</strong><small>Serviços abertos</small></div>
           <div class="stat-card panel green"><span>Concluídos</span><strong id="statConcluidos">0</strong><small>Fechados ou pagos</small></div>
-          <div class="stat-card panel gold"><span>Total faturado</span><strong id="statTotalFaturado">0 €</strong><small>Soma dos valores</small></div>
+          <div class="stat-card panel gold"><span>Total Fatdo</span><strong id="statTotalFatdo">0 €</strong><small>Soma dos valores</small></div>
         </div>
 
         <section class="panel">
@@ -3381,7 +3381,7 @@ td.acoes-col, .acoes-col{
               <div class="field advanced-work-field master-edit-only"><label>Data de início</label><input id="dataInicio" type="date" /></div>
               <div class="field advanced-work-field master-edit-only"><label>Data de fim</label><input id="dataFim" type="date" /></div>
               <div class="field advanced-work-field master-edit-only"><label>Estado</label><select id="estado"><option>Pendente</option><option>Em curso</option><option>Concluído</option><option>Entregue</option><option>Cancelado</option></select></div>
-              <div class="field"><label>Faturação</label><select id="trabalhoInvoiceType"><option>Com Fatura</option><option>Sem Fatura</option></select></div>
+              <div class="field"><label>Fatção</label><select id="trabalhoInvoiceType"><option>Com Fat</option><option>Sem Fat</option></select></div>
               <div class="field field-span-2"><label>Descrição</label><textarea id="descricao" rows="5"></textarea></div>
               <div class="field field-span-2"><div class="inline-actions"><button type="submit" class="btn btn-primary">Guardar trabalho</button><button type="button" class="btn btn-secondary" id="clearTrabalhoBtn">Limpar</button></div></div>
             </form>
@@ -3400,7 +3400,7 @@ td.acoes-col, .acoes-col{
             </div>
             <div id="trabalhosCardsWrap" class="mobile-cards-wrap"></div><div class="table-wrap">
               <table>
-                <thead><tr><th>ID</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Início</th><th>Fim</th><th>Estado</th><th>Faturação</th><th>Ações</th></tr></thead>
+                <thead><tr><th>ID</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Início</th><th>Fim</th><th>Estado</th><th>Fatção</th><th>Ações</th></tr></thead>
                 <tbody id="trabalhosTableBody"></tbody>
               </table>
             </div>
@@ -3462,7 +3462,7 @@ td.acoes-col, .acoes-col{
 <th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('data')">Data do Trabalho <span id="sortIcon-data">↕</span></button></th>
 <th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('valor')">Valor <span id="sortIcon-valor">↕</span></button></th>
 <th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('metodo')">Método <span id="sortIcon-metodo">↕</span></button></th>
-<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('invoiceType')">Faturação <span id="sortIcon-invoiceType">↕</span></button></th>
+<th><button type="button" class="table-sort-btn" onclick="setPagamentoSort('invoiceType')">Fatção <span id="sortIcon-invoiceType">↕</span></button></th>
 <th>Ações</th></tr></thead>
                 <tbody id="pagamentosTableBody"></tbody>
               </table>
@@ -4694,7 +4694,7 @@ function buildProfessionalReportHtml(){
     <body>
       <div class="hero">
         <h1>Relatório Profissional</h1>
-        <p>Resumo avançado de clientes, faturação e histórico.</p>
+        <p>Resumo avançado de clientes, Fatção e histórico.</p>
       </div>
 
       <div class="stats">
@@ -4703,7 +4703,7 @@ function buildProfessionalReportHtml(){
           <div class="value">${formatEuroValue(data.avgValue)}</div>
         </div>
         <div class="card">
-          <div class="label">Cliente com mais faturação</div>
+          <div class="label">Cliente com mais Fatção</div>
           <div class="value">${data.topClient ? escapeHtml(data.topClient.nome) : '--'}</div>
         </div>
       </div>
@@ -7256,7 +7256,7 @@ button.desc-status-btn:hover{transform:translateY(-1px)}
   color:#fee2e2;
   box-shadow:0 0 0 1px rgba(239,68,68,.08) inset;
 }
-.pipeline-like-btn.fatura-btn{
+.pipeline-like-btn.Fat-btn{
   background:linear-gradient(180deg, rgba(168,85,247,.22), rgba(126,34,206,.16));
   border-color:rgba(216,180,254,.32);
   color:#f3e8ff;
@@ -7328,7 +7328,7 @@ td.acoes-col, .acoes-col{
 }
 
 
-.pipeline-like-btn.fatura-disabled{
+.pipeline-like-btn.Fat-disabled{
   background:linear-gradient(180deg, rgba(148,163,184,.12), rgba(100,116,139,.08));
   border-color:rgba(148,163,184,.20);
   color:#94a3b8;
@@ -8293,25 +8293,25 @@ function renderDashboardEmpresaSmart(){
   const pagamentosLista = Array.isArray(pagamentos) ? pagamentos : [];
   const orcamentosLista = getDashboardOrcamentosLista();
 
-  const totalFaturado = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
+  const totalFatdo = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
   const totalRecebido = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
-  const totalDivida = Math.max(totalFaturado - totalRecebido, 0);
+  const totalDivida = Math.max(totalFatdo - totalRecebido, 0);
 
   const clientTotals = {};
   trabalhosLista.forEach(t => {
     const nome = String(t.cliente || t.clienteNome || '').trim();
     if(!nome) return;
-    clientTotals[nome] = clientTotals[nome] || { faturado:0, pago:0 };
-    clientTotals[nome].faturado += Number(t.valor || t.valorPago || 0) || 0;
+    clientTotals[nome] = clientTotals[nome] || { Fatdo:0, pago:0 };
+    clientTotals[nome].Fatdo += Number(t.valor || t.valorPago || 0) || 0;
   });
   pagamentosLista.forEach(p => {
     const nome = String(p.cliente || p.clienteNome || '').trim();
     if(!nome) return;
-    clientTotals[nome] = clientTotals[nome] || { faturado:0, pago:0 };
+    clientTotals[nome] = clientTotals[nome] || { Fatdo:0, pago:0 };
     clientTotals[nome].pago += Number(p.valor || p.valorPago || 0) || 0;
   });
   const clientesDivida = Object.entries(clientTotals)
-    .map(([nome, vals]) => ({ nome, divida: Math.max((vals.faturado||0) - (vals.pago||0), 0) }))
+    .map(([nome, vals]) => ({ nome, divida: Math.max((vals.Fatdo||0) - (vals.pago||0), 0) }))
     .filter(item => item.divida > 0.009)
     .sort((a,b) => b.divida - a.divida)
     .slice(0,6);
@@ -8378,14 +8378,14 @@ function renderDashboard(){
   const totalTrabalhos = trabalhos.length;
   const emAndamento = trabalhos.filter(t=>['Pendente','Em curso','Aguardar peça'].includes(normalizeEstado(t.estado))).length;
   const concluidos = trabalhos.filter(t=>['Concluído','Pago','Entregue'].includes(normalizeEstado(t.estado))).length;
-  const totalFaturado = trabalhos.reduce((s,t)=>s+Number(t.valor||0),0);
+  const totalFatdo = trabalhos.reduce((s,t)=>s+Number(t.valor||0),0);
   const totalPago = pagamentos.reduce((s,p)=>s+Number(p.valor||0),0);
   const clientesAtivos = new Set(trabalhos.map(t=>(t.cliente||'').trim()).filter(Boolean)).size;
 
   $('statTotalTrabalhos').textContent = totalTrabalhos;
   $('statEmAndamento').textContent = emAndamento;
   $('statConcluidos').textContent = concluidos;
-  $('statTotalFaturado').textContent = euro(totalFaturado);
+  $('statTotalFatdo').textContent = euro(totalFatdo);
 
   const recentWrap=$('recentTrabalhos');
   recentWrap.innerHTML = !trabalhos.length
@@ -8423,7 +8423,7 @@ function renderDashboard(){
 
 
 
-let dashboardCharts = { faturacao:null, resumo:null };
+let dashboardCharts = { Fatcao:null, resumo:null };
 
 function buildDashboardChartData(){
   const trabalhosLista = Array.isArray(trabalhos) ? trabalhos : [];
@@ -8439,34 +8439,34 @@ function buildDashboardChartData(){
     monthValues[d.getMonth()] += Number(t.valor || t.valorPago || 0) || 0;
   });
 
-  const totalFaturado = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
+  const totalFatdo = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
   const totalRecebido = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
-  const totalDivida = Math.max(totalFaturado - totalRecebido, 0);
+  const totalDivida = Math.max(totalFatdo - totalRecebido, 0);
 
   return { monthLabels, monthValues, totalRecebido, totalDivida };
 }
 
 function destroyDashboardCharts(){
-  try{ if(dashboardCharts.faturacao){ dashboardCharts.faturacao.destroy(); dashboardCharts.faturacao = null; } }catch(e){}
+  try{ if(dashboardCharts.Fatcao){ dashboardCharts.Fatcao.destroy(); dashboardCharts.Fatcao = null; } }catch(e){}
   try{ if(dashboardCharts.resumo){ dashboardCharts.resumo.destroy(); dashboardCharts.resumo = null; } }catch(e){}
 }
 
 function renderDashboardCharts(){
   try{
     if(typeof Chart === 'undefined') return;
-    const faturacaoCanvas = document.getElementById('graficoFaturacaoMensal');
+    const FatcaoCanvas = document.getElementById('graficoFatcaoMensal');
     const resumoCanvas = document.getElementById('graficoResumoFinanceiro');
-    if(!faturacaoCanvas || !resumoCanvas) return;
+    if(!FatcaoCanvas || !resumoCanvas) return;
 
     const { monthLabels, monthValues, totalRecebido, totalDivida } = buildDashboardChartData();
     destroyDashboardCharts();
 
-    dashboardCharts.faturacao = new Chart(faturacaoCanvas.getContext('2d'), {
+    dashboardCharts.Fatcao = new Chart(FatcaoCanvas.getContext('2d'), {
       type: 'bar',
       data: {
         labels: monthLabels,
         datasets: [{
-          label: 'Faturação (€)',
+          label: 'Fatção (€)',
           data: monthValues
         }]
       },
@@ -8519,7 +8519,7 @@ function renderAlerts(){
 }
 
 function trabalhoActions(t){
-  const showInvoice = (t.invoiceType || 'Com Fatura') === 'Com Fatura';
+  const showInvoice = (t.invoiceType || 'Com Fat') === 'Com Fat';
   const canEdit = isAdminLike();
   const canDelete = isAdminLike();
   const hasDesc = ((t.descricao || t.descrição || t.description || t.desc || '')).trim().length > 0;
@@ -8531,7 +8531,7 @@ function trabalhoActions(t){
   return `
     <div class="enterprise-actions">
       ${descButton}
-      ${showInvoice ? `<button class="pipeline-like-btn fatura-btn" onclick="generateInvoice('${t.id}')">Fatura</button>` : `<span class="pipeline-like-btn fatura-disabled">Fatura</span>`}
+      ${showInvoice ? `<button class="pipeline-like-btn Fat-btn" onclick="generateInvoice('${t.id}')">Fat</button>` : `<span class="pipeline-like-btn Fat-disabled">Fat</span>`}
       ${canEdit ? `<button class="pipeline-like-btn edit-btn" onclick="editTrabalho('${t.id}')">Editar</button>` : '<span></span>'}
       ${canDelete ? `<button class="pipeline-like-btn delete-btn" onclick="deleteTrabalho('${t.id}')">Apagar</button>` : '<span></span>'}
       <div class="stage-flow">${flowButtons}</div>
@@ -8563,8 +8563,8 @@ function renderTrabalhos(){
   const page = updateTrabalhosPagination(rows.length);
   const pageRows = rows.slice(page.start, page.end);
   $('trabalhosTableBody').innerHTML = pageRows.length ? pageRows.map(t=>{
-    const invoiceType = t.invoiceType || 'Com Fatura';
-    const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
+    const invoiceType = t.invoiceType || 'Com Fat';
+    const invoiceClass = invoiceType === 'Sem Fat' ? 'sem' : 'com';
     const effectiveEstado = t.paymentStatus === 'Pago' ? 'Pago' : (t.estado || '-');
     return `<tr><td><strong>${escapeHtml(t.workCode||'-')}</strong></td><td>${escapeHtml(t.cliente||'-')}</td><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valorPago ?? t.valor ?? 0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><div class="status-cell-inline"><span class="badge" data-state="${escapeHtml(effectiveEstado)}">${escapeHtml(effectiveEstado)}</span></div></td><td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td><td class="actions-cell">${trabalhoActions(t)}</td></tr>`;
   }).join('') : '<tr><td colspan="9">Sem resultados.</td></tr>';
@@ -8625,8 +8625,8 @@ function renderPagamentos() {
 
   tbody.innerHTML = listaOrdenada.length
     ? listaOrdenada.map((p) => {
-      const invoiceType = p.invoiceType || 'Com Fatura';
-      const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
+      const invoiceType = p.invoiceType || 'Com Fat';
+      const invoiceClass = invoiceType === 'Sem Fat' ? 'sem' : 'com';
       return `
       <tr>
         <td>${escapeHtml(p.cliente || '-')}</td>
@@ -8712,7 +8712,7 @@ $('globalSearch')?.addEventListener('input', ()=>{ renderTrabalhos(); renderClie
 $('clearTrabalhoBtn')?.addEventListener('click', ()=>{
   $('trabalhoForm')?.reset();
   if($('trabalhoId')) $('trabalhoId').value='';
-  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
+  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fat';
   if($('cliente')) $('cliente').value='';
   if($('contacto')) $('contacto').value='';
   if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
@@ -8750,7 +8750,7 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
     dataInicio:$('dataInicio').value,
     dataFim:$('dataFim').value,
     estado:$('estado').value,
-    invoiceType:$('trabalhoInvoiceType') ? $('trabalhoInvoiceType').value : 'Com Fatura',
+    invoiceType:$('trabalhoInvoiceType') ? $('trabalhoInvoiceType').value : 'Com Fat',
     descricao:$('descricao').value.trim()
   };
 
@@ -8782,7 +8782,7 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
 
   $('trabalhoForm').reset();
   $('trabalhoId').value='';
-  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fatura';
+  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value='Com Fat';
   if($('cliente')) $('cliente').value='';
   if($('contacto')) $('contacto').value='';
   if($('workCodeDisplay')) $('workCodeDisplay').value = nextTrabalhoIdPreview();
@@ -8842,7 +8842,7 @@ window.editTrabalho = function(id){
   $('dataInicio').value=t.dataInicio||'';
   $('dataFim').value=t.dataFim||'';
   $('estado').value=normalizeEstado(t.estado||'Pendente');
-  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value=t.invoiceType||'Com Fatura';
+  if($('trabalhoInvoiceType')) $('trabalhoInvoiceType').value=t.invoiceType||'Com Fat';
   $('descricao').value=t.descricao||'';
   updateTrabalhoAdvancedFields();
   switchTab('adicionar');
@@ -8902,7 +8902,7 @@ window.openClientHistory = function(id){
   $('clientModalContent').innerHTML = `
     <div class="client-summary-grid">
       <div class="client-summary-card"><span>Total trabalhos</span><strong>${relatedTrabalhos.length}</strong></div>
-      <div class="client-summary-card"><span>Total faturado</span><strong>${euro(totalTrabalhos)}</strong></div>
+      <div class="client-summary-card"><span>Total Fatdo</span><strong>${euro(totalTrabalhos)}</strong></div>
       <div class="client-summary-card"><span>Total pago</span><strong>${euro(totalPagamentos)}</strong></div>
       <div class="client-summary-card"><span>Estado</span><strong>${relatedPagamentos.length ? 'Com histórico' : 'Sem pagamentos'}</strong></div>
     </div>
@@ -8950,8 +8950,8 @@ window.generateInvoice = function(id){
   const t = trabalhos.find(x=>x.id===id);
   if(!t) return;
   const invoiceNumber = `FT-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
-  printHtml(`Fatura ${invoiceNumber}`, `
-    <h1>Fatura / Serviço</h1>
+  printHtml(`Fat ${invoiceNumber}`, `
+    <h1>Fat / Serviço</h1>
     <div class="meta">Nº ${invoiceNumber}</div>
     <div class="card"><strong>Cliente:</strong> ${escapeHtml(t.cliente||'-')}</div>
     <div class="card"><strong>Tipo de trabalho:</strong> ${escapeHtml(t.tipoTrabalho||'-')}</div>
@@ -9024,7 +9024,7 @@ window.markAsPaid = async function(id, metodo='Manual', dataPagamento='', valorP
     data: finalPaymentDate,
     valor: valorFinal,
     metodo,
-    invoiceType: updatedTrabalho.invoiceType || 'Com Fatura',
+    invoiceType: updatedTrabalho.invoiceType || 'Com Fat',
     sourceWorkId: updatedTrabalho.id,
     workCode: updatedTrabalho.workCode || ''
   };
@@ -9299,8 +9299,8 @@ function renderMobileCards(){
       return (!term||hay.includes(term))&&(!globalTerm||hay.includes(globalTerm))&&(!estado||t.estado===estado);
     }).sort((a,b)=>getWorkCodeNumber(b.workCode)-getWorkCodeNumber(a.workCode));
     trabWrap.innerHTML = rows.length ? rows.map(t=>{
-      const invoiceType = t.invoiceType || 'Com Fatura';
-      const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
+      const invoiceType = t.invoiceType || 'Com Fat';
+      const invoiceClass = invoiceType === 'Sem Fat' ? 'sem' : 'com';
       return `<article class="mobile-card">
         <div>
           <div class="mobile-card-title">${escapeHtml(t.cliente || '-')}</div>
@@ -9310,7 +9310,7 @@ function renderMobileCards(){
           <div class="mobile-card-item"><span>ID</span><strong>${escapeHtml(t.workCode || '-')}</strong></div>
           <div class="mobile-card-item"><span>Valor</span><strong>${euro(t.valorPago ?? t.valor ?? 0)}</strong></div>
           <div class="mobile-card-item"><span>Estado</span><strong><div class="status-cell-inline"><span class="badge" data-state="${escapeHtml(t.estado||'-')}">${escapeHtml(t.estado||'-')}</span></div></strong></div>
-          <div class="mobile-card-item"><span>Faturação</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
+          <div class="mobile-card-item"><span>Fatção</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
         </div>
         ${trabalhoActions(t)}
       </article>`;
@@ -9320,8 +9320,8 @@ function renderMobileCards(){
   const pagWrap = $('pagamentosCardsWrap');
   if(pagWrap){
     pagWrap.innerHTML = pagamentos.length ? pagamentos.slice().reverse().map(p=>{
-      const invoiceType = p.invoiceType || 'Com Fatura';
-      const invoiceClass = invoiceType === 'Sem Fatura' ? 'sem' : 'com';
+      const invoiceType = p.invoiceType || 'Com Fat';
+      const invoiceClass = invoiceType === 'Sem Fat' ? 'sem' : 'com';
       return `<article class="mobile-card">
         <div>
           <div class="mobile-card-title">${escapeHtml(p.cliente || '-')}</div>
@@ -9331,7 +9331,7 @@ function renderMobileCards(){
           <div class="mobile-card-item"><span>Data</span><strong>${fmtDate(p.workDate || p.data || '')}</strong></div>
           <div class="mobile-card-item"><span>Valor</span><strong>${euro(p.valor || 0)}</strong></div>
           <div class="mobile-card-item"><span>Método</span><strong>${escapeHtml(p.metodo || 'Manual')}</strong></div>
-          <div class="mobile-card-item"><span>Faturação</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
+          <div class="mobile-card-item"><span>Fatção</span><strong><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></strong></div>
         </div>
         ${isAdminLike() ? `<div class="row-actions"><button class="small-btn danger" onclick="deletePagamento('${p.id}')">Apagar</button></div>` : ''}
       </article>`;
@@ -9915,7 +9915,7 @@ function buildProfessionalReportHtml(){
     <body>
       <div class="hero">
         <h1>Relatório Profissional</h1>
-        <p>Resumo avançado de clientes, faturação e histórico.</p>
+        <p>Resumo avançado de clientes, Fatção e histórico.</p>
       </div>
 
       <div class="stats">
@@ -9924,7 +9924,7 @@ function buildProfessionalReportHtml(){
           <div class="value">${formatEuroValue(data.avgValue)}</div>
         </div>
         <div class="card">
-          <div class="label">Cliente com mais faturação</div>
+          <div class="label">Cliente com mais Fatção</div>
           <div class="value">${data.topClient ? escapeHtml(data.topClient.nome) : '--'}</div>
         </div>
       </div>
@@ -10065,7 +10065,7 @@ window.approveOrcamento = async function(id){
     dataOrcamento: o.data || '',
     dataFim: '',
     estado: 'Pendente',
-    invoiceType: 'Com Fatura',
+    invoiceType: 'Com Fat',
     descricao: `Criado a partir do orçamento ${o.codigo || ''}${o.notas ? ' - ' + o.notas : ''}${o.data ? ' • Data do orçamento: ' + o.data : ''}`
   };
   trabalhos.push(novoTrabalho);
@@ -10093,7 +10093,7 @@ window.approveOrcamentoAsPaid = async function(id){
     dataOrcamento: o.data || '',
     dataFim: '',
     estado: 'Pendente',
-    invoiceType: 'Com Fatura',
+    invoiceType: 'Com Fat',
     descricao: `Criado a partir do orçamento ${o.codigo || ''}${o.notas ? ' - ' + o.notas : ''}${o.data ? ' • Data do orçamento: ' + o.data : ''}`
   };
   trabalhos.push(novoTrabalho);
