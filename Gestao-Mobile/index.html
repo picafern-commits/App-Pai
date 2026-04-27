@@ -2816,7 +2816,7 @@ td.acoes-col, .acoes-col{
 }
 
 
-/* CAMPOS SÓ ADMIN MESTRE NO ADICIONAR */
+/* CAMPOS AVANÇADOS NO ADICIONAR */
 .master-edit-only.is-hidden-by-role{
   display:none !important;
 }
@@ -3222,6 +3222,195 @@ body{
   }
 }
 
+
+/* ===== HISTORICO TABLE PREMIUM SAFE ===== */
+#trabalhos-page .table-wrap{
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.07);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));
+  box-shadow:0 18px 42px rgba(0,0,0,.16);
+}
+#trabalhos-page table{
+  border-collapse:separate;
+  border-spacing:0;
+}
+#trabalhos-page thead th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:rgba(9,13,24,.96);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-size:11px;
+  color:#b8c6e6;
+}
+#trabalhos-page tbody tr{
+  background:rgba(255,255,255,.018);
+  transition:background .15s ease, transform .15s ease;
+}
+#trabalhos-page tbody tr:hover{
+  background:rgba(255,255,255,.045);
+}
+#trabalhos-page tbody td{
+  vertical-align:middle;
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+#trabalhos-page tbody td:nth-child(1) strong{
+  display:inline-flex;
+  padding:7px 10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.055);
+}
+#trabalhos-page tbody td:nth-child(4){
+  font-size:16px;
+  font-weight:900;
+  color:#86efac;
+  white-space:nowrap;
+}
+#trabalhos-page .actions-cell .row-actions,
+#trabalhos-page .actions-cell{
+  gap:6px;
+}
+#trabalhos-page .small-btn{
+  min-height:auto !important;
+  padding:7px 9px !important;
+  border-radius:10px !important;
+  font-size:11px !important;
+}
+@media (max-width:900px){
+  #trabalhos-page table{min-width:980px}
+  #trabalhos-page .table-wrap{
+    margin-left:-2px;
+    margin-right:-2px;
+  }
+}
+.orc-btn.approved{
+  background:linear-gradient(135deg,#f59e0b,#22c55e) !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#fff !important;
+}
+
+
+/* ===== ESTADO / HISTORICO MAIS PERCEPTIVEL ===== */
+.status-cell-inline{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:120px;
+}
+.estado-pill-plus{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 11px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.01em;
+  border:1px solid rgba(255,255,255,.08);
+  white-space:nowrap;
+}
+.estado-pill-plus::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:currentColor;
+  box-shadow:0 0 0 4px rgba(255,255,255,.04);
+}
+.estado-pill-plus.pendente{
+  background:rgba(245,158,11,.14);
+  color:#fcd34d;
+  border-color:rgba(245,158,11,.28);
+}
+.estado-pill-plus.em-curso,
+.estado-pill-plus.andamento{
+  background:rgba(14,165,233,.14);
+  color:#7dd3fc;
+  border-color:rgba(14,165,233,.28);
+}
+.estado-pill-plus.concluido,
+.estado-pill-plus.entregue,
+.estado-pill-plus.pago{
+  background:rgba(34,197,94,.14);
+  color:#86efac;
+  border-color:rgba(34,197,94,.28);
+}
+.estado-pill-plus.cancelado,
+.estado-pill-plus.rejeitado{
+  background:rgba(239,68,68,.14);
+  color:#fca5a5;
+  border-color:rgba(239,68,68,.28);
+}
+.data-criacao-mini{
+  display:block;
+  margin-top:4px;
+  color:var(--muted,#9fabca);
+  font-size:11px;
+}
+.orc-actions .orc-btn{
+  min-height:auto !important;
+  padding:8px 10px !important;
+  border-radius:11px !important;
+  font-size:11px !important;
+  font-weight:800 !important;
+}
+.orc-btn.approved{
+  background:linear-gradient(135deg,rgba(245,158,11,.9),rgba(34,197,94,.9)) !important;
+  color:white !important;
+  border-color:rgba(255,255,255,.14) !important;
+}
+
+
+/* ===== VALOR MODO EMPRESA ===== */
+.valor-admin-force{
+  display:block !important;
+}
+.valor-empresa-box{
+  border:1px solid rgba(34,197,94,.22) !important;
+  background:linear-gradient(180deg,rgba(34,197,94,.08),rgba(255,255,255,.025)) !important;
+  border-radius:16px !important;
+  padding:12px !important;
+}
+.valor-empresa-box label::after{
+  content:"  Admin";
+  margin-left:8px;
+  padding:3px 7px;
+  border-radius:999px;
+  background:rgba(34,197,94,.14);
+  color:#86efac;
+  font-size:10px;
+  font-weight:900;
+}
+.valor-empresa-hint{
+  color:#86efac;
+  font-size:12px;
+  margin-top:7px;
+  font-weight:700;
+}
+#trabalhos-page tbody td:nth-child(4){
+  font-size:18px !important;
+  font-weight:950 !important;
+  color:#86efac !important;
+}
+
+
+/* ===== VALOR MODO EMPRESA SAFE CSS ===== */
+.valor-empresa-box{
+  border:1px solid rgba(34,197,94,.22) !important;
+  background:linear-gradient(180deg,rgba(34,197,94,.08),rgba(255,255,255,.025)) !important;
+  border-radius:16px !important;
+  padding:12px !important;
+}
+#valor{
+  font-weight:800;
+}
+#trabalhos-page tbody td:nth-child(4){
+  font-size:18px !important;
+  font-weight:950 !important;
+  color:#86efac !important;
+}
+
 </style>
   
 
@@ -3420,7 +3609,7 @@ body{
               </div>
               <div class="field"><label>Contacto do cliente</label><input id="contacto" type="text" readonly /></div>
               <div class="field"><label>Tipo de trabalho</label><input id="tipoTrabalho" type="text" required /></div>
-              <div class="field advanced-work-field master-edit-only"><label>Valor (€)</label><input id="valor" type="number" min="0" step="0.01" /></div>
+              <div class="field advanced-work-field master-edit-only valor-empresa-box"><label>Valor (€)</label><input id="valor" type="number" min="0" step="0.01" /></div>
               <div class="field advanced-work-field master-edit-only"><label>Data de início</label><input id="dataInicio" type="date" /></div>
               <div class="field advanced-work-field master-edit-only"><label>Data de fim</label><input id="dataFim" type="date" /></div>
               <div class="field advanced-work-field master-edit-only"><label>Estado</label><select id="estado"><option>Pendente</option><option>Em curso</option><option>Concluído</option><option>Entregue</option><option>Cancelado</option></select></div>
@@ -4568,7 +4757,7 @@ function buildProfessionalReportHtml(){
         th,td{border:1px solid #e2e8f0;padding:10px;text-align:left}
         th{background:#f5f3ff;color:#4c1d95}
       
-/* CAMPOS SÓ ADMIN MESTRE NO ADICIONAR */
+/* CAMPOS AVANÇADOS NO ADICIONAR */
 .master-edit-only.is-hidden-by-role{
   display:none !important;
 }
@@ -4809,7 +4998,7 @@ body{
         </thead>
         <tbody>${historyHtml}</tbody>
       </table>
-    </body>
+</body>
   </html>`;
 }
 
@@ -5969,7 +6158,7 @@ function applyDeviceAccessRestrictions(){
 
 function updateTrabalhoAdvancedFields(){
   const isEditing = !!($('trabalhoId') && $('trabalhoId').value);
-  const canSee = isMasterAdmin() || isEditing;
+  const canSee = isAdminLike() || isMasterAdmin() || isEditing;
   document.querySelectorAll('.master-edit-only').forEach(el => {
     el.classList.toggle('is-hidden-by-role', !canSee);
   });
@@ -8066,7 +8255,7 @@ td.acoes-col, .acoes-col{
 }
 
 
-/* CAMPOS SÓ ADMIN MESTRE NO ADICIONAR */
+/* CAMPOS AVANÇADOS NO ADICIONAR */
 .master-edit-only.is-hidden-by-role{
   display:none !important;
 }
@@ -8695,7 +8884,9 @@ function renderTrabalhos(){
     const invoiceType = t.invoiceType || 'Com Fat';
     const invoiceClass = invoiceType === 'Sem Fat' ? 'sem' : 'com';
     const effectiveEstado = t.paymentStatus === 'Pago' ? 'Pago' : (t.estado || '-');
-    return `<tr><td><strong>${escapeHtml(t.workCode||'-')}</strong></td><td>${escapeHtml(t.cliente||'-')}</td><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valorPago ?? t.valor ?? 0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><div class="status-cell-inline"><span class="badge" data-state="${escapeHtml(effectiveEstado)}">${escapeHtml(effectiveEstado)}</span></div></td><td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td><td class="actions-cell">${trabalhoActions(t)}</td></tr>`;
+    const estadoClass = String(effectiveEstado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-');
+    const dataCriacao = t.dataCriacao || t.dataAdicionado || t.createdAt || t.dataInicio || '';
+    return `<tr><td><strong>${escapeHtml(t.workCode||'-')}</strong><span class="data-criacao-mini">Criado: ${fmtDate(dataCriacao)}</span></td><td>${escapeHtml(t.cliente||'-')}</td><td>${escapeHtml(t.tipoTrabalho||'-')}</td><td>${euro(t.valorPago ?? t.valor ?? 0)}</td><td>${fmtDate(t.dataInicio)}</td><td>${fmtDate(t.dataFim)}</td><td><div class="status-cell-inline"><span class="estado-pill-plus ${escapeHtml(estadoClass)}">${escapeHtml(effectiveEstado)}</span></div></td><td><span class="invoice-badge ${invoiceClass}">${escapeHtml(invoiceType)}</span></td><td class="actions-cell">${trabalhoActions(t)}</td></tr>`;
   }).join('') : '<tr><td colspan="9">Sem resultados.</td></tr>';
 }
 function renderClientes(){
@@ -9875,7 +10066,7 @@ function buildProfessionalReportHtml(){
         th,td{border:1px solid #e2e8f0;padding:10px;text-align:left}
         th{background:#f5f3ff;color:#4c1d95}
       
-/* CAMPOS SÓ ADMIN MESTRE NO ADICIONAR */
+/* CAMPOS AVANÇADOS NO ADICIONAR */
 .master-edit-only.is-hidden-by-role{
   display:none !important;
 }
@@ -10166,7 +10357,7 @@ function renderOrcamentos(){
       <td>${euro(o.valor||0)}</td>
       <td>${fmtDate(o.data||'')}</td>
       <td><span class="badge" data-state="${escapeHtml((o.estado||'pendente').replace(/^./,m=>m.toUpperCase()))}">${escapeHtml((o.estado||'pendente').replace(/^./,m=>m.toUpperCase()))}</span></td>
-      <td><div class="orc-actions">${isAdminLike()?`<button class="orc-btn edit" onclick="editOrcamento('${o.id}')">Editar</button><button class="orc-btn pending" onclick="approveOrcamento('${o.id}')">Pend.</button><button class="orc-btn paid" onclick="approveOrcamentoAsPaid('${o.id}')">Pago</button><button class="orc-btn reject" onclick="rejectOrcamento('${o.id}')">Rejeitar</button><button class="orc-btn delete" onclick="deleteOrcamento('${o.id}')">Apagar</button>`:''}</div></td>
+      <td><div class="orc-actions">${isAdminLike()?`<button class="orc-btn edit" onclick="editOrcamento('${o.id}')">Editar</button><button class="orc-btn approved" onclick="approveOrcamento('${o.id}')">Aprovado</button><button class="orc-btn reject" onclick="rejectOrcamento('${o.id}')">Rejeitar</button><button class="orc-btn delete" onclick="deleteOrcamento('${o.id}')">Apagar</button>`:''}</div></td>
     </tr>`).join('') : '<tr><td colspan="7">Sem orçamentos registados.</td></tr>';
 }
 $('searchOrcamentos')?.addEventListener('input', renderOrcamentos);
@@ -10234,6 +10425,8 @@ window.approveOrcamento = async function(id){
     tipoTrabalho: o.descricao || 'Orçamento aprovado',
     valor: Number(o.valor || 0),
     dataInicio: getTodayLocalDateStr(),
+    dataCriacao: new Date().toISOString(),
+    dataAdicionado: new Date().toISOString(),
     dataOrcamento: o.data || '',
     dataFim: '',
     estado: 'Pendente',
@@ -10262,6 +10455,8 @@ window.approveOrcamentoAsPaid = async function(id){
     tipoTrabalho: o.descricao || 'Orçamento aprovado',
     valor: Number(o.valor || 0),
     dataInicio: getTodayLocalDateStr(),
+    dataCriacao: new Date().toISOString(),
+    dataAdicionado: new Date().toISOString(),
     dataOrcamento: o.data || '',
     dataFim: '',
     estado: 'Pendente',
