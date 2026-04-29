@@ -3077,6 +3077,30 @@ body{
   color:#86efac !important;
 }
 
+
+/* ===== VALOR TRABALHO / VALOR PAGO FINAL ===== */
+#trabalhos-page tbody td:nth-child(4){
+  color:var(--muted,#9fabca) !important;
+  font-weight:700 !important;
+}
+#trabalhos-page tbody td:nth-child(5){
+  color:#86efac !important;
+  font-weight:950 !important;
+  font-size:16px !important;
+}
+#adicionar-page .field:has(#valorTrabalho){
+  background:rgba(4,8,18,.22) !important;
+  border:1px solid rgba(255,255,255,.055) !important;
+}
+#adicionar-page .field:has(#valor){
+  background:linear-gradient(180deg,rgba(34,197,94,.08),rgba(255,255,255,.025)) !important;
+  border:1px solid rgba(34,197,94,.16) !important;
+}
+#adicionar-page .field:has(#valor) label{
+  color:#bbf7d0 !important;
+}
+
+.valor-trabalho-note{display:block;margin-top:4px;font-size:11px;color:var(--muted,#9fabca);font-weight:700;}
 </style>
   
 
@@ -8217,7 +8241,7 @@ function renderDashboardEmpresaSmart(){
   const pagamentosLista = Array.isArray(pagamentos) ? pagamentos : [];
   const orcamentosLista = getDashboardOrcamentosLista();
 
-  const totalFat = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
+  const totalFat = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
   const totalRecebido = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
   const totalDivida = Math.max(totalFat - totalRecebido, 0);
 
@@ -8302,7 +8326,7 @@ function renderDashboard(){
   const totalTrabalhos = trabalhos.length;
   const emAndamento = trabalhos.filter(t=>['Pendente','Em curso','Aguardar peça'].includes(normalizeEstado(t.estado))).length;
   const concluidos = trabalhos.filter(t=>['Concluído','Pago','Entregue'].includes(normalizeEstado(t.estado))).length;
-  const totalFat = trabalhos.reduce((s,t)=>s+Number(t.valor||0),0);
+  const totalFat = pagamentos.reduce((s,p)=>s+Number(p.valor||0),0);
   const totalPago = pagamentos.reduce((s,p)=>s+Number(p.valor||0),0);
   const clientesAtivos = new Set(trabalhos.map(t=>(t.cliente||'').trim()).filter(Boolean)).size;
 
@@ -8319,16 +8343,17 @@ function renderDashboard(){
         <div class="mini-label badge" data-state="${escapeHtml(t.estado||'Sem estado')}">${escapeHtml(t.estado||'Sem estado')}</div>
         <strong>${escapeHtml(t.cliente||'-')}</strong>
         <div>${escapeHtml(t.tipoTrabalho||'-')}</div>
-        <div class="recent-meta">${euro(t.valorPago ?? t.valorTrabalho ?? t.valor ?? 0)} • ${fmtDate(t.dataInicio)} → ${fmtDate(t.dataFim)}</div>
+        <div class="recent-meta">${euro(getValorPago(t))} <span class="valor-trabalho-note">Valor trabalho: ${euro(getValorTrabalho(t))}</span> • ${fmtDate(t.dataInicio)} → ${fmtDate(t.dataFim)}</div>
       </div>`).join('');
 
   const monthMap={};
-  trabalhos.forEach(t=>{
-    if(!t.dataInicio) return;
-    const d=new Date(t.dataInicio);
+  pagamentos.forEach(p=>{
+    const rawDate = p.data || p.workDate || p.dataPagamento || '';
+    if(!rawDate) return;
+    const d=new Date(rawDate);
     if(isNaN(d)) return;
     const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    monthMap[key]=(monthMap[key]||0)+Number(t.valor||0);
+    monthMap[key]=(monthMap[key]||0)+Number(p.valor||0);
   });
   const entries=Object.entries(monthMap).sort((a,b)=>a[0].localeCompare(b[0])).slice(-6);
   const max=Math.max(...entries.map(([,v])=>v),1);
@@ -8355,15 +8380,15 @@ function buildDashboardChartData(){
   const monthLabels = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const monthValues = Array(12).fill(0);
 
-  trabalhosLista.forEach(t => {
-    const rawDate = t.dataInicio || t.data || t.dataFim || t.dataPagamento || '';
+  pagamentosLista.forEach(p => {
+    const rawDate = p.data || p.workDate || p.dataPagamento || '';
     if(!rawDate) return;
     const d = new Date(rawDate);
     if(Number.isNaN(d.getTime())) return;
-    monthValues[d.getMonth()] += Number(t.valor || t.valorPago || 0) || 0;
+    monthValues[d.getMonth()] += Number(p.valor || p.valorPago || 0) || 0;
   });
 
-  const totalFat = trabalhosLista.reduce((sum, t) => sum + (Number(t.valor || t.valorPago || 0) || 0), 0);
+  const totalFat = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
   const totalRecebido = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
   const totalDivida = Math.max(totalFat - totalRecebido, 0);
 
@@ -8475,6 +8500,7 @@ function pagamentoActions(p){
 let trabalhosCurrentPage = 1;
 function getTrabalhosPerPage(){ const el = $('trabalhosPerPage'); const v = Number(el?.value || 20); return Number.isFinite(v) && v > 0 ? v : 20; }
 function updateTrabalhosPagination(totalRows){ const perPage = getTrabalhosPerPage(); const totalPages = Math.max(1, Math.ceil(totalRows / perPage)); if(trabalhosCurrentPage > totalPages) trabalhosCurrentPage = totalPages; if(trabalhosCurrentPage < 1) trabalhosCurrentPage = 1; const info = $('trabalhosPageInfo'); if(info) info.textContent = `Página ${trabalhosCurrentPage} de ${totalPages} • ${totalRows} trabalhos`; const prev = $('trabalhosPrevBtn'); const next = $('trabalhosNextBtn'); if(prev) prev.disabled = trabalhosCurrentPage <= 1; if(next) next.disabled = trabalhosCurrentPage >= totalPages; return { perPage, totalPages, start:(trabalhosCurrentPage-1)*perPage, end:trabalhosCurrentPage*perPage }; }
+
 
 function renderTrabalhos(){
   const term=$('searchTrabalhos').value.trim().toLowerCase();
@@ -8673,8 +8699,8 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
     contacto:$('contacto').value.trim(),
     tipoTrabalho:$('tipoTrabalho').value.trim(),
     valorTrabalho:Number($('valorTrabalho')?.value||0),
-    valor:Number($('valorTrabalho')?.value||0),
-    valorPago:Number($('valor').value||0),
+    valor:Number($('valor')?.value||0),
+    valorPago:Number($('valor')?.value||0),
     dataInicio:$('dataInicio').value,
     dataFim:$('dataFim').value,
     estado:$('estado').value,
