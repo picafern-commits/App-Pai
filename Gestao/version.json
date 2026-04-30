@@ -1,11 +1,9 @@
 {
-  "version": "1.0.9",
+  "version": "1.1.0",
   "environment": "produção",
   "changelog": [
-    "Versão 1.0.9: versão interna alinhada com o sistema de updates automáticos.",
-    "Verificação automática de updates de 2 em 2 minutos.",
-    "Botão manual “Verificar updates” nas Configurações.",
-    "Popup de atualização com changelog da nova versão.",
-    "Sistema isolado do login e da Firebase."
+    "Versão 1.1.0: coluna Tipo do Histórico ligeiramente aumentada.",
+    "Pagamentos passam a abrir organizados por ID, mantendo os botões de ordenação existentes.",
+    "Sistema de aviso/update automático mantido."
   ]
 }
