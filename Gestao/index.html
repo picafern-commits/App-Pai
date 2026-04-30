@@ -3562,7 +3562,7 @@ body{
                     <tbody id="managedUsersTableBody"></tbody>
                   </table>
                 </div>
-                <div class="config-tools"><div class="setting-card"><span class="mini-label">Estado</span><strong id="inputFixInfo">Inputs corrigidos</strong><p>Esta versão volta à base estável para garantir escrita normal em todos os campos.</p></div></div><div class="config-actions">
+                <div class="config-tools"><div class="setting-card"><span class="mini-label">Atualizações</span><strong>Sistema de versão ativo</strong><p>Verifica automaticamente de 2 em 2 minutos e mostra changelog quando existir nova versão.</p><button type="button" class="btn btn-secondary" id="manualUpdateCheckBtn">Verificar updates</button><span id="geUpdateStatus"></span></div></div><div class="config-tools"><div class="setting-card"><span class="mini-label">Estado</span><strong id="inputFixInfo">Inputs corrigidos</strong><p>Esta versão volta à base estável para garantir escrita normal em todos os campos.</p></div></div><div class="config-actions">
                   <button class="btn btn-secondary" id="exportBackupBtn">Backup JSON</button>
                 </div>
               </section>
@@ -10182,22 +10182,27 @@ $('orcamentoData') && !$('orcamentoData').value && ($('orcamentoData').value = g
   </div>
 
 
-<!-- Sistema de aviso de versão SAFE: não toca no login, Firebase, localStorage ou IndexedDB -->
+<!-- Sistema de aviso de versão SAFE: não toca no login, Firebase, localStorage de sessão ou IndexedDB -->
 <style id="ge-update-safe-style">
-  #geUpdateToast{position:fixed;right:18px;bottom:18px;z-index:999999;max-width:390px;width:calc(100% - 36px);padding:16px;border-radius:20px;background:linear-gradient(145deg,rgba(15,23,42,.98),rgba(30,41,59,.96));border:1px solid rgba(96,165,250,.35);box-shadow:0 24px 70px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08);color:#f8fafc;display:none;backdrop-filter:blur(18px);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+  #geUpdateToast{position:fixed;right:18px;bottom:18px;z-index:999999;max-width:420px;width:calc(100% - 36px);padding:16px;border-radius:20px;background:linear-gradient(145deg,rgba(15,23,42,.98),rgba(30,41,59,.96));border:1px solid rgba(96,165,250,.35);box-shadow:0 24px 70px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08);color:#f8fafc;display:none;backdrop-filter:blur(18px);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
   #geUpdateToast.ge-show{display:block}
   #geUpdateToast .ge-title{font-weight:900;font-size:15px;margin:0 36px 6px 0}
-  #geUpdateToast .ge-text{font-size:12px;line-height:1.45;color:#cbd5e1;margin:0 0 14px}
+  #geUpdateToast .ge-text{font-size:12px;line-height:1.45;color:#cbd5e1;margin:0 0 12px}
+  #geUpdateToast .ge-changelog{margin:0 0 14px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:none}
+  #geUpdateToast .ge-changelog strong{display:block;font-size:12px;margin-bottom:7px;color:#fff}
+  #geUpdateToast .ge-changelog ul{margin:0;padding-left:18px;color:#dbeafe;font-size:12px;line-height:1.45}
   #geUpdateToast .ge-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
   #geUpdateToast button{border:0;border-radius:14px;padding:10px 13px;font-weight:850;cursor:pointer;color:#fff;background:linear-gradient(135deg,#2563eb,#7c3aed)}
   #geUpdateToast button.ge-secondary{background:rgba(255,255,255,.08);color:#e2e8f0;border:1px solid rgba(255,255,255,.12)}
   #geUpdateToast .ge-close{position:absolute;right:12px;top:12px;width:32px;height:32px;padding:0;background:rgba(255,255,255,.08);font-size:18px;line-height:1}
+  #geUpdateStatus{margin-left:10px;font-size:12px;opacity:.82}
   @media(max-width:640px){#geUpdateToast{left:12px;right:12px;bottom:12px;width:auto;border-radius:18px}#geUpdateToast .ge-actions button{flex:1}}
 </style>
 <div id="geUpdateToast" aria-live="polite">
   <button class="ge-close" type="button" id="geUpdateClose" aria-label="Fechar">×</button>
   <div class="ge-title">Nova versão disponível</div>
   <p class="ge-text" id="geUpdateText">Há uma atualização pronta.</p>
+  <div class="ge-changelog" id="geUpdateChangelog"><strong>Novidades</strong><ul id="geUpdateChangelogList"></ul></div>
   <div class="ge-actions">
     <button class="ge-secondary" type="button" id="geUpdateLater">Mais tarde</button>
     <button type="button" id="geUpdateNow">Atualizar agora</button>
@@ -10206,33 +10211,74 @@ $('orcamentoData') && !$('orcamentoData').value && ($('orcamentoData').value = g
 <script id="ge-update-safe-script">
 (function(){
   'use strict';
-  var CURRENT_VERSION = '1.0.7';
+  var CURRENT_VERSION = '1.0.8';
   var VERSION_URL = './version.json';
   var DISMISSED_KEY = 'ge_update_dismissed_version';
-  var CHECK_EVERY_MS = 180000;
+  var CHECK_EVERY_MS = 120000;
+  var lastKnownRemote = '';
   function byId(id){ return document.getElementById(id); }
   function dismissed(v){ try{return localStorage.getItem(DISMISSED_KEY) === String(v||'');}catch(e){return false;} }
   function dismiss(v){ try{localStorage.setItem(DISMISSED_KEY, String(v||''));}catch(e){} var t=byId('geUpdateToast'); if(t)t.classList.remove('ge-show'); }
-  function show(v, env){
-    if(!v || String(v) === CURRENT_VERSION || dismissed(v)) return;
+  function setStatus(msg){ var el=byId('geUpdateStatus'); if(el) el.textContent = msg || ''; }
+  function normaliseChangelog(data){
+    var log = data && (data.changelog || data.changes || data.novidades);
+    if(Array.isArray(log)) return log.map(String).filter(Boolean).slice(0,6);
+    if(typeof log === 'string') return log.split('
+').map(function(x){return x.trim();}).filter(Boolean).slice(0,6);
+    return [];
+  }
+  function renderChangelog(items){
+    var box=byId('geUpdateChangelog'), list=byId('geUpdateChangelogList');
+    if(!box || !list) return;
+    list.innerHTML='';
+    if(!items || !items.length){ box.style.display='none'; return; }
+    items.forEach(function(item){ var li=document.createElement('li'); li.textContent=item; list.appendChild(li); });
+    box.style.display='block';
+  }
+  function show(v, env, changelog, manual){
+    if(!v) return;
+    lastKnownRemote = String(v);
+    if(String(v) === CURRENT_VERSION){
+      renderChangelog([]);
+      if(manual) setStatus('App atualizada · versão ' + CURRENT_VERSION);
+      return;
+    }
+    if(!manual && dismissed(v)) return;
     var text=byId('geUpdateText');
     if(text) text.textContent = 'Tens a versão ' + CURRENT_VERSION + '. Já existe a versão ' + v + (env ? ' (' + env + ')' : '') + '. Carrega em atualizar quando quiseres.';
+    renderChangelog(changelog || []);
     var t=byId('geUpdateToast'); if(t)t.classList.add('ge-show');
+    setStatus('Nova versão encontrada: ' + v);
     var later=byId('geUpdateLater'), close=byId('geUpdateClose'), now=byId('geUpdateNow');
     if(later) later.onclick=function(){ dismiss(v); };
     if(close) close.onclick=function(){ dismiss(v); };
-    if(now) now.onclick=function(){ var url = new URL(window.location.href); url.searchParams.set('v', String(v)); url.searchParams.set('_', String(Date.now())); window.location.replace(url.toString()); };
+    if(now) now.onclick=function(){
+      try{ if('caches' in window) caches.keys().then(function(names){ names.forEach(function(name){ caches.delete(name); }); }); }catch(e){}
+      var url = new URL(window.location.href);
+      url.searchParams.set('v', String(v));
+      url.searchParams.set('_', String(Date.now()));
+      window.location.replace(url.toString());
+    };
   }
-  async function check(){
-    try{ var res = await fetch(VERSION_URL + '?_=' + Date.now(), {cache:'no-store'}); if(!res.ok) return; var data = await res.json(); show(String(data.version || '').trim(), data.environment || data.env || ''); }
-    catch(e){ console.warn('Verificação de versão indisponível:', e); }
+  async function check(manual){
+    if(manual) setStatus('A verificar...');
+    try{
+      var res = await fetch(VERSION_URL + '?_=' + Date.now(), {cache:'no-store'});
+      if(!res.ok){ if(manual) setStatus('Não consegui verificar agora.'); return; }
+      var data = await res.json();
+      show(String(data.version || '').trim(), data.environment || data.env || '', normaliseChangelog(data), !!manual);
+    }
+    catch(e){ console.warn('Verificação de versão indisponível:', e); if(manual) setStatus('Verificação indisponível.'); }
   }
-  window.AppVersionUpdater = { check: check, currentVersion: CURRENT_VERSION };
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', check); else check();
-  setInterval(check, CHECK_EVERY_MS);
-  document.addEventListener('visibilitychange', function(){ if(!document.hidden) check(); });
+  window.AppVersionUpdater = { check: check, currentVersion: CURRENT_VERSION, lastRemoteVersion: function(){return lastKnownRemote;} };
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ check(false); }); else check(false);
+  setInterval(function(){ check(false); }, CHECK_EVERY_MS);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) check(false); });
+  document.addEventListener('click', function(ev){
+    var target = ev.target && ev.target.closest ? ev.target.closest('#manualUpdateCheckBtn') : null;
+    if(target){ ev.preventDefault(); check(true); }
+  });
 })();
 </script>
-
 </body>
 </html>

@@ -1,4 +1,10 @@
 {
-  "version": "1.0.7",
-  "environment": "produção"
+  "version": "1.0.8",
+  "environment": "produção",
+  "changelog": [
+    "Verificação automática de updates de 2 em 2 minutos.",
+    "Botão manual “Verificar updates” nas Configurações.",
+    "Popup de atualização com changelog da nova versão.",
+    "Sistema isolado do login e da Firebase."
+  ]
 }
