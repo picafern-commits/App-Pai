@@ -1,9 +1,13 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.1",
   "environment": "produção",
   "changelog": [
-    "Versão 1.1.0: coluna Tipo do Histórico ligeiramente aumentada.",
-    "Pagamentos passam a abrir organizados por ID, mantendo os botões de ordenação existentes.",
-    "Sistema de aviso/update automático mantido."
-  ]
+    "Histórico corrigido: Valor Pago editado fica gravado no trabalho.",
+    "Valor Pago manual passa a ter prioridade sobre o valor antigo da coleção pagamentos.",
+    "Quando existir pagamento associado, o valor também é atualizado em pagamentos."
+  ],
+  "build": "1.2.1-valor-pago-historico-corrigido",
+  "updatedAt": "2026-06-05T14:30:00Z",
+  "notes": "Correção da edição do Valor Pago no Histórico: o campo editado passa a gravar no trabalho e a manter pagamentos alinhados.",
+  "name": "App-Pai-Testes-main-v1.2.1-valor-pago-historico-corrigido"
 }

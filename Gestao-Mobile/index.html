@@ -3035,16 +3035,8 @@ td.acoes-col, .acoes-col{
   border-color:rgba(255,255,255,.10) !important;
   box-shadow:0 12px 26px rgba(0,0,0,.16);
 }
-.nav-btn.active::before{
-  content:"";
-  position:absolute;
-  left:-2px;
-  top:10px;
-  bottom:10px;
-  width:4px;
-  border-radius:999px;
-  background:linear-gradient(180deg, #ff7a18, #24c8ff);
-}
+/* v1.1.7: barra antiga da sidebar removida */
+.nav-btn.active::before{content:none !important;display:none !important;}
 .nav-icon{
   width:32px !important;
   height:32px !important;
@@ -3451,6 +3443,7 @@ body{
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0b1020">
 <link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/professional-ui.css">
 
 </head>
 <body>
@@ -4011,7 +4004,7 @@ function legacy_openPaymentMethodModal(id){
   if(hiddenId) hiddenId.value = id;
   if(methodInput) methodInput.value = '';
   if(dateInput) dateInput.value = (t.dataPagamento && String(t.dataPagamento).trim()) ? t.dataPagamento : getTodayLocalDateStr();
-  if(valueInput) valueInput.value = String(t.valorPago ?? t.valorTrabalho ?? t.valor ?? '').replace('.', ',');
+  if(valueInput) valueInput.value = String(getValorParaPagamento(t) || '').replace('.', ',');
 
   modal.style.display = 'grid';
   modal.classList.add('show');
@@ -5031,6 +5024,8 @@ body{
         </thead>
         <tbody>${historyHtml}</tbody>
       </table>
+
+
 </body>
   </html>`;
 }
@@ -5666,7 +5661,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.1.6';
 const STORAGE_KEYS = { trabalhos:'ge_trabalhos', clientes:'ge_clientes', pagamentos:'ge_pagamentos', orcamentos:'ge_orcamentos', lastTrabId:'ge_last_trab_id' };
 const LOGS_COLLECTION = 'logs';
 
@@ -6129,9 +6124,49 @@ function initUiScale(){
 
 
 const euro = (v) => Number(v || 0).toLocaleString('pt-PT', {style:'currency', currency:'EUR'});
-const getValorTrabalho = (t) => Number(t?.valorTrabalho ?? t?.valorEsperado ?? t?.valor ?? 0) || 0;
-const getValorPago = (t) => Number(t?.valorPago ?? t?.valor ?? 0) || 0;
-const getValorPagoCompat = (t) => Number(t?.valorPago ?? t?.valor ?? 0) || 0;
+const parseMoneyValue = (value) => {
+  if(value === null || value === undefined || value === '') return 0;
+  if(typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  let s = String(value).trim().replace(/\s/g,'').replace(/€/g,'');
+  if(!s) return 0;
+  if(s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else s = s.replace(',', '.');
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+};
+const getValorTrabalho = (t) => parseMoneyValue(t?.valorTrabalho ?? t?.valorEsperado ?? t?.valor ?? 0);
+const trabalhoEstaPago = (t) => normalizeEstado(t?.estado || '') === 'Pago' || String(t?.paymentStatus || '').toLowerCase() === 'pago' || !!t?.dataPagamento;
+const getPagamentosDoTrabalho = (t) => {
+  const lista = Array.isArray(window.pagamentos || pagamentos) ? (window.pagamentos || pagamentos) : [];
+  if(!t || !lista.length) return [];
+  const id = String(t.id || '');
+  const code = String(t.workCode || '');
+  return lista.filter(p =>
+    (id && String(p.sourceWorkId || p.trabalhoId || '') === id) ||
+    (code && String(p.workCode || p.referencia || '') === code)
+  );
+};
+const getValorPago = (t) => {
+  if(!t) return 0;
+
+  // O campo editável do Histórico é a fonte principal.
+  // Antes a APP dava prioridade à coleção "pagamentos", por isso ao corrigir
+  // manualmente o Valor Pago no Histórico o valor voltava ao antigo após refresh.
+  const valorPagoManual = parseMoneyValue(t.valorPago ?? 0);
+  if(valorPagoManual > 0) return valorPagoManual;
+
+  const pagamentosTrabalho = getPagamentosDoTrabalho(t);
+  if(pagamentosTrabalho.length){
+    return pagamentosTrabalho.reduce((sum, p) => sum + parseMoneyValue(p.valor ?? p.valorPago ?? 0), 0);
+  }
+
+  return 0;
+};
+const getValorPagoCompat = getValorPago;
+const getValorParaPagamento = (t) => {
+  const pago = getValorPago(t);
+  return pago > 0 ? pago : getValorTrabalho(t);
+};
 const fmtDate = (v) => { if(!v) return '-'; const d = new Date(v); return isNaN(d) ? '-' : d.toLocaleDateString('pt-PT'); };
 const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const isMasterAdmin = () => currentRole === 'master_admin';
@@ -6396,7 +6431,8 @@ function buildFlowButtons(t){
   const nextEstado = getNextFlowEstado(t.estado || 'Pendente');
 
   if(isPaid || atual === 'Pago'){
-    return `<span class="stage-step done final-paid">Pago${t.dataPagamento ? ` • ${escapeHtml(fmtDate(t.dataPagamento))}` : ''}</span>`;
+    const removePaidButton = isMasterAdmin() ? `<button class="stage-step stage-control-btn pay-warning" onclick="window.desmarcarPago('${t.id}')">Tirar Pago</button>` : '';
+    return `<span class="stage-step done final-paid">Pago${t.dataPagamento ? ` • ${escapeHtml(fmtDate(t.dataPagamento))}` : ''}</span>${removePaidButton}`;
   }
 
   if(atual === 'Entregue' || !nextEstado){
@@ -8498,7 +8534,9 @@ body{
 <meta name="theme-color" content="#0b1020">
 <link rel="manifest" href="manifest.json">
 
-</head><body>${bodyHtml}</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
+</head><body>${bodyHtml}
+
+</body></html>`); win.document.close(); setTimeout(()=>{ win.focus(); win.print(); },300); }
 
 
 function getAgendaDate(t){
@@ -8647,28 +8685,45 @@ function renderDashboardEmpresaSmart(){
   const pagamentosLista = Array.isArray(pagamentos) ? pagamentos : [];
   const orcamentosLista = getDashboardOrcamentosLista();
 
-  const totalFat = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
   const totalRecebido = pagamentosLista.reduce((sum, p) => sum + (Number(p.valor || p.valorPago || 0) || 0), 0);
-  const totalDivida = Math.max(totalFat - totalRecebido, 0);
 
+  // Dívida no Dashboard: só entra quando o trabalho já foi ENTREGUE
+  // e ainda existe diferença entre Valor Trabalho e Valor Pago.
+  // Assim, ao passar para Entregue aparece em dívida; ao pagar total desaparece.
   const clientTotals = {};
   trabalhosLista.forEach(t => {
     const nome = String(t.cliente || t.clienteNome || '').trim();
     if(!nome) return;
-    clientTotals[nome] = clientTotals[nome] || { Fat:0, pago:0 };
-    clientTotals[nome].Fat += Number(t.valor || t.valorPago || 0) || 0;
+
+    const estadoAtual = normalizeEstado(t.estado || '');
+    const trabalhoEntregueOuPago = estadoAtual === 'Entregue' || estadoAtual === 'Pago';
+    if(!trabalhoEntregueOuPago) return;
+
+    const valorTrabalho = getValorTrabalho(t);
+    const valorPago = getValorPago(t);
+    const emAberto = Math.max(valorTrabalho - valorPago, 0);
+
+    if(emAberto <= 0.009) return;
+
+    clientTotals[nome] = clientTotals[nome] || { divida:0, trabalhos:0, valorTrabalho:0, valorPago:0 };
+    clientTotals[nome].divida += emAberto;
+    clientTotals[nome].valorTrabalho += valorTrabalho;
+    clientTotals[nome].valorPago += valorPago;
+    clientTotals[nome].trabalhos += 1;
   });
-  pagamentosLista.forEach(p => {
-    const nome = String(p.cliente || p.clienteNome || '').trim();
-    if(!nome) return;
-    clientTotals[nome] = clientTotals[nome] || { Fat:0, pago:0 };
-    clientTotals[nome].pago += Number(p.valor || p.valorPago || 0) || 0;
-  });
-  const clientesDivida = Object.entries(clientTotals)
-    .map(([nome, vals]) => ({ nome, divida: Math.max((vals.Fat||0) - (vals.pago||0), 0) }))
+
+  const clientesDividaTodos = Object.entries(clientTotals)
+    .map(([nome, vals]) => ({
+      nome,
+      divida: vals.divida || 0,
+      valorTrabalho: vals.valorTrabalho || 0,
+      valorPago: vals.valorPago || 0,
+      trabalhos: vals.trabalhos || 0
+    }))
     .filter(item => item.divida > 0.009)
-    .sort((a,b) => b.divida - a.divida)
-    .slice(0,6);
+    .sort((a,b) => b.divida - a.divida);
+  const totalDivida = clientesDividaTodos.reduce((sum, item) => sum + item.divida, 0);
+  const clientesDivida = clientesDividaTodos.slice(0,6);
 
   const orcPendentes = orcamentosLista
     .filter(o => String(o.estado || '').toLowerCase().includes('pend'))
@@ -8678,7 +8733,7 @@ function renderDashboardEmpresaSmart(){
   recebidoEl.textContent = euro(totalRecebido);
   dividaEl.textContent = euro(totalDivida);
   orcEl.textContent = String(orcPendentes.length);
-  cliEl.textContent = String(clientesDivida.length);
+  cliEl.textContent = String(clientesDividaTodos.length);
 
   if(alertCards){
     const trabalhosPendentes = trabalhosLista.filter(t => {
@@ -8692,8 +8747,8 @@ function renderDashboardEmpresaSmart(){
     if(trabalhosPendentes){
       alertHtml.push(`<div class="alert-card"><span class="badge" data-state="Em andamento">Trabalhos</span><strong>${trabalhosPendentes}</strong><p>Trabalhos pendentes ou em andamento.</p></div>`);
     }
-    if(clientesDivida.length){
-      alertHtml.push(`<div class="alert-card"><span class="badge" data-state="Pendente">Clientes</span><strong>${clientesDivida.length}</strong><p>Clientes com valores em dívida.</p></div>`);
+    if(clientesDividaTodos.length){
+      alertHtml.push(`<div class="alert-card"><span class="badge" data-state="Pendente">Clientes</span><strong>${clientesDividaTodos.length}</strong><p>Clientes com valores em dívida.</p></div>`);
     }
     if(totalDivida > 0.009){
       alertHtml.push(`<div class="alert-card"><span class="badge" data-state="Pendente">Dívida</span><strong>${euro(totalDivida)}</strong><p>Valor global ainda por receber.</p></div>`);
@@ -8705,7 +8760,7 @@ function renderDashboardEmpresaSmart(){
     <div class="empresa-item">
       <div class="meta">
         <span class="title">${escapeHtml(item.nome)}</span>
-        <span class="sub">Cliente com valor em aberto</span>
+        <span class="sub">Pago ${euro(item.valorPago)} de ${euro(item.valorTrabalho)} • ${item.trabalhos} trabalho(s)</span>
       </div>
       <div style="display:grid;justify-items:end;gap:6px;">
         <span class="empresa-pill danger">Dívida</span>
@@ -9108,8 +9163,10 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
     contacto:$('contacto').value.trim(),
     tipoTrabalho:$('tipoTrabalho').value.trim(),
     valorTrabalho:Number($('valorTrabalho')?.value||0),
-    valor:Number($('valor')?.value||0),
-    valorPago:Number($('valor')?.value||0),
+    valor:Number($('valorTrabalho')?.value||0),
+    // Ao editar um trabalho antigo, guardar o Valor Pago que está no formulário.
+    // Ao criar um trabalho novo, começa sempre a 0 e só muda quando for pago.
+    valorPago: original ? parseMoneyValue($('valor')?.value ?? getValorPago(original)) : 0,
     dataInicio:$('dataInicio').value,
     dataFim:$('dataFim').value,
     estado:$('estado').value,
@@ -9131,6 +9188,34 @@ $('trabalhoForm')?.addEventListener('submit', async (e)=>{
   saveLocal();
   try{
     await upsertRemote('trabalhos', trabalhos.find(x=>x.id===item.id) || item);
+
+    // Se o trabalho já tinha pagamento registado, manter a coleção pagamentos alinhada
+    // com o Valor Pago corrigido no Histórico.
+    if(original && (trabalhoEstaPago(item) || item.paymentStatus === 'Pago')){
+      const existingPagamento = pagamentos.find(p =>
+        (p.sourceWorkId && p.sourceWorkId === item.id) ||
+        (p.trabalhoId && p.trabalhoId === item.id) ||
+        (p.workCode && item.workCode && p.workCode === item.workCode)
+      );
+      if(existingPagamento){
+        const pagamentoCorrigido = {
+          ...existingPagamento,
+          valor: Number(item.valorPago ?? 0),
+          valorPago: Number(item.valorPago ?? 0),
+          cliente: item.cliente || existingPagamento.cliente || '',
+          referencia: item.workCode || existingPagamento.referencia || '',
+          workCode: item.workCode || existingPagamento.workCode || '',
+          sourceWorkId: item.id,
+          data: item.dataPagamento || existingPagamento.data || '',
+          metodo: item.paymentMethod || item.metodoPagamento || existingPagamento.metodo || 'Manual',
+          invoiceType: item.invoiceType || existingPagamento.invoiceType || 'Com Fat'
+        };
+        await upsertRemote('pagamentos', pagamentoCorrigido);
+        const pi = pagamentos.findIndex(p => p.id === pagamentoCorrigido.id);
+        if(pi >= 0) pagamentos[pi] = pagamentoCorrigido;
+      }
+    }
+
     await logAction(actionType, {
       entity: 'trabalho',
       trabalhoId: item.id,
@@ -9203,7 +9288,7 @@ window.editTrabalho = function(id){
   if($('contacto')) $('contacto').value=t.contacto||'';
   $('tipoTrabalho').value=t.tipoTrabalho||'';
   if($('valorTrabalho')) $('valorTrabalho').value = (t.valorTrabalho ?? t.valor ?? '');
-  $('valor').value = (t.valorPago ?? '');
+  $('valor').value = getValorPago(t) || '';
   $('dataInicio').value=t.dataInicio||'';
   $('dataFim').value=t.dataFim||'';
   $('estado').value=normalizeEstado(t.estado||'Pendente');
@@ -9363,7 +9448,7 @@ window.markAsPaid = async function(id, metodo='Manual', dataPagamento='', valorP
   const t = trabalhos.find(x => x.id === id);
   if(!t) return false;
   const finalPaymentDate = dataPagamento || todayLocalDate();
-  const valorFinal = Number(valorPersonalizado ?? t.valorPago ?? t.valorTrabalho ?? t.valor ?? 0);
+  const valorFinal = Number(valorPersonalizado ?? getValorParaPagamento(t) ?? 0);
   const updatedTrabalho = JSON.parse(JSON.stringify(t));
   updatedTrabalho.estado = 'Pago';
   updatedTrabalho.dataEstado = new Date().toISOString();
@@ -9487,19 +9572,75 @@ function showPaymentModal(){
   modal.style.display = 'grid';
 }
 
+
+window.desmarcarPago = async function(id){
+  if(!isMasterAdmin()){
+    alert('Só o Admin Mestre pode tirar pagamentos.');
+    return false;
+  }
+  const t = trabalhos.find(x => x.id === id);
+  if(!t) return;
+  if(!confirm('Tirar o pagamento deste trabalho? O Valor Pago volta a 0,00 € e o registo sai da página Pagamentos.')) return;
+
+  const existingPagamento = pagamentos.find(p => (p.sourceWorkId && p.sourceWorkId === t.id) || (p.workCode && t.workCode && p.workCode === t.workCode));
+  const updatedTrabalho = JSON.parse(JSON.stringify(t));
+  updatedTrabalho.estado = 'Entregue';
+  updatedTrabalho.paymentStatus = 'Pendente';
+  updatedTrabalho.paymentMethod = '';
+  updatedTrabalho.metodoPagamento = '';
+  updatedTrabalho.dataPagamento = '';
+  updatedTrabalho.valorPago = 0;
+  updatedTrabalho.dataEstado = new Date().toISOString();
+  updatedTrabalho.historicoEstados = Array.isArray(updatedTrabalho.historicoEstados) ? updatedTrabalho.historicoEstados : [];
+  const last = updatedTrabalho.historicoEstados[updatedTrabalho.historicoEstados.length - 1];
+  if(!last || normalizeEstado(last.estado) !== 'Entregue'){
+    updatedTrabalho.historicoEstados.push({ estado:'Entregue', data:updatedTrabalho.dataEstado, obs:'Pagamento removido' });
+  }
+
+  try{
+    await ensureFirebaseReady();
+    const ops = [upsertRemote('trabalhos', updatedTrabalho)];
+    if(existingPagamento?.id) ops.push(removeRemote('pagamentos', existingPagamento.id));
+    await Promise.all(ops);
+    await logAction('remove_pagamento_trabalho', {
+      entity:'trabalho',
+      trabalhoId: updatedTrabalho.id,
+      pagamentoId: existingPagamento?.id || '',
+      cliente: updatedTrabalho.cliente || '',
+      trabalhoAfter: JSON.parse(JSON.stringify(updatedTrabalho)),
+      pagamentoDeleted: existingPagamento ? JSON.parse(JSON.stringify(existingPagamento)) : null
+    });
+
+    Object.assign(t, updatedTrabalho);
+    if(existingPagamento?.id){
+      pagamentos = pagamentos.filter(p => p.id !== existingPagamento.id);
+    }
+    saveLocal();
+    refreshVisibleViews();
+    setTimeout(()=>{ try{ refreshVisibleViews(); }catch(e){} }, 200);
+    setSyncMessage('Pagamento removido', 'good');
+    return true;
+  }catch(err){
+    console.error(err);
+    setSyncMessage('Erro a remover pagamento no Firebase', 'bad');
+    alert(`Não foi possível tirar o pagamento. ${err?.code ? '(' + err.code + ')' : ''}`.trim());
+    return false;
+  }
+};
+
 window.marcarComoPagoComValor = function(id){
   const t = trabalhos.find(x => x.id === id);
   if(!t) return;
   pendingPaymentWorkId = id;
   resetPaymentModalState();
   $('paymentJobName').textContent = t.tipoTrabalho || 'Trabalho';
-  $('paymentJobClient').textContent = `${t.cliente || '-'} • ${euro(t.valorPago ?? t.valorTrabalho ?? t.valor ?? 0)}`;
+  $('paymentJobClient').textContent = `${t.cliente || '-'} • ${euro(getValorParaPagamento(t))}`;
   if($('paymentDateInput')) {
     $('paymentDateInput').value = t.dataPagamento || todayLocalDate();
     $('paymentDateInput').removeAttribute('readonly');
     $('paymentDateInput').disabled = false;
   }
-  if($('paymentValueInput')) $('paymentValueInput').value = String(t.valorPago ?? t.valorTrabalho ?? t.valor ?? '').replace('.', ',');
+  if($('paymentValueInput')) $('paymentValueInput').value = String(getValorParaPagamento(t) || '').replace('.', ',');
   showPaymentModal();
 };
 
@@ -9747,7 +9888,7 @@ function legacy2_openPaymentMethodModal(id){
   if(hiddenId) hiddenId.value = id;
   if(methodInput) methodInput.value = '';
   if(dateInput) dateInput.value = (t.dataPagamento && String(t.dataPagamento).trim()) ? t.dataPagamento : getTodayLocalDateStr();
-  if(valueInput) valueInput.value = String(t.valorPago ?? t.valorTrabalho ?? t.valor ?? '').replace('.', ',');
+  if(valueInput) valueInput.value = String(getValorParaPagamento(t) || '').replace('.', ',');
 
   modal.style.display = 'grid';
   modal.classList.add('show');
@@ -10353,7 +10494,9 @@ body{
         </thead>
         <tbody>${historyHtml}</tbody>
       </table>
-    </body>
+    
+
+</body>
   </html>`;
 }
 
@@ -10620,7 +10763,7 @@ $('orcamentoData') && !$('orcamentoData').value && ($('orcamentoData').value = g
 <script id="ge-update-safe-script">
 (function(){
   'use strict';
-  var CURRENT_VERSION = '1.1.0';
+  var CURRENT_VERSION = '1.1.6';
   var VERSION_URL = './version.json';
   var DISMISSED_KEY = 'ge_update_dismissed_version';
   var CHECK_EVERY_MS = 120000;
@@ -10632,8 +10775,7 @@ $('orcamentoData') && !$('orcamentoData').value && ($('orcamentoData').value = g
   function normaliseChangelog(data){
     var log = data && (data.changelog || data.changes || data.novidades);
     if(Array.isArray(log)) return log.map(String).filter(Boolean).slice(0,6);
-    if(typeof log === 'string') return log.split('
-').map(function(x){return x.trim();}).filter(Boolean).slice(0,6);
+    if(typeof log === 'string') return log.split('\n').map(function(x){return x.trim();}).filter(Boolean).slice(0,6);
     return [];
   }
   function renderChangelog(items){
@@ -10687,6 +10829,55 @@ $('orcamentoData') && !$('orcamentoData').value && ($('orcamentoData').value = g
     var target = ev.target && ev.target.closest ? ev.target.closest('#manualUpdateCheckBtn') : null;
     if(target){ ev.preventDefault(); check(true); }
   });
+})();
+</script>
+
+
+
+<script>
+(function(){
+  const KEY='gestao:visualTheme';
+  const themes=[
+    ['default','Escuro Premium'],['corporate','Azul Corporativo'],['orange','Preto/Laranja'],['green','Verde Técnico'],['brinka','Tema Brinka'],['light','Claro Premium']
+  ];
+  function applyTheme(value){
+    const v=value||'default';
+    document.body.classList.remove('theme-corporate','theme-orange','theme-green','theme-brinka','theme-light');
+    if(v!=='default') document.body.classList.add('theme-'+v);
+    try{localStorage.setItem(KEY,v)}catch(e){}
+    const sel=document.getElementById('visualThemeSelect');
+    if(sel) sel.value=v;
+  }
+  function buildThemeCard(){
+    if(document.getElementById('visualThemeCard')) return;
+    const page=document.getElementById('configuracoes-page') || document.querySelector('.config-actions')?.parentElement || document.querySelector('[data-page="configuracoes"]');
+    if(!page) return;
+    const card=document.createElement('div');
+    card.id='visualThemeCard';
+    card.className='setting-card visual-theme-card';
+    const options=themes.map(t=>'<option value="'+t[0]+'">'+t[1]+'</option>').join('');
+    card.innerHTML='<span class="mini-label">Visual Refresh 2026</span>'+
+      '<strong>Sistema de temas</strong>'+
+      '<p>Altera o visual da APP sem mexer nos dados, Firebase ou permissões.</p>'+
+      '<div class="field" style="margin-top:12px;max-width:420px">'+
+      '<label for="visualThemeSelect">Tema ativo</label>'+
+      '<select id="visualThemeSelect">'+options+'</select></div>'+
+      '<div class="theme-preview-grid">'+
+      '<div class="theme-dot-row"><span class="theme-dot" style="background:#7c5cff"></span><span>Premium</span></div>'+
+      '<div class="theme-dot-row"><span class="theme-dot" style="background:#2f7dff"></span><span>Corporativo</span></div>'+
+      '<div class="theme-dot-row"><span class="theme-dot" style="background:#ff7a18"></span><span>Laranja</span></div>'+
+      '<div class="theme-dot-row"><span class="theme-dot" style="background:#21d07a"></span><span>Verde</span></div>'+
+      '</div>';
+    const anchor=page.querySelector('.config-actions') || page.lastElementChild;
+    if(anchor && anchor.parentElement) anchor.parentElement.insertBefore(card, anchor); else page.appendChild(card);
+    const sel=document.getElementById('visualThemeSelect');
+    if(sel) sel.addEventListener('change',()=>applyTheme(sel.value));
+    applyTheme(localStorage.getItem(KEY)||'default');
+  }
+  window.applyGestaoVisualTheme=applyTheme;
+  function init(){ applyTheme(localStorage.getItem(KEY)||'default'); setTimeout(buildThemeCard,400); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+  document.addEventListener('click',()=>setTimeout(buildThemeCard,80),true);
 })();
 </script>
 </body>

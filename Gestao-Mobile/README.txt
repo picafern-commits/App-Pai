@@ -14,15 +14,10 @@ Firebase necessário:
 2. Firestore Database criado
 3. Regras Firestore publicadas
 
-Regras recomendadas para esta versão:
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if request.auth != null;
-    }
-  }
-}
+Regras Firestore:
+- usar o ficheiro ../firestore.rules
+- nao publicar regras abertas do tipo "allow read, write: if request.auth != null"
+- confirmar que cada utilizador tem perfil em user_roles
 
 Coleções usadas:
 - trabalhos
