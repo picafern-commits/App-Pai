@@ -1,0 +1,297 @@
+/* ==========================================================================
+   Mobile Fit - enquadramento em ecrãs pequenos (telemóvel)
+   --------------------------------------------------------------------------
+   Camada final: carregada DEPOIS de todo o CSS do index.html e do
+   professional-ui.css. Só atua em ecrãs <= 900px, por isso o desktop
+   fica igual. Para desligar: remover a linha <link ... mobile-fit.css>
+   e o <script ... mobile-fit.js> do index.html.
+   ========================================================================== */
+
+@media (max-width: 900px) {
+
+  /* ---------- Base ---------- */
+  html { -webkit-text-size-adjust: 100%; }
+  html, body { overflow-x: hidden !important; max-width: 100%; }
+  .main { padding: 10px 12px calc(24px + env(safe-area-inset-bottom)) !important; }
+  .page { min-width: 0; }
+  .panel, .content-grid > *, .dashboard-grid > * { min-width: 0; }
+  img { max-width: 100%; }
+
+  /* ---------- Barra de topo ---------- */
+  .topbar {
+    position: sticky !important;
+    /* Adiciona env(safe-area-inset-top) para empurrar a barra para baixo do notch no iPhone */
+    top: 0;
+    z-index: 35;
+    margin: 0 -12px 10px !important;
+    padding: calc(8px + env(safe-area-inset-top)) 12px 10px !important; /* 👈 AJUSTE AQUI */
+    background: linear-gradient(180deg, rgba(8,11,19,.96), rgba(8,11,19,.82)) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 0 !important;
+  }
+  
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding-right: 84px; /* espaço para o botão "Online" */
+  }
+  .topbar-left > div { min-width: 0; flex: 1; }
+  .mobile-menu-btn { flex: 0 0 auto; width: 44px; height: 44px; }
+  #pageTitle {
+    margin: 0 !important;
+    font-size: 20px !important;
+    line-height: 1.15 !important;
+    letter-spacing: -.02em !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topbar .subline {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    margin-top: 2px;
+    font-size: 11.5px !important;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  /* o "Role" completo já aparece no menu lateral (Sessão) */
+  #roleLine, #roleLine + span { display: none !important; }
+  #currentUserName { overflow: hidden; text-overflow: ellipsis; }
+
+  /* ---------- Widget "Online" ---------- */
+  .online-widget {
+    top: calc(10px + env(safe-area-inset-top)) !important;
+    right: 12px !important;
+    z-index: 1300 !important;
+  }
+  .online-toggle {
+    min-height: 40px !important;
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    gap: 6px !important;
+  }
+  body.mobile-sidebar-open .online-widget { display: none !important; } /* não tapar o menu lateral */
+  .online-card {
+    width: min(320px, calc(100vw - 24px)) !important;
+    max-height: 60dvh;
+    overflow: auto;
+  }
+
+  /* ---------- Dashboard ---------- */
+  .hero { padding: 16px !important; }
+  .hero-copy h3 { font-size: 24px !important; margin: 0 0 12px !important; line-height: 1.1; }
+  .hero-actions {
+    position: static !important;   /* estava "sticky" e sobrepunha o título */
+    bottom: auto !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px !important;
+  }
+  .hero-actions .btn { min-height: 46px; padding: 10px 8px; font-size: 14px; }
+  .hero-side { margin-top: 12px; }
+  .hero-chip { width: 100%; box-sizing: border-box; }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+  .stat-card {
+    min-height: 92px !important;
+    padding: 14px !important;
+    border-radius: 18px !important;
+  }
+  .stat-card span { font-size: 10px !important; letter-spacing: .08em !important; }
+  .stat-card strong { font-size: clamp(22px, 7.2vw, 30px) !important; overflow-wrap: anywhere; }
+  .stat-card small { font-size: 11.5px !important; }
+
+  .alert-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+  .alert-card { padding: 12px !important; border-radius: 16px !important; min-width: 0; }
+  .alert-card strong { font-size: 22px !important; }
+  .alert-card p, .alert-card small { font-size: 12px !important; line-height: 1.35; }
+
+  .empresa-smart-grid, .dashboard-grid { grid-template-columns: 1fr !important; }
+  .empresa-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+  .empresa-kpi { padding: 12px !important; border-radius: 16px !important; }
+  .empresa-kpi strong { font-size: 20px !important; overflow-wrap: anywhere; }
+
+  .panel { padding: 16px !important; }
+  .panel-head h3 { font-size: 18px !important; }
+
+  /* ---------- Formulários ---------- */
+  .form-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .field-span-2 { grid-column: auto !important; }
+  input, select, textarea {
+    font-size: 16px !important;   /* evita o zoom automático do iPhone */
+    min-height: 46px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  textarea { min-height: 96px; }
+  input::placeholder, textarea::placeholder { font-size: 14px; }
+  /* campos de valor (Adicionar trabalho): o fundo destacado ficava colado ao texto */
+  #adicionar-page .field:has(#valorTrabalho),
+  #adicionar-page .field:has(#valor) { padding: 10px 12px 12px !important; border-radius: 16px !important; }
+  input[type="date"] { min-width: 0; }
+  .inline-actions { display: grid !important; grid-template-columns: 1fr; gap: 10px !important; }
+
+  /* ---------- Cartões (histórico, pagamentos, clientes) ---------- */
+  .mobile-cards-wrap { display: grid !important; gap: 10px !important; margin-bottom: 12px; }
+  .mobile-card {
+    padding: 14px !important;
+    border-radius: 18px !important;
+    display: grid;
+    gap: 10px !important;
+    min-width: 0;
+  }
+  .mobile-card-title { font-size: 16px !important; line-height: 1.25; overflow-wrap: anywhere; }
+  .mobile-card-sub { font-size: 12.5px !important; overflow-wrap: anywhere; }
+  .mobile-card-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+  .mobile-card-item { padding: 9px 11px !important; border-radius: 12px !important; min-width: 0; }
+  .mobile-card-item span { font-size: 10px !important; }
+  .mobile-card-item strong { font-size: 14px !important; overflow-wrap: anywhere; }
+  /* o ID já aparece por baixo do nome do cliente */
+  #trabalhosCardsWrap .mobile-card-item:first-child { display: none; }
+
+  /* Botões de ação dos cartões: quebram em linhas (antes cortavam à direita) */
+  .enterprise-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    gap: 8px !important;
+    padding-bottom: 0 !important;
+  }
+  .enterprise-actions > * { flex: 1 1 calc(50% - 8px) !important; min-width: 0; }
+  .enterprise-actions .pipeline-like-btn,
+  .enterprise-actions .small-btn {
+    min-height: 42px !important;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+    justify-content: center;
+  }
+  .enterprise-actions .stage-flow { flex: 1 1 100% !important; display: flex; }
+  .enterprise-actions .stage-step { flex: 1; min-height: 42px; font-size: 13px !important; }
+  .mobile-card .row-actions { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .row-actions .small-btn { min-height: 44px; }
+  .orc-btn { min-height: 44px; font-size: 13px !important; }
+
+  /* ---------- Tabelas: em vez de esconder, viram cartões ---------- */
+  /* Só as que já têm cartões próprios (histórico e pagamentos) ficam escondidas */
+  .mobile-cards-wrap + .table-wrap { display: none !important; }
+  .table-wrap {
+    display: block !important;
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  table.m-stack, table.m-stack tbody { display: block; width: 100%; min-width: 0 !important; }
+  table.m-stack thead { display: none; }
+  table.m-stack tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+    padding: 14px;
+    margin: 0 0 10px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 18px;
+    background: rgba(255,255,255,.04) !important;
+    transform: none !important;
+  }
+  table.m-stack td {
+    display: block;
+    min-width: 0 !important;
+    width: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    font-size: 14px !important;
+    overflow-wrap: break-word;
+    white-space: normal !important;
+  }
+  table.m-stack td[data-label="Email"] { grid-column: 1 / -1; }
+  table.m-stack td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #9fb0d2;
+  }
+  table.m-stack td:first-child { grid-column: 1 / -1; font-size: 16px !important; font-weight: 800; }
+  table.m-stack td:first-child::before,
+  table.m-stack td[colspan]::before,
+  table.m-stack td[data-label="Ações"]::before { display: none; }
+  table.m-stack td[colspan] { grid-column: 1 / -1; }
+  table.m-stack td:last-child { grid-column: 1 / -1; }
+  table.m-stack .row-actions,
+  table.m-stack .orc-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  table.m-stack .row-actions > *,
+  table.m-stack .orc-actions > * { flex: 1 1 calc(50% - 8px); min-height: 44px; }
+
+  /* tabelas sem cabeçalho (ex.: "Dados do cliente") ficam simples e sem cortes.
+     A regra geral "table{min-width:760px}" é que forçava o overflow aqui. */
+  .table-wrap table:not(.m-stack) { width: 100% !important; min-width: 0 !important; table-layout: fixed; }
+  .table-wrap table:not(.m-stack) td,
+  .table-wrap table:not(.m-stack) th { overflow-wrap: anywhere; white-space: normal !important; }
+
+  /* ---------- Janelas (modais) ---------- */
+  .modal { padding: 10px !important; align-items: center; }
+  .modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100dvh - 20px) !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 22px !important;
+    box-sizing: border-box;
+  }
+
+  /* ---------- Ecrã de login ---------- */
+  .login-screen {
+    padding: calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom)) !important;
+    min-height: 100dvh;
+    box-sizing: border-box;
+  }
+  .login-screen::before { display: none !important; } /* moldura duplicada */
+  .login-card {
+    width: 100% !important;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 14px !important;
+    gap: 14px !important;
+    border-radius: 26px !important;
+  }
+  .login-card::after { display: none !important; }
+  .login-brand { padding: 18px 14px !important; gap: 12px !important; min-height: 0 !important; }
+  .company-logo-large { width: min(150px, 44vw) !important; height: auto !important; }
+  .clean-brand-copy h1 {
+    display: inline-block;
+    font-size: clamp(28px, 9vw, 36px) !important;
+    letter-spacing: -.03em !important;   /* -.06em cortava a última letra */
+    padding: 0 .08em .06em 0;
+    line-height: 1.15 !important;
+    text-align: center;
+  }
+  .login-panel { padding: 18px 16px !important; }
+  .login-only-title h1 { font-size: 30px !important; letter-spacing: -.03em !important; margin: 0 0 6px !important; }
+}
+
+/* ---------- Ecrãs muito pequenos (<= 360px) ---------- */
+@media (max-width: 360px) {
+  .main { padding-left: 10px !important; padding-right: 10px !important; }
+  .topbar { margin-left: -10px !important; margin-right: -10px !important; padding-left: 10px !important; padding-right: 10px !important; }
+  .hero-actions { grid-template-columns: 1fr; }
+  .alert-grid { grid-template-columns: 1fr !important; }
+  .enterprise-actions > * { flex-basis: 100% !important; }
+}

@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Jorge Torneiro</title>
   <meta name="theme-color" content="#0b1020" />
   <link rel="manifest" href="manifest.json" />
@@ -140,7 +140,7 @@ textarea{resize:vertical}
   position:relative;
   z-index:1;
   display:grid;
-  grid-template-columns:260px minmax(0,1fr);
+  grid-template-columns:minmax(0,1fr);
   min-height:100vh;
 }
 .sidebar{
@@ -446,7 +446,7 @@ body.ui-laptop .main{padding:12px}
 .bars{display:grid;gap:12px}
 .bar-row{display:grid;grid-template-columns:110px minmax(0,1fr) 100px;gap:12px;align-items:center}
 .bar-track{height:14px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;min-width:0}
-.bar-fill{height:100%;border-radius:999px;background:linear-gradient(135deg,var(--accent3),var(--accent2))}
+.bar-fill{height:100%;border-radius:999px;background:linear-gradient(135deg,#ff7a18,#24c8ff)}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .field-span-2{grid-column:span 2}
 .inline-actions{display:flex;gap:10px;flex-wrap:wrap}
@@ -3437,13 +3437,16 @@ body{
 </style>
   
 
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0b1020">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="css/professional-ui.css">
+<link rel="stylesheet" href="css/mobile-fit.css">
+<script src="js/mobile-fit.js" defer></script>
+<link rel="stylesheet" href="css/portal.css">
+<script src="js/portal.js" defer></script>
 
 </head>
 <body>
@@ -3501,47 +3504,12 @@ body{
         <div id="onlineUsersList" class="online-users-list"></div>
       </div>
     </div>
-    <div id="mobileSidebarBackdrop" class="mobile-sidebar-backdrop"></div>
-    <aside class="sidebar">
-      <div class="brand-card">
-        <img class="sidebar-logo" src="logo-icon-dark.png" alt="Logo Jorge Torneiro" />
-        <div>
-          <h1>Jorge Torneiro</h1>
-          <p>App mobile produção produção</p>
-        </div>
-      </div>
-
-      <nav class="nav">
-        <button class="nav-btn active" data-tab="dashboard"><span class="nav-icon">◈</span><span>Dashboard</span></button>
-        <button class="nav-btn" data-tab="adicionar"><span class="nav-icon">＋</span><span>Adicionar Trabalho</span></button>
-        <button class="nav-btn" data-tab="trabalhos"><span class="nav-icon">☰</span><span>Histórico Trabalhos</span></button>
-        <button class="nav-btn" data-tab="orcamentos"><span class="nav-icon">📝</span><span>Orçamentos</span></button>
-        <button class="nav-btn" data-tab="clientes"><span class="nav-icon">◉</span><span>Clientes</span></button>
-        <button class="nav-btn" data-tab="pagamentos"><span class="nav-icon">€</span><span>Pagamentos</span></button>
-        <button class="nav-btn" data-tab="relatorios"><span class="nav-icon">▣</span><span>Relatórios</span></button>
-        <button class="nav-btn admin-only" data-tab="logs"><span class="nav-icon">🧾</span><span>Auditoria</span></button>
-        <button class="nav-btn" data-tab="configuracoes"><span class="nav-icon">⚙</span><span>Configurações</span></button>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="mini-card">
-          <span class="mini-label">Sessão</span>
-          <strong id="roleBadge">-</strong>
-        </div>
-        <div class="mini-card">
-          <span class="mini-label">Versão</span>
-          <strong id="versionBadge">-</strong>
-        </div>
-        <button id="logoutBtn" class="btn btn-secondary full">Terminar sessão</button>
-      </div>
-    </aside>
-
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
-          <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Abrir menu">☰</button>
+          <button id="portalBackBtn" class="portal-back-btn" type="button" data-go="portal" aria-label="Voltar ao portal" title="Voltar ao portal">🏠<span>Portal</span></button>
           <div>
-            <h2 id="pageTitle">Dashboard</h2>
+            <h2 id="pageTitle">Portal</h2>
             <div class="subline">
               <span id="roleLine">Role: -</span>
               <span>•</span>
@@ -3553,7 +3521,41 @@ body{
         </div>
       </header>
 
-      <section class="page active" id="dashboard-page">
+      <section class="page active" id="portal-page">
+        <div class="portal-header brand-card">
+          <img class="sidebar-logo" src="logo-icon-dark.png" alt="Logo Jorge Torneiro" />
+          <div>
+            <h1>Jorge Torneiro</h1>
+            <p>App mobile produção produção</p>
+          </div>
+        </div>
+
+        <div class="portal-grid">
+          <button type="button" class="portal-tile" data-go="dashboard"><span class="portal-tile-icon">📊</span><span class="portal-tile-label">Dashboard</span></button>
+          <button type="button" class="portal-tile" data-go="adicionar"><span class="portal-tile-icon">⚡</span><span class="portal-tile-label">Adicionar Trabalho</span></button>
+          <button type="button" class="portal-tile" data-go="trabalhos"><span class="portal-tile-icon">🛠️</span><span class="portal-tile-label">Histórico Trabalhos</span></button>
+          <button type="button" class="portal-tile" data-go="orcamentos"><span class="portal-tile-icon">📝</span><span class="portal-tile-label">Orçamentos</span></button>
+          <button type="button" class="portal-tile" data-go="clientes"><span class="portal-tile-icon">👥</span><span class="portal-tile-label">Clientes</span></button>
+          <button type="button" class="portal-tile" data-go="pagamentos"><span class="portal-tile-icon">💶</span><span class="portal-tile-label">Pagamentos</span></button>
+          <button type="button" class="portal-tile admin-only" data-go="logs"><span class="portal-tile-icon">🧾</span><span class="portal-tile-label">Auditoria</span></button>
+          <button type="button" class="portal-tile" data-go="configuracoes"><span class="portal-tile-icon">⚙</span><span class="portal-tile-label">Configurações</span></button>
+        </div>
+		
+	        <div class="portal-session">
+          <div class="portal-mini-card">
+            <span class="mini-label">Sessão</span>
+            <strong id="roleBadge">-</strong>
+          </div>
+          <div class="portal-mini-card">
+            <span class="mini-label">Versão</span>
+            <strong id="versionBadge">-</strong>
+          </div>
+          <button id="logoutBtn" class="btn btn-secondary full">Terminar sessão</button>
+        </div>	
+		
+      </section>
+
+      <section class="page" id="dashboard-page">
         <div class="hero panel">
           <div class="hero-copy">
             <h3>Controlo Total Rapido</h3>
@@ -3697,7 +3699,7 @@ body{
           <section class="panel wide-panel">
             <div class="panel-head"><h3>Lista de clientes</h3></div>
             <div class="toolbar"><input id="searchClientes" type="text" placeholder="Pesquisar cliente" /></div>
-            <div class="table-wrap">
+            <div id="clientesCardsWrap" class="mobile-cards-wrap"></div><div class="table-wrap">
               <table>
                 <thead><tr><th>Nome</th><th>Telefone</th><th>Email</th><th>NIF</th><th>Ações</th></tr></thead>
                 <tbody id="clientesTableBody"></tbody>
@@ -4359,7 +4361,7 @@ async function importBackupDataObject(data){
   try{ if(typeof refreshVisibleViews === 'function') refreshVisibleViews(); }catch(e){}
 
   const activePage = document.querySelector('.page.active');
-  const activeTab = activePage ? activePage.id.replace(/-page$/, '') : (sessionStorage.getItem('gestao:lastTab') || 'dashboard');
+  const activeTab = activePage ? activePage.id.replace(/-page$/, '') : (sessionStorage.getItem('gestao:lastTab') || 'portal');
   try{ sessionStorage.setItem('gestao:lastTab', activeTab); }catch(e){}
 
   alert(`Backup importado com sucesso. Trabalhos: ${trabalhos.length}, Clientes: ${clientes.length}, Pagamentos: ${pagamentos.length}.${remoteSummary}`);
@@ -5865,7 +5867,7 @@ function initOnlineUsersUi(){
     refreshBtn.dataset.bound = '1';
     refreshBtn.addEventListener('click', () => renderOnlineUsersCard());
   }
-  const hidden = (() => { try{ return localStorage.getItem(ONLINE_WIDGET_KEY) === '1'; }catch(e){ return false; } })();
+  const hidden = (() => { try{ const v = localStorage.getItem(ONLINE_WIDGET_KEY); return v === null ? window.innerWidth <= 900 : v === '1'; }catch(e){ return false; } })();
   toggleOnlineUsersCard(!hidden);
 }
 function getRenderableOnlineUsers(){
@@ -6972,8 +6974,9 @@ function switchTab(tab){
   navButtons.forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
   bottomButtons.forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
   pages.forEach(p => p.classList.toggle('active', p.id===`${tab}-page`));
-  const btn=document.querySelector(`.nav-btn[data-tab="${tab}"]`);
-  $('pageTitle').textContent = btn ? btn.textContent.trim() : 'Dashboard';
+  document.body.classList.toggle('on-portal', tab === 'portal');
+  const tile=document.querySelector(`.portal-tile[data-go="${tab}"] .portal-tile-label`);
+  $('pageTitle').textContent = tab === 'portal' ? 'Portal' : (tile ? tile.textContent.trim() : 'Dashboard');
   try{ updatePresenceState(true); }catch(e){}
   if(tab === 'dashboard'){
     renderDashboard();
@@ -7006,7 +7009,7 @@ function refreshVisibleViews(){
   try{ renderAll(); }catch(e){}
   try{
     const activePage = document.querySelector('.page.active');
-    const activeTab = activePage ? activePage.id.replace(/-page$/, '') : (sessionStorage.getItem('gestao:lastTab') || 'dashboard');
+    const activeTab = activePage ? activePage.id.replace(/-page$/, '') : (sessionStorage.getItem('gestao:lastTab') || 'portal');
     switchTab(activeTab);
   }catch(e){}
 }
@@ -7014,7 +7017,7 @@ function refreshVisibleViews(){
 function forceAppRefresh(){
   try{
     const activePage = document.querySelector('.page.active');
-    const activeTab = activePage ? activePage.id.replace(/-page$/, '') : (sessionStorage.getItem('gestao:lastTab') || 'dashboard');
+    const activeTab = activePage ? activePage.id.replace(/-page$/, '') : (sessionStorage.getItem('gestao:lastTab') || 'portal');
     sessionStorage.setItem('gestao:lastTab', activeTab);
   }catch(e){}
   setTimeout(()=>{

@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Portal inicial - substitui a sidebar por uma página de arranque com
+   "quadrados" grandes, dois por fila. Funciona em qualquer largura de
+   ecrã (não depende de media queries), porque a sidebar deixou de existir.
+   Para desligar: remover <link ... portal.css> e <script ... portal.js>
+   do index.html (a app volta a abrir sempre no Dashboard).
+   ========================================================================== */
+
+/* ---------- Botão "voltar ao portal" na barra de topo ---------- */
+.portal-back-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 16px 0 12px;
+  border: 1px solid var(--line, rgba(255,255,255,.10));
+  border-radius: 14px;
+  background: rgba(255,255,255,.06);
+  color: var(--text, #f3f7ff);
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+}
+.portal-back-btn:hover{ background: rgba(255,255,255,.10); }
+.portal-back-btn:active{ transform: translateY(1px); }
+.portal-back-btn span{ white-space: nowrap; }
+
+/* Na própria página do Portal o botão de voltar não faz sentido */
+body.on-portal .portal-back-btn{ display: none; }
+
+/* ---------- Cabeçalho do portal (logo + sessão) ---------- */
+.portal-header{ margin-bottom: 14px; }
+
+.portal-session{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.portal-session .btn{
+  grid-column: 1 / -1;
+}
+/* classe própria (não ".mini-card") porque essa fica "display:none" em
+   ecrãs pequenos numa regra antiga pensada só para a sidebar */
+.portal-mini-card{
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line2, rgba(255,255,255,.08));
+}
+.portal-mini-card .mini-label{
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted, #9fb0d2);
+  margin-bottom: 4px;
+}
+.portal-mini-card strong{ font-size: 16px; }
+
+/* ---------- Grelha do portal: 2 quadrados por fila ---------- */
+.portal-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.portal-tile{
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  border: 1px solid var(--line, rgba(255,255,255,.10));
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+  box-shadow: 0 18px 40px rgba(0,0,0,.22);
+  color: var(--text, #f3f7ff);
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+  padding: 12px;
+  text-align: center;
+}
+.portal-tile:hover,
+.portal-tile:focus-visible{
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,.22);
+  background: linear-gradient(135deg, rgba(111,92,255,.20), rgba(36,200,255,.12));
+  box-shadow: 0 22px 50px rgba(0,0,0,.28);
+}
+.portal-tile:active{ transform: translateY(0); }
+
+.portal-tile-icon{
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: rgba(255,255,255,.07);
+  font-size: 28px;
+  line-height: 1;
+}
+.portal-tile-label{
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+/* Ecrãs grandes: quadrados não ficam gigantes desnecessariamente */
+@media (min-width: 720px){
+  .portal-grid{ max-width: 640px; margin: 0 auto; }
+}
+
+/* Ecrãs pequenos: quadrados mais compactos, mesma disposição 2x2 */
+@media (max-width: 420px){
+  .portal-tile{ border-radius: 22px; gap: 8px; }
+  .portal-tile-icon{ width: 52px; height: 52px; font-size: 24px; border-radius: 16px; }
+  .portal-tile-label{ font-size: 13px; }
+  .portal-grid{ gap: 10px; }
+}
